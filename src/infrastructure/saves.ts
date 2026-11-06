@@ -1,5 +1,6 @@
 import type { ContentPack, GameState } from '../core/contracts.ts';
 import { firstSceneOf, hotspotsOf, scenesOf } from '../core/scenes.ts';
+import { createState, transition } from '../core/engine.ts';
 
 export interface StoragePort { getItem(key: string): string | null; setItem(key: string, value: string): void; removeItem(key: string): void }
 export const slots = ['auto', 'checkpoint', 'manual-1', 'manual-2', 'manual-3'] as const;
@@ -9,10 +10,10 @@ export type SaveResult<T> = { ok: true; value: T } | { ok: false; error: string 
 const object = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 const strings = (v: unknown): v is string[] => Array.isArray(v) && v.every(x => typeof x === 'string') && new Set(v).size === v.length;
 function actionsOf(content: ContentPack) {
-  return [...content.dialogues.flatMap(d => d.nodes.flatMap(n => n.choices)), ...content.minigames.map(g => g.reward), ...content.chapters.flatMap(c => hotspotsOf(c).flatMap(h => h.interaction.kind === 'inspect' ? [h.interaction.action, ...(h.interaction.options ?? [])].filter(x => x !== undefined) : []))];
+  return [...content.dialogues.flatMap(d => d.nodes.flatMap(n => n.choices)), ...content.minigames.map(g => g.reward), ...(content.collection ?? []).flatMap(e => e.study ? [e.study] : []), ...content.chapters.flatMap(c => hotspotsOf(c).flatMap(h => h.interaction.kind === 'inspect' ? [h.interaction.action, ...(h.interaction.options ?? [])].filter(x => x !== undefined) : []))];
 }
 function migratePrevious(s: Record<string, unknown>, content: ContentPack) {
-  if (s.schemaVersion !== 1 || s.contentId !== content.id || s.contentVersion !== 2 || content.version !== 3) return null;
+  if (s.schemaVersion !== 1 || s.contentId !== content.id || s.contentVersion !== 2 || content.version < 3) return null;
   if (!strings(s.visited) || !strings(s.flags) || !strings(s.clues) || !strings(s.rewards) || !object(s.metrics) || !object(s.quests) || !object(s.decisions)) return null;
   const chapter = content.chapters.find(c => c.id === s.chapterId); if (!chapter) return null;
   const next = structuredClone(s); next.schemaVersion = 2; next.contentVersion = 3;
@@ -40,12 +41,34 @@ export function decodeSave(raw: string, content: ContentPack): SaveResult<SaveEn
     if (object(s)) {
       const migrated = migratePrevious(s, content);
       if (migrated) { s = migrated; data.state = migrated; data.notice = migrated.chapterId==='morning'?'已接上旧进度。第二章从陈家店门口重新读起。':migrated.chapterId==='noon'?'已接上旧进度。第三章从琴记店堂重新读起。':'已接上原来的进度。'; }
+      if (object(s) && s.schemaVersion === 2 && s.contentId === content.id && s.contentVersion === 3 && content.version === 4) {
+        const updated = structuredClone(s); updated.schemaVersion = 3; updated.contentVersion = 4;
+        const visited = Array.isArray(s.visited) ? s.visited : [];
+        const furthest = content.chapters.find(c => c.id === visited.at(-1)) ?? (s.phase === 'title' ? content.chapters.find(c => c.id === content.firstChapter) : undefined);
+        if (!furthest) throw new Error('旧存档缺少行程记录。');
+        updated.journey = { chapterId: furthest.id, sceneId: furthest.id === s.chapterId ? s.sceneId : firstSceneOf(furthest) };
+        // Run the complete current validator before any intentional chapter restart.
+        // This recursive call cannot migrate again: its schema/content versions are current.
+        const checkedLegacy = decodeSave(JSON.stringify({ ...data, state: updated }), content);
+        if (!checkedLegacy.ok) throw new Error(checkedLegacy.error);
+        if (s.chapterId === content.firstChapter) {
+          s = s.phase === 'title' ? createState(content) : transition(createState(content), { type: 'start' }, content).state;
+          data.notice = '第一章已精修，将从新的入口开始；原存档文件没有改动。';
+        } else {
+          s = checkedLegacy.value.state; data.notice ??= '已接上旧进度，并补齐回访行程记录。';
+        }
+        data.state = s;
+      }
     }
-    if (!object(s) || s.schemaVersion !== 2 || s.contentId !== content.id || s.contentVersion !== content.version) throw new Error('这份存档不适用于当前版本，原文件未改动。');
+    if (!object(s) || s.schemaVersion !== 3 || s.contentId !== content.id || s.contentVersion !== content.version) throw new Error('这份存档不适用于当前版本，原文件未改动。');
     if (!['title', 'playing', 'ending'].includes(String(s.phase)) || typeof s.chapterId !== 'string' || !content.chapters.some(c => c.id === s.chapterId)) throw new Error('章节状态无效。');
     for (const key of ['visited', 'flags', 'clues', 'rewards', 'achievements', 'seenScenes']) if (!strings(s[key])) throw new Error(`存档字段 ${key} 无效。`);
     for (const key of ['inventory', 'metrics', 'quests', 'decisions']) if (!object(s[key])) throw new Error(`存档字段 ${key} 无效。`);
     const state = s as unknown as GameState;
+    if (!object(state.journey) || typeof state.journey.chapterId !== 'string' || typeof state.journey.sceneId !== 'string') throw new Error('行程记录无效。');
+    const journeyChapter = content.chapters.find(c => c.id === state.journey.chapterId);
+    if (!journeyChapter || !scenesOf(journeyChapter).some(scene => scene.id === state.journey.sceneId)) throw new Error('行程位置无效。');
+    if (state.phase !== 'title' && (!state.visited.includes(journeyChapter.id) || !state.seenScenes.includes(state.journey.sceneId) || state.visited.at(-1) !== journeyChapter.id)) throw new Error('行程与走访记录不一致。');
     const actions = actionsOf(content);
     const flags = new Set(actions.flatMap(a => a.effects.filter(e => e.kind === 'flag').map(e => e.id)));
     const known = (values: string[], ids: string[]) => values.every(v => ids.includes(v));
@@ -70,8 +93,8 @@ export function decodeSave(raw: string, content: ContentPack): SaveResult<SaveEn
     return { ok: true, value: data as unknown as SaveEnvelope };
   } catch (e) { return { ok: false, error: e instanceof Error ? e.message : '无法读取存档。' }; }
 }
-export function createSaveRepository(storage: StoragePort, content: ContentPack) {
-  const prefix = `baiwei:${content.id}:v1:`;
+export function createSaveRepository(storage: StoragePort, content: ContentPack, channel?: 'developer') {
+  const prefix = `baiwei:${content.id}:${channel ? `${channel}:` : ''}v1:`;
   return {
     read(slot: SlotId): SaveResult<SaveEnvelope | null> {
       try { const raw = storage.getItem(prefix + slot); return raw ? decodeSave(raw, content) : { ok: true, value: null }; }

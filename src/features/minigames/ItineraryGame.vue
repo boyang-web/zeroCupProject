@@ -2,6 +2,8 @@
 import { computed, ref } from 'vue';
 import type { MinigameProps, MinigameResult } from './contracts.ts';
 import Icon from '../../shared/Icon.vue';
+import UiButton from '../../shared/UiButton.vue';
+import WoodFrame from '../../presentation/WoodFrame.vue';
 import { isItineraryComplete, placeBookmark } from './itinerary.ts';
 const props = defineProps<MinigameProps>();
 const emit = defineEmits<{ finish: [result: MinigameResult] }>();
@@ -24,11 +26,11 @@ function finish() {
 </script>
 <template>
   <div v-if="plan" class="itinerary-game">
-    <div class="slip-tray"><button v-for="(slip, i) in plan.slips" :key="slip.id" class="route-slip" :class="{ selected: selected === slip.id, filed: Object.values(placed).includes(slip.id) }" :aria-pressed="selected === slip.id" @click="selected = slip.id; feedback = ''"><span class="slip-number">{{ String(i + 1).padStart(2, '0') }}</span><strong>{{ slip.title }}</strong><small>{{ slip.detail }}</small><span class="slip-action">{{ selected === slip.id ? '已选中 · 点一个时段' : Object.values(placed).includes(slip.id) ? '已夹入 · 可重新放置' : '点选这张书签' }}</span></button></div>
+    <div class="slip-tray"><button v-for="(slip, i) in plan.slips" :key="slip.id" class="route-slip" :class="{ selected: selected === slip.id, filed: Object.values(placed).includes(slip.id) }" :aria-pressed="selected === slip.id" @click="selected = slip.id; feedback = ''"><WoodFrame kind="ui-paper" /><span class="slip-number">{{ String(i + 1).padStart(2, '0') }}</span><strong>{{ slip.title }}</strong><small>{{ slip.detail }}</small><span class="slip-action">{{ selected === slip.id ? '已选中 · 点一个时段' : Object.values(placed).includes(slip.id) ? '已夹入 · 可重新放置' : '点选这张书签' }}</span></button></div>
     <div class="itinerary-line" aria-hidden="true"><span></span><Icon name="leaf" /><span></span></div>
     <div class="route-slots"><button v-for="slot in plan.slots" :key="slot.id" class="route-slot" :class="{ filled: placed[slot.id], accepting: selected }" :aria-label="`放入${slot.label}：${placed[slot.id] ? plan.slips.find(s => s.id === placed[slot.id])?.title : '空位'}`" @click="place(slot.id)"><small>{{ slot.label }} / {{ slot.time }}</small><strong>{{ plan.slips.find(s => s.id === placed[slot.id])?.title ?? '把书签夹在这里' }}</strong><span>{{ placed[slot.id] ? '重新选书签可替换' : '＋' }}</span></button></div>
     <p class="activity-feedback" role="status">{{ feedback || '书签上写着今天能见到他们的时间。' }}</p>
-    <div class="button-row"><button class="primary" @click="finish"><Icon name="book" /> 收好书页，准备出门</button><button class="quiet" @click="help">按祖母的标注整理</button></div>
+    <div class="button-row"><UiButton tone="jade" @click="finish"><Icon name="book" />收好书页，准备出门</UiButton><UiButton tone="quiet" @click="help">按奶奶的标注整理</UiButton></div>
   </div>
   <p v-else>书签还没准备好，可以先回到小院。</p>
 </template>

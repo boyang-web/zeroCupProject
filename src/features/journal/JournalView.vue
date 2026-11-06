@@ -1,24 +1,61 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import type { ContentPack, GameState } from '../../core/contracts.ts';
-const props = defineProps<{ content: ContentPack; state: GameState }>();
-const commitments = computed(() => props.content.dialogues.flatMap(d => d.nodes.flatMap(n => n.choices)).filter(c => c.decision && props.state.decisions[c.decision] === c.id));
-const tab = ref('clues');
-const tabs = [{ id: 'clues', label: '页记' }, { id: 'items', label: '随身物' }, { id: 'quests', label: '未完的事' }, { id: 'achievements', label: '拾零' }];
-const statuses = { active: '未完', completed: '已记下', failed: '暂搁' };
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { gsap } from 'gsap';
+import type { ContentPack, GameState } from '../../core/contracts';
+import { matches } from '../../core/conditions';
+import { featureUnlocked } from '../../core/progression';
+import AssetImage from '../../shared/AssetImage.vue';
+import UiButton from '../../shared/UiButton.vue';
+import UiOrnament from '../../presentation/UiOrnament.vue';
+import HandwrittenText from './HandwrittenText.vue';
+const props = defineProps<{ content: ContentPack; state: GameState; reducedMotion: boolean; newEntryId?: string; developer?: boolean }>();
+const emit = defineEmits<{ read: [] }>();
+const tab = ref<'recipes' | 'life'>(props.newEntryId && props.content.clues.some(c => c.id === props.newEntryId && c.category === 'life') ? 'life' : 'recipes');
+const page = ref(0), turning = ref(false), ready = ref(false), skipWriting = ref(false);
+const writingId = ref(props.newEntryId);
+const book = ref<HTMLElement>(), cover = ref<HTMLElement>(), leaf = ref<HTMLElement>();
+let opening: gsap.core.Timeline | undefined, turn: gsap.core.Timeline | undefined;
+const canLife = computed(() => featureUnlocked(props.state, props.content, 'lifeNotes', { developer: props.developer }));
+const spreads = computed(() => tab.value === 'recipes'
+  ? (props.content.recipes ?? []).filter(r => props.developer || matches(props.state, r.condition)).map(r => ({ id: r.id, title: r.title, subtitle: r.subtitle, asset: r.asset as string | undefined, ingredients: r.ingredients as string[] | undefined, steps: r.steps as string[] | undefined, text: '' }))
+  : props.content.clues.filter(c => c.category === 'life' && (props.developer || props.state.clues.includes(c.id))).map(c => ({ id: c.id, title: c.title, subtitle: '人间百味 · 问过之后写下', asset: c.asset, ingredients: undefined as string[] | undefined, steps: undefined as string[] | undefined, text: c.text })));
+const spread = computed(() => spreads.value[page.value] ?? spreads.value[0]);
+const animateInk = computed(() => ready.value && !skipWriting.value && spread.value?.id === writingId.value);
+onMounted(async () => {
+  const index = spreads.value.findIndex(s => s.id === props.newEntryId); if (index >= 0) page.value = index;
+  await nextTick();
+  if (!book.value) return;
+  if (props.reducedMotion) { ready.value = true; emit('read'); return; }
+  opening = gsap.timeline({ onComplete: () => { ready.value = true; emit('read'); } });
+  opening.fromTo(book.value!, { opacity: .2, y: 18, scale: .96 }, { opacity: 1, y: 0, scale: 1, duration: .4, ease: 'power2.out' });
+  opening.fromTo(cover.value!, { rotationY: 0, opacity: 1 }, { rotationY: -170, opacity: 0, duration: .8, ease: 'power2.inOut' }, .16);
+});
+function changeTab(value: 'recipes' | 'life') { if (turning.value || value === 'life' && !canLife.value) return; tab.value = value; page.value = 0; skipWriting.value = false; }
+function changePage(direction: number) {
+  const target = props.developer && spreads.value.length ? (page.value + direction + spreads.value.length) % spreads.value.length : page.value + direction;
+  if (turning.value || target < 0 || target >= spreads.value.length) return;
+  if (props.reducedMotion) { page.value = target; return; }
+  turning.value = true;
+  turn = gsap.timeline({ onComplete: () => { turning.value = false; } });
+  turn.set(leaf.value!, { opacity: 1, rotationY: direction > 0 ? 0 : -180 })
+    .to(leaf.value!, { rotationY: direction > 0 ? -180 : 0, duration: .65, ease: 'power2.inOut' })
+    .call(() => { page.value = target; skipWriting.value = false; }, [], .3)
+    .set(leaf.value!, { opacity: 0 });
+}
+onBeforeUnmount(() => { opening?.kill(); turn?.kill(); });
 </script>
 <template>
-  <nav class="tabs" aria-label="百味录分类"><button v-for="t in tabs" :key="t.id" :aria-pressed="tab === t.id" @click="tab = t.id">{{ t.label }}</button></nav>
-  <section v-if="tab === 'clues'" class="entry-list">
-    <p v-if="!state.clues.length" class="muted">这一页还空着。</p>
-    <article v-for="entry in content.clues.filter(e => state.clues.includes(e.id))" :key="entry.id"><h3>{{ entry.title }}</h3><p>{{ entry.text }}</p></article>
-    <aside v-for="a in content.achievements.filter(a => a.annotation && state.achievements.includes(a.id))" :key="a.id" class="annotation">{{ a.annotation }}</aside>
-  </section>
-  <section v-else-if="tab === 'items'" class="entry-list"><p v-if="!Object.values(state.inventory).some(n => n > 0)" class="muted">行囊里还没有可用物件。</p><article v-for="item in content.items.filter(i => (state.inventory[i.id] ?? 0) > 0)" :key="item.id"><h3>{{ item.icon }} · {{ item.title }} × {{ state.inventory[item.id] }}</h3><p>{{ item.text }}</p></article></section>
-  <section v-else-if="tab === 'quests'" class="entry-list">
-    <aside v-if="commitments.length" class="recorded-choices"><span class="eyebrow">说过的话</span><p v-for="choice in commitments" :key="choice.id">“{{ choice.label }}”</p></aside>
-    <article v-for="quest in content.quests.filter(q => state.quests[q.id])" :key="quest.id"><h3>{{ quest.title }} <small>{{ statuses[state.quests[quest.id] ?? 'active'] }}</small></h3><p>{{ quest.text }}</p></article>
-    <aside class="annotation"><p v-for="m in content.metrics.filter(m => (state.metrics[m.id] ?? 0) > 0)" :key="m.id">{{ m.title }} {{ state.metrics[m.id] }}</p></aside>
-  </section>
-  <section v-else class="entry-list"><p v-if="!state.achievements.length" class="muted">还没夹进什么。</p><article v-for="a in content.achievements.filter(a => state.achievements.includes(a.id))" :key="a.id"><h3>{{ a.title }}</h3><p>{{ a.text }}</p></article></section>
+  <div ref="book" class="journal-book" :class="{ 'journal-book--ready': ready, 'journal-book--still': reducedMotion }">
+    <nav class="book-ribbons" aria-label="百味录内容"><button :aria-pressed="tab === 'recipes'" @click="changeTab('recipes')"><UiOrnament kind="bookmark" /><span>食谱</span></button><button v-if="canLife" :aria-pressed="tab === 'life'" @click="changeTab('life')"><UiOrnament kind="bookmark" /><span>人间百味</span></button></nav>
+    <div class="book-spread" :key="`${tab}-${spread?.id}`">
+      <template v-if="spread">
+        <section class="book-page book-page--left"><small class="book-page-kicker">{{ spread.subtitle }}</small><h2>{{ spread.title }}</h2><div v-if="spread.asset" class="recipe-illustration" :class="{ 'recipe-illustration--drawing': animateInk }"><AssetImage :asset="content.assets[spread.asset]!" /></div><p v-else class="book-quiet-note">把听到的话，<br />慢慢写在这里。</p><UiOrnament kind="divider" /><div v-if="spread.ingredients" class="recipe-ingredients"><small>备料</small><p v-for="(ingredient, i) in spread.ingredients" :key="ingredient"><HandwrittenText :text="ingredient" :animate="animateInk" :reduced-motion="reducedMotion" :delay=".12 + i * .16" /></p></div><UiOrnament kind="osmanthus" class="book-flower" /></section>
+        <section class="book-page book-page--right"><small class="book-page-kicker">{{ tab === 'recipes' ? '做法' : '这一次听到的事' }}</small><ol v-if="spread.steps" class="recipe-method"><li v-for="(step, i) in spread.steps" :key="step"><small>{{ ['一', '二', '三', '四', '五'][i] }}</small><HandwrittenText :text="step" :animate="animateInk" :reduced-motion="reducedMotion" :delay=".2 + i * .3" /></li></ol><p v-else class="life-manuscript"><HandwrittenText :text="spread.text" :animate="animateInk" :reduced-motion="reducedMotion" /></p><p v-if="animateInk && !reducedMotion" class="writing-skip"><button @click="skipWriting = true">直接看完</button></p><span class="book-page-number">{{ String(page * 2 + 2).padStart(2, '0') }}</span></section>
+      </template>
+      <div v-else class="book-empty"><h2>{{ tab === 'recipes' ? '先记下一味' : '留一页给遇见的人' }}</h2><p>{{ tab === 'recipes' ? '翻开奶奶的旧本子，看看第一页。' : '回到熟悉的地方，再和人聊聊。有些事，问过才能写。' }}</p></div>
+    </div>
+    <div ref="cover" v-show="!ready && !reducedMotion" class="book-opening-cover" aria-hidden="true"><span>百味录</span><small>长明巷食录</small></div>
+    <div ref="leaf" class="book-turning-leaf" aria-hidden="true"></div>
+    <footer class="book-pagination"><UiButton tone="quiet" :disabled="(!developer && page === 0) || !spreads.length || turning" aria-label="上一页" @click="changePage(-1)">←</UiButton><small>{{ spreads.length ? `${page + 1} / ${spreads.length}` : '尚未落笔' }}</small><UiButton tone="quiet" :disabled="(!developer && page >= spreads.length - 1) || !spreads.length || turning" aria-label="下一页" @click="changePage(1)">→</UiButton></footer>
+  </div>
 </template>

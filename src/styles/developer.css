@@ -1,0 +1,25 @@
+.developer-bar { position: fixed; z-index: 50; top: .5rem; left: 50%; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; gap: .7rem; padding: .35rem .8rem; max-width: calc(100vw - 1rem); color: #fff2d3; background: #37281cf2; border: 1px solid #c69b58; border-radius: .3rem; box-shadow: 0 3px 18px #0005; font-size: .8rem; }
+.developer-bar strong { white-space: nowrap; color: #efd197; }
+.developer-bar button { white-space: nowrap; color: inherit; padding: .3rem .45rem; border: 1px solid #a88857; background: transparent; border-radius: .2rem; cursor: pointer; }
+.developer-bar button:hover, .developer-bar button:focus-visible { background: #795736; }
+.immersive.developer-active .topbar { top: 3.5rem; padding-top: 0; }
+.immersive.developer-active .chapter-track { top: 8.4rem; }
+.developer-description { line-height: 1.8; margin-top: 0; }
+.developer-location { display: flex; flex-wrap: wrap; gap: .5rem; font-size: .85rem; overflow-wrap: anywhere; }
+.developer-location span { color: var(--jade); font-weight: 700; }
+.developer-tabs { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+.developer-search { display: grid; gap: .4rem; margin: 1rem 0; font-size: .9rem; }
+.developer-search input { width: 100%; box-sizing: border-box; padding: .65rem .8rem; color: inherit; background: #fffaf0; border: 1px solid #a88b66; border-radius: .25rem; font: inherit; }
+.developer-results { display: grid; gap: .7rem; }
+.developer-card { padding: .8rem; border: 1px solid #bca47d; border-radius: .25rem; background: #fffaf055; }
+.developer-card h3 { margin: 0 0 .55rem; font-size: 1rem; }
+.developer-card p { margin: .3rem 0 .5rem; white-space: pre-line; line-height: 1.65; }
+.developer-card small { display: block; margin-top: .5rem; opacity: .7; overflow-wrap: anywhere; font-family: monospace; }
+.developer-node { display: flex; gap: .8rem; align-items: center; justify-content: space-between; }
+.developer-node > div { min-width: 0; }
+.developer-node > button { flex-shrink: 0; }
+.developer-panel-list { display: flex; flex-wrap: wrap; gap: .7rem; }
+.developer-actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid #bca47d; }
+.modal-header-actions { display: flex; align-items: center; gap: .5rem; }
+.developer-game-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin: .8rem 0; padding: .7rem; border: 1px dashed #a88b66; }
+@media (max-width: 600px) { .developer-bar { width: max-content; gap: .35rem; font-size: .72rem; } .developer-bar > span { display: none; } .developer-node { display: block; } .developer-node > button { margin-top: .6rem; } .modal-header-actions { gap: .2rem; } }

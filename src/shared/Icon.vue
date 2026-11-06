@@ -1,6 +1,9 @@
 <script setup lang="ts">
 defineProps<{ name: string }>();
 const paths: Record<string, string> = {
+  menu: 'M4 6h16M4 12h16M4 18h16',
+  bag: 'M5 7h14l2 14H3L5 7Zm3 0V5a4 4 0 0 1 8 0v2',
+  collection: 'M3 4h18v5H3V4Zm2 5v12h14V9M9 13h6',
   fullscreen: 'M3 9V3h6m6 0h6v6M3 15v6h6m6 0h6v-6',
   book: 'M12 5.5C9 3.5 5 3.5 2.5 4.5v15C5 18.5 9 18.5 12 20.5m0-15c3-2 7-2 9.5-1v15c-2.5-1-6.5-1-9.5 1m0-15v15',
   talk: 'M20.5 11c0 4.5-4.1 8-9 8H6l-4 3 1.8-5.5A7.5 7.5 0 0 1 2 11c0-4.5 4-8 9-8s9.5 3.5 9.5 8ZM7 10h9m-9 4h5',

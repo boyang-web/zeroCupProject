@@ -1,14 +1,18 @@
+@font-face { font-family: BaiweiHand; src: url('/assets/fonts/BaiweiHand.woff') format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: BaiweiTitle; src: url('/assets/fonts/BaiweiTitle.woff') format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
 :root {
   color-scheme: light;
-  --ink: #2e3b32; --muted: #55462f; --jade: #385347; --deep: #f5f1e7;
-  --paper: #faf6ec; --paper-ink: #2e3b32; --accent: #78502e;
-  --wood-text: #fff1d0; --wood-hover-text: #271d12;
-  --wood-text-shadow: 0 1px 2px #24180e, 0 0 3px #24180e;
-  --scene-text: #fff1d0; --scene-label-surface: #243126;
-  --green: #385347; --seal: #ad5a43;
-  --line: #80755c30; --radius: 4px;
-  --font-body: 'Microsoft YaHei', 'PingFang SC', system-ui, sans-serif;
-  --font-story: 'Noto Serif SC', 'STSong', 'Songti SC', 'SimSun', serif;
+  --ink: #473522; --paper-ink: #473522; --muted: #79684f;
+  --jade: #596c52; --green: #596c52; --deep: #eee4ce;
+  --paper: #f7edda; --accent: #9b713f; --seal: #a14e35;
+  --wood-text: #f7ebd1; --wood-hover-text: #44301d;
+  --wood-text-shadow: 0 1px 1px #2b1b1340;
+  --scene-text: #fff1d3; --scene-label-surface: #342a20dd;
+  --line: #9f845b36; --radius: 2px;
+  --font-body: BaiweiHand, 'KaiTi', 'STKaiti', 'Microsoft YaHei', sans-serif;
+  --font-story: BaiweiHand, 'KaiTi', 'STKaiti', 'Noto Serif SC', 'SimSun', serif;
+  --font-title: BaiweiTitle, BaiweiHand, 'KaiTi', 'STKaiti', serif;
   font-family: var(--font-body); color: var(--ink); background: var(--deep);
   font-synthesis: none; text-rendering: optimizeLegibility;
 }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }

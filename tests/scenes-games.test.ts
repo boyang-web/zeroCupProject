@@ -59,5 +59,5 @@ test('every second and third chapter scene and local decision roundtrips without
 test('previous first-chapter saves migrate explicitly while old main-chapter drafts restart safely',()=>{
   const s:any=enterMorning();s.schemaVersion=1;s.contentVersion=2;delete s.sceneId;delete s.seenScenes;
   const parsed=decodeSave(JSON.stringify({format:'baiwei-save',version:1,savedAt:new Date().toISOString(),state:s}),content);
-  assert.ok(parsed.ok);assert.equal(parsed.value.state.schemaVersion,2);assert.equal(parsed.value.state.sceneId,'morning-front');assert.ok(parsed.value.state.flags.includes('entrusted'));assert.equal(parsed.value.state.quests.morning,'active');assert.ok(parsed.value.notice);
+  assert.ok(parsed.ok);assert.equal(parsed.value.state.schemaVersion,3);assert.equal(parsed.value.state.sceneId,'morning-front');assert.ok(parsed.value.state.flags.includes('entrusted'));assert.equal(parsed.value.state.quests.morning,'active');assert.ok(parsed.value.notice);
 });

@@ -1,11 +1,16 @@
 import type { Asset } from '../core/contracts.ts';
 import { spriteRegions } from './sprite-regions.ts';
+import { uiRegions } from './ui-regions.ts';
 const base = import.meta.env?.BASE_URL ?? '/';
 const placeholder = (file: string, label: string, source: string): Asset => ({
   url: `${base}assets/placeholders/${file}`, label, source, placeholder: true,
 });
 export const assets: Record<string, Asset> = {
-  ...Object.fromEntries(Object.entries(spriteRegions).map(([id, sprite]) => [id, { url: `${base}assets/${sprite.file}`, label: id, source: '内置 imagegen；独立精灵区域，见 docs/art/第二章素材.md', placeholder: false, region: sprite.region, alphaCutoff: .13 }])),
+  ...Object.fromEntries(Object.entries(spriteRegions).filter(([id]) => !id.startsWith('ui-')).map(([id, sprite]) => [id, { url: `${base}assets/${sprite.file}`, label: id, source: '内置 imagegen；独立精灵区域，见 docs/art/第二章素材.md', placeholder: false, region: sprite.region, alphaCutoff: .13 }])),
+  ...Object.fromEntries(Object.entries(uiRegions).map(([id, sprite]) => [id, { url: `${base}assets/${sprite.file}`, label: id, source: '内置 imagegen；桂影旧木 UI v2，见 docs/art/入口与第一章UI-v2.md', placeholder: false, region: sprite.region, alphaCutoff: .15 }])),
+  'title-homecoming': { url: `${base}assets/title/homecoming-v1.png`, label: '百味录 · 木门里的长明巷', source: '内置 imagegen，桂影旧木风格，见 docs/art/入口与第一章UI-v2.md', placeholder: false },
+  'recipe-rice': { url: `${base}assets/arrival/osmanthus-rice-v1.png`, label: '桂花米酒手绘食谱插图', source: '内置 imagegen，见 docs/art/入口与第一章UI-v2.md', placeholder: false, alphaCutoff: .13 },
+  'courtyard-evening': { url: `${base}assets/arrival/courtyard-evening-v1.png`, label: '回访 · 灯亮起来的小院', source: '内置 imagegen，原小院仅改变光照，见 docs/art/入口与第一章UI-v2.md', placeholder: false },
   'morning-front': { url: `${base}assets/morning/front-v1.png`, label: '陈家 · 店门口', source: '内置 imagegen，新生成', placeholder: false },
   'morning-kitchen': { url: `${base}assets/morning/kitchen-v1.png`, label: '陈家 · 灶间', source: '内置 imagegen，新生成', placeholder: false },
   'morning-yard': { url: `${base}assets/morning/yard-v1.png`, label: '陈家 · 后院', source: '内置 imagegen，新生成', placeholder: false },

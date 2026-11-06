@@ -3,6 +3,7 @@ import { onBeforeUnmount, onMounted, shallowRef, ref } from 'vue';
 import type { Component } from 'vue';
 import type { MinigameProps, MinigameResult } from './contracts.ts';
 import { getMinigame } from './registry.ts';
+import UiButton from '../../shared/UiButton.vue';
 const props = defineProps<MinigameProps>();
 const emit = defineEmits<{ finish: [result: MinigameResult] }>();
 const component = shallowRef<Component>();
@@ -19,6 +20,7 @@ onBeforeUnmount(() => { cancelled = true; });
 </script>
 <template>
   <p>{{ definition.description }}</p>
+  <div v-if="developer" class="developer-game-actions"><UiButton @click="finish({ status: 'completed', score: 100, assisted: false })">测试：直接完成</UiButton><small>可跳过操作，检查奖励与后续对白。</small></div>
   <component :is="component" v-if="component" :definition="definition" :state="state" :reduced-motion="reducedMotion" :assets="assets" @finish="finish" />
   <p v-else role="status">{{ error || '正在准备桌面…' }}</p>
   <button class="quiet" @click="finish({ status: 'cancelled' })">先放下，稍后再来</button>

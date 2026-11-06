@@ -4,13 +4,14 @@ import { matches } from '../../core/engine.ts';
 import Icon from '../../shared/Icon.vue';
 import AssetImage from '../../shared/AssetImage.vue';
 import { computed } from 'vue';
-const props = defineProps<{ node: DialogueNode; state: GameState; content: ContentPack }>();
+const props = defineProps<{ node: DialogueNode; state: GameState; content: ContentPack; developer?: boolean }>();
 const portraitAsset = computed(() => {
   const asset=props.node.portrait?props.content.assets[props.node.portrait]:undefined;
   if(!asset?.region)return asset;
   return {...asset,region:{...asset.region,height:Math.min(asset.region.height,asset.region.width*1.55)}};
 });
 const emit = defineEmits<{ choose: [id: string] }>();
+const decisionAhead = computed(() => props.node.choices.some(c => c.decision && !props.state.decisions[c.decision]));
 function conflict(state: GameState, decision: string | undefined, id: string) {
   return !!decision && !!state.decisions[decision] && state.decisions[decision] !== id;
 }
@@ -23,10 +24,11 @@ function conflict(state: GameState, decision: string | undefined, id: string) {
   <div class="dialogue-text"><p v-for="(paragraph, index) in node.text.split('\n\n')" :key="index">{{ paragraph }}</p></div>
   <div class="choice-list conversation-choices">
     <div v-for="choice in node.choices" :key="choice.id">
-      <button class="choice" :disabled="!matches(state, choice.condition) || conflict(state, choice.decision, choice.id)" @click="emit('choose', choice.id)"><Icon name="arrow" /><span>{{ choice.label }}</span><span v-if="choice.decision" class="choice-mark">决定</span></button>
-      <small v-if="conflict(state, choice.decision, choice.id)">这项决定已经发生；可读取之前的存档尝试其他选择。</small>
-      <small v-else-if="!matches(state, choice.condition)">{{ choice.unavailable }}</small>
+      <button class="choice" :disabled="!developer && (!matches(state, choice.condition) || conflict(state, choice.decision, choice.id))" @click="emit('choose', choice.id)"><Icon name="arrow" /><span>{{ choice.label }}</span><span v-if="choice.decision" class="choice-mark">决定</span></button>
+      <small v-if="!developer && conflict(state, choice.decision, choice.id)">这项决定已经发生；可读取之前的存档尝试其他选择。</small>
+      <small v-else-if="!developer && !matches(state, choice.condition)">{{ choice.unavailable }}</small>
     </div>
   </div>
+  <p v-if="decisionAhead && !developer" class="decision-guidance">选定后，这句话会留下记录。选择前的进度会单独保存，可以从菜单里读取。</p>
   </div>
 </template>

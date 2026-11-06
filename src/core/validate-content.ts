@@ -16,7 +16,7 @@ export function validateContent(pack: ContentPack): string[] {
   const clues = unique('线索', pack.clues.map(x => x.id));
   const items = unique('道具', pack.items.map(x => x.id));
   const metrics = unique('属性', pack.metrics.map(x => x.id));
-  const flagIds=new Set([...pack.dialogues.flatMap(d=>d.nodes.flatMap(n=>n.choices)),...pack.minigames.map(g=>g.reward),...pack.chapters.flatMap(c=>hotspotsOf(c).flatMap(h=>h.interaction.kind==='inspect'?[h.interaction.action,...(h.interaction.options??[])].filter(a=>a!==undefined):[]))].flatMap(a=>a.effects.filter(e=>e.kind==='flag').map(e=>e.id)));
+  const flagIds=new Set([...pack.dialogues.flatMap(d=>d.nodes.flatMap(n=>n.choices)),...pack.minigames.map(g=>g.reward),...(pack.collection??[]).flatMap(e=>e.study?[e.study]:[]),...pack.chapters.flatMap(c=>hotspotsOf(c).flatMap(h=>h.interaction.kind==='inspect'?[h.interaction.action,...(h.interaction.options??[])].filter(a=>a!==undefined):[]))].flatMap(a=>a.effects.filter(e=>e.kind==='flag').map(e=>e.id)));
   unique('成就', pack.achievements.map(x => x.id)); unique('结局', pack.endings.map(x => x.id));
   const ref = (set: Set<string>, id: string, location: string) => { if (!set.has(id)) errors.push(`${location}: 未定义 ${id}`); };
   const condition = (value: Condition | undefined, location: string) => {
@@ -55,6 +55,7 @@ export function validateContent(pack: ContentPack): string[] {
     ref(sceneIds, firstSceneOf(chapter), chapter.id);
     for (const scene of scenes) {
       if (!pack.assets[scene.asset]) errors.push(`${scene.id}: 场景资产不存在`);
+      for (const variant of scene.variants ?? []) { condition(variant.condition, scene.id); if (variant.asset && !pack.assets[variant.asset]) errors.push(`${scene.id}: 变化场景资产不存在`); }
       for (const link of scene.links) { ref(sceneIds, link.sceneId, scene.id); condition(link.condition, scene.id); }
     }
     const reached=new Set<string>();const pending=[firstSceneOf(chapter)];
@@ -73,6 +74,7 @@ export function validateContent(pack: ContentPack): string[] {
         if (pack.minigames.find(g => g.id === gameId)?.chapterId !== chapter.id) errors.push(`${h.id}: 小游戏章节不匹配`);
       }
       if (h.interaction.kind === 'inspect') {
+        if (h.drag && !h.interaction.options?.some(a => a.id === h.drag!.actionId)) errors.push(`${h.id}: 拖动物件动作不存在`);
         h.interaction.versions?.forEach(v=>condition(v.condition,h.id));
         if (h.interaction.activityId) {
           const gameId = h.interaction.activityId;
@@ -112,7 +114,18 @@ export function validateContent(pack: ContentPack): string[] {
     }
     ref(chapters, game.chapterId, game.id); if (game.assistedItem) ref(items, game.assistedItem, game.id); action(game.reward);
   }
+  unique('食谱', (pack.recipes ?? []).map(r => r.id));
+  for (const recipe of pack.recipes ?? []) { condition(recipe.condition, recipe.id); if (!pack.assets[recipe.asset]) errors.push(`${recipe.id}: 食谱插图不存在`); }
+  unique('收集物件', (pack.collection ?? []).map(e => e.id));
+  for (const entry of pack.collection ?? []) { condition(entry.condition, entry.id); if (!pack.assets[entry.asset]) errors.push(`${entry.id}: 收藏插图不存在`); if (entry.study) action(entry.study); }
   unique('动作', actionIds);
+  for (const [feature, unlock] of Object.entries(pack.progression?.unlocks ?? {})) condition(unlock, `功能 ${feature}`);
+  unique('引导', (pack.progression?.guides ?? []).map(g => g.id));
+  for (const guide of pack.progression?.guides ?? []) {
+    ref(chapters, guide.chapterId, guide.id); condition(guide.condition, guide.id); condition(guide.complete, guide.id);
+    const owner = pack.chapters.find(c => c.id === guide.chapterId);
+    if (guide.target && (!owner || !hotspotsOf(owner).some(h => h.id === guide.target))) errors.push(`${guide.id}: 引导物件不存在`);
+  }
   pack.achievements.forEach(a => condition(a.condition, a.id)); pack.endings.forEach(e => condition(e.condition, e.id));
   if (!pack.endings.length || pack.endings.at(-1)?.condition) errors.push('最后需要一个无条件兜底结局');
   const visited = new Set<string>(); let id: string | undefined = pack.firstChapter;

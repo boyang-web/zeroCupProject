@@ -2,13 +2,9 @@
 import { computed } from 'vue';
 import { assets } from '../content/assets';
 import AssetImage from '../shared/AssetImage.vue';
+import { frameSizes, frameSlices } from './frame-layout';
 const props = withDefaults(defineProps<{ kind?: string }>(), { kind: 'ui-menu' });
-// Nine slices preserve the carved corners instead of stretching them with the panel.
-const slices = computed(() => {
-  const asset = assets[props.kind]; const r = asset?.region; if (!r) return [];
-  const x = Math.min(54, r.width / 4), y = Math.min(54, r.height / 4);
-  const xs = [0, x, r.width - x, r.width], ys = [0, y, r.height - y, r.height];
-  return Array.from({ length: 9 }, (_, i) => ({ ...asset, region: { ...r, x: r.x + xs[i % 3], y: r.y + ys[Math.floor(i / 3)], width: xs[i % 3 + 1] - xs[i % 3], height: ys[Math.floor(i / 3) + 1] - ys[Math.floor(i / 3)] } }));
-});
+const dimensions = computed(() => frameSizes[props.kind] ?? frameSizes['ui-paper']!);
+const slices = computed(() => frameSlices(assets[props.kind], dimensions.value.source));
 </script>
-<template><span class="wood-frame" aria-hidden="true"><AssetImage v-for="(slice, i) in slices" :key="i" :asset="slice" stretch /></span></template>
+<template><span class="wood-frame" :class="'wood-frame--' + kind" :style="{ '--frame-corner': dimensions.display + 'px' }" aria-hidden="true"><AssetImage v-for="(slice, i) in slices" :key="i" :asset="slice" stretch /></span></template>
