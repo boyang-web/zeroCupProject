@@ -1,0 +1,123 @@
+import type { Action, Condition, ContentPack } from './contracts.ts';
+import { firstSceneOf, hotspotsOf, scenesOf } from './scenes.ts';
+
+export function validateContent(pack: ContentPack): string[] {
+  const errors: string[] = [];
+  const unique = (label: string, ids: string[]) => {
+    const seen = new Set<string>();
+    for (const id of ids) { if (!id || seen.has(id)) errors.push(`${label}: 重复或空 ID ${id}`); seen.add(id); }
+    return seen;
+  };
+  const chapters = unique('章节', pack.chapters.map(x => x.id));
+  const quests = unique('任务', pack.quests.map(x => x.id));
+  const dialogues = unique('对话', pack.dialogues.map(x => x.id));
+  const games = unique('小游戏', pack.minigames.map(x => x.id));
+  unique('场景全局',pack.chapters.flatMap(c=>scenesOf(c).map(s=>s.id)));
+  const clues = unique('线索', pack.clues.map(x => x.id));
+  const items = unique('道具', pack.items.map(x => x.id));
+  const metrics = unique('属性', pack.metrics.map(x => x.id));
+  const flagIds=new Set([...pack.dialogues.flatMap(d=>d.nodes.flatMap(n=>n.choices)),...pack.minigames.map(g=>g.reward),...pack.chapters.flatMap(c=>hotspotsOf(c).flatMap(h=>h.interaction.kind==='inspect'?[h.interaction.action,...(h.interaction.options??[])].filter(a=>a!==undefined):[]))].flatMap(a=>a.effects.filter(e=>e.kind==='flag').map(e=>e.id)));
+  unique('成就', pack.achievements.map(x => x.id)); unique('结局', pack.endings.map(x => x.id));
+  const ref = (set: Set<string>, id: string, location: string) => { if (!set.has(id)) errors.push(`${location}: 未定义 ${id}`); };
+  const condition = (value: Condition | undefined, location: string) => {
+    if (!value) return;
+    switch (value.kind) {
+      case 'flag': ref(flagIds,value.id,location);break;
+      case 'clue': ref(clues, value.id, location); break;
+      case 'item': ref(items, value.id, location); break;
+      case 'metric': ref(metrics, value.id, location); break;
+      case 'quest': ref(quests, value.id, location); break;
+      case 'all': case 'any': value.conditions.forEach(c => condition(c, location)); break;
+      case 'not': condition(value.condition, location); break;
+    }
+  };
+  const actionIds: string[] = [];
+  const action = (value: Action) => {
+    actionIds.push(value.id); condition(value.condition, value.id);
+    for (const effect of value.effects) {
+      if (effect.kind === 'clue') ref(clues, effect.id, value.id);
+      if (effect.kind === 'item') ref(items, effect.id, value.id);
+      if (effect.kind === 'metric') ref(metrics, effect.id, value.id);
+      if (effect.kind === 'quest') ref(quests, effect.id, value.id);
+    }
+  };
+  ref(chapters, pack.firstChapter, '起始章节');
+  for (const quest of pack.quests) ref(chapters, quest.chapterId, quest.id);
+  for (const chapter of pack.chapters) {
+    ref(quests, chapter.questId, chapter.id);
+    if (pack.quests.find(q => q.id === chapter.questId)?.chapterId !== chapter.id) errors.push(`${chapter.id}: 主任务章节不匹配`);
+    if (!pack.assets[chapter.asset]) errors.push(`${chapter.id}: 缺少场景资产 ${chapter.asset}`);
+    if (chapter.character && !pack.assets[chapter.character.asset]) errors.push(`${chapter.id}: 缺少人物资产`);
+    chapter.beats?.forEach(b => condition(b.condition, chapter.id));
+    if (chapter.next) ref(chapters, chapter.next, chapter.id);
+    chapter.metricIds.forEach(id => ref(metrics, id, chapter.id)); condition(chapter.exit, chapter.id);
+    const scenes = scenesOf(chapter); const sceneIds = unique(`${chapter.id} 场景`, scenes.map(s => s.id));
+    ref(sceneIds, firstSceneOf(chapter), chapter.id);
+    for (const scene of scenes) {
+      if (!pack.assets[scene.asset]) errors.push(`${scene.id}: 场景资产不存在`);
+      for (const link of scene.links) { ref(sceneIds, link.sceneId, scene.id); condition(link.condition, scene.id); }
+    }
+    const reached=new Set<string>();const pending=[firstSceneOf(chapter)];
+    while(pending.length){const id=pending.pop()!;if(reached.has(id))continue;reached.add(id);scenes.find(s=>s.id===id)?.links.forEach(l=>pending.push(l.sceneId));}
+    for(const scene of scenes)if(!reached.has(scene.id))errors.push(`${chapter.id}: 场景无法到达 ${scene.id}`);
+    unique(`${chapter.id} 热点`, hotspotsOf(chapter).map(h => h.id));
+    for (const h of hotspotsOf(chapter)) {
+      if (h.sprite && !pack.assets[h.sprite.asset]) errors.push(`${h.id}: 独立资产不存在`);
+      for (const variant of h.variants ?? []) { condition(variant.condition, h.id); if (variant.asset && !pack.assets[variant.asset]) errors.push(`${h.id}: 变化资产不存在`); }
+      if (h.x < 0 || h.x > 100 || h.y < 0 || h.y > 100) errors.push(`${h.id}: 热点超出画面`);
+      condition(h.condition, h.id); condition(h.completed, h.id);
+      if (h.interaction.kind === 'dialogue') ref(dialogues, h.interaction.dialogueId, h.id);
+      if (h.interaction.kind === 'minigame') {
+        const gameId = h.interaction.gameId;
+        ref(games, gameId, h.id);
+        if (pack.minigames.find(g => g.id === gameId)?.chapterId !== chapter.id) errors.push(`${h.id}: 小游戏章节不匹配`);
+      }
+      if (h.interaction.kind === 'inspect') {
+        h.interaction.versions?.forEach(v=>condition(v.condition,h.id));
+        if (h.interaction.activityId) {
+          const gameId = h.interaction.activityId;
+          ref(games, gameId, h.id);
+          if (pack.minigames.find(g => g.id === gameId)?.chapterId !== chapter.id) errors.push(`${h.id}: 物件活动归属错误`);
+        }
+        if (h.interaction.action) action(h.interaction.action);
+        h.interaction.options?.forEach(action);
+      }
+    }
+  }
+  for (const dialogue of pack.dialogues) {
+    const nodes = unique(`${dialogue.id} 节点`, dialogue.nodes.map(n => n.id)); ref(nodes, dialogue.entry, dialogue.id);
+    for (const entry of dialogue.entries ?? []) { condition(entry.condition, dialogue.id); ref(nodes, entry.nodeId, dialogue.id); }
+    for (const node of dialogue.nodes) if (node.portrait && !pack.assets[node.portrait]) errors.push(`${node.id}: 人物立绘不存在`);
+    for (const node of dialogue.nodes) for (const choice of node.choices) {
+      action(choice); if (choice.next) ref(nodes, choice.next, choice.id);
+    }
+  }
+  for (const game of pack.minigames) {
+    condition(game.condition, game.id);
+    if (game.itinerary) {
+      const slotIds = unique(`${game.id} 时段`, game.itinerary.slots.map(s => s.id));
+      unique(`${game.id} 书签`, game.itinerary.slips.map(s => s.id));
+      unique(`${game.id} 目标`, game.itinerary.slips.map(s => s.slot));
+      if (game.itinerary.slips.length !== game.itinerary.slots.length) errors.push(`${game.id}: 书签与时段数量不一致`);
+      game.itinerary.slips.forEach(s => ref(slotIds, s.slot, game.id));
+    }
+    if (game.breakfast) {
+      unique(`${game.id} 订单`, game.breakfast.orders.map(o => o.id));
+      game.breakfast.orders.forEach(o => { if (!game.breakfast!.fillings.includes(o.filling) || o.count < 1) errors.push(`${game.id}: 配餐内容无效`); });
+    }
+    if (game.service) {
+      unique(`${game.id} 小票`, game.service.tickets.map(t=>t.id));
+      if(!Number.isSafeInteger(game.service.pots)||game.service.pots<1)errors.push(`${game.id}: 锅数无效`);
+      game.service.tickets.forEach(t=>{if(t.cook<1||t.deadline<t.cook)errors.push(`${game.id}: 小票时间不可达`);});
+    }
+    ref(chapters, game.chapterId, game.id); if (game.assistedItem) ref(items, game.assistedItem, game.id); action(game.reward);
+  }
+  unique('动作', actionIds);
+  pack.achievements.forEach(a => condition(a.condition, a.id)); pack.endings.forEach(e => condition(e.condition, e.id));
+  if (!pack.endings.length || pack.endings.at(-1)?.condition) errors.push('最后需要一个无条件兜底结局');
+  const visited = new Set<string>(); let id: string | undefined = pack.firstChapter;
+  while (id && chapters.has(id) && !visited.has(id)) { visited.add(id); id = pack.chapters.find(c => c.id === id)?.next; }
+  if (id && visited.has(id)) errors.push('主流程出现循环');
+  for (const c of pack.chapters) if (!visited.has(c.id)) errors.push(`主流程无法到达 ${c.id}`);
+  return errors;
+}

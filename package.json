@@ -1,0 +1,20 @@
+{
+  "name": "baiwei-story-game",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24.15.0" },
+  "scripts": {
+    "dev": "vite --configLoader native --host 127.0.0.1",
+    "typecheck": "vue-tsc --noEmit",
+    "build": "vue-tsc --noEmit && vite build --configLoader native",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node --experimental-strip-types --test --test-isolation=none tests/*.test.ts",
+    "check:content": "node --experimental-strip-types scripts/check-content.ts"
+  },
+  "dependencies": { "vue": "^3.5.22", "three": "0.180.0", "gsap": "^3.13.0" },
+  "devDependencies": {
+    "@types/three": "^0.180.0", "@vitejs/plugin-vue": "^6.0.10",
+    "typescript": "^5.9.2", "vite": "^8.3.5", "vue-tsc": "^3.1.0"
+  }
+}

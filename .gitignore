@@ -1,0 +1,33 @@
+# Dependencies and generated output
+node_modules/
+dist/
+coverage/
+
+# Local caches and temporary work
+.npm-cache/
+.cache/
+.tmp/
+.vite/
+__pycache__/
+*.py[cod]
+*.log
+*.tsbuildinfo
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.local
+.codex/
+.agents/
+.aws/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Preserve originals locally; publish the current project and directory guides
+/archive/*
+!/archive/README.md
+/references/*
+!/references/README.md

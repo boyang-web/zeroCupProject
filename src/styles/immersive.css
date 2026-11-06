@@ -1,0 +1,66 @@
+html, body, #app { min-height: 100%; }
+.game-shell.immersive { width: 100%; max-width: none; height: 100dvh; margin: 0; padding: 0; position: relative; overflow: hidden; background: #252b20; }
+.immersive > main { position: absolute; inset: 0; min-height: 0; }
+.immersive .play-layout { width: 100%; height: 100%; border: 0; background: transparent; box-shadow: none; }
+.immersive .scene-window { position: absolute; inset: 0; overflow: hidden; }
+.immersive .scene { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: max(100vw, calc(100dvh * 1.7779)); aspect-ratio: 1672 / 941; }
+.immersive .topbar { position: absolute; z-index: 8; left: 22px; right: 22px; top: 12px; min-height: 78px; max-height: 90px; }
+.immersive .brand { font-size: 1.65rem; }.immersive .brand small { font-size: .5rem; }
+.immersive .chapter-track { position: absolute; z-index: 7; left: 50%; top: 92px; transform: translateX(-50%); min-height: 0; gap: .4rem; padding: 0; }
+.immersive .chapter-track > span { font-size: .66rem; }
+.immersive .scene-caption { top: 18%; left: 5%; max-width: min(380px, calc(100vw - 40px)); padding: .9rem 1.15rem; background: var(--paper); border: 1px solid #b79c65; border-radius: var(--radius); color: var(--paper-ink); text-shadow: none; box-shadow: 0 4px 18px #1f281c25; }
+.immersive .scene-caption h2 { font-size: 2.5rem; }.immersive .scene-caption p { font-size: .77rem; }
+.immersive .chapter-sidebar { position: absolute; z-index: 6; left: 22px; bottom: 34px; width: min(340px, calc(100vw - 44px)); display: flex; flex-direction: column; align-items: stretch; padding: 1.6rem 1.7rem; gap: .6rem; background: transparent; border: 0; isolation: isolate; }
+.immersive .chapter-sidebar .objective-toggle { padding: .5rem .9rem; min-height: 32px; font-size: .65rem; }
+.immersive .chapter-sidebar .objective-toggle .icon { width: 13px; height: 13px; }
+.immersive .chapter-sidebar:not(.expanded):not(.ready) { width: 180px; padding: 1.2rem 1.4rem; }
+.immersive .chapter-sidebar:not(.expanded) h1, .immersive .chapter-sidebar:not(.expanded):not(.ready) .sidebar-bottom { display: none; }
+.immersive .chapter-sidebar h1 { font-size: .85rem; line-height: 1.85; margin: .6rem 0 .3rem; color: var(--paper-ink); }
+.immersive .chapter-beats { border: 0; padding: .6rem 0; font-size: .66rem; gap: .4rem; }
+.immersive .sidebar-bottom { gap: .5rem; }.immersive .sidebar-bottom .travel-button { font-size: .7rem; }
+.immersive .sidebar-bottom small { font-size: .59rem; line-height: 1.7; }
+.immersive .scene-paths { position: absolute; z-index: 6; right: 24px; top: 43%; display: flex; flex-direction: column; gap: .8rem; align-items: flex-end; }
+.immersive .scene-paths > span { padding: .3rem .65rem; border-radius: var(--radius); background: var(--scene-label-surface); color: var(--scene-text); text-shadow: none; font: .8rem var(--font-story); margin-right: 1rem; }
+.immersive .scene-paths button { display: flex; align-items: center; gap: 1rem; min-width: 160px; font-size: .75rem; }
+.immersive .scene-controls { position: absolute; right: 24px; bottom: 38px; min-height: 0; border: 0; margin: 0; gap: 1rem; color: var(--scene-text); text-shadow: none; }
+.immersive .scene-controls > span:nth-child(2) { display: none; }
+.immersive .scene-controls > span:first-child { font-size: .7rem; padding: .35rem .65rem; background: var(--scene-label-surface); border-radius: var(--radius); }
+.immersive .scene-controls button { font-size: .67rem; }
+.immersive .status-bar { position: absolute; z-index: 7; left: 26px; right: 26px; bottom: 8px; min-height: 0; color: var(--scene-text); text-shadow: none; }
+.immersive .status-bar > span, .immersive .status-bar p:not(:empty) { padding: .2rem .55rem; background: var(--scene-label-surface); border-radius: var(--radius); }
+.immersive .status-bar p { color: inherit; font-size: .65rem; }
+.immersive .scene-footnote { display: none; }
+.immersive .discovery-toast { top: 145px; right: 24px; }
+.immersive .title-screen { width: 100%; height: 100%; min-height: 0; margin: 0; }
+.immersive .title-copy { margin-left: 5%; padding-top: 5rem; background: #faf6ecf2; border-radius: var(--radius); }.immersive .title-background { object-position: center; }
+.immersive .title-screen:before { background: linear-gradient(90deg,#faf6ecfa 0%,#faf6ecf5 35%,transparent 70%),linear-gradient(0deg,#182d2840,transparent 60%); }
+.immersive .title-copy h1 { color: var(--paper-ink); }.immersive .title-copy .eyebrow { color: var(--muted); }.immersive .title-corner { bottom: 4rem; right: 3rem; padding: .7rem .6rem; background: var(--scene-label-surface); border-radius: var(--radius); color: var(--scene-text); text-shadow: none; }
+.immersive .ending-screen { position: absolute; inset: 0; padding-top: 180px; overflow-y: auto; }
+.world-object.hotspot { transform: translate(-50%, -100%); padding: 0; border: 0; border-radius: 0; background: transparent; min-width: 0; min-height: 0; isolation: isolate; transition: left .65s ease, top .65s ease; }
+.world-object > .asset-image { width: 100%; height: 100%; transform: translateY(0); transform-origin: 50% 90%; filter: drop-shadow(0 3px 4px #2b2b1e35); transition: transform .24s ease, filter .24s ease; }
+.world-object.hotspot:hover, .world-object.hotspot:active { transform: translate(-50%, -100%); background: transparent; }
+.world-object.hotspot:hover > .asset-image, .world-object.hotspot:focus-visible > .asset-image { transform: translateY(-8px) scale(1.025); filter: brightness(1.07) drop-shadow(0 11px 8px #2d382a50); }
+.world-object .hotspot-label { position: absolute; bottom: calc(100% + 6px); left: 50%; margin: 0; transform: translate(-50%, 4px); opacity: 0 !important; font: .68rem var(--font-story); background: #f5ead0ec; border-color: #b69b67; box-shadow: 0 2px 8px #322e1d25; }
+.world-object:hover .hotspot-label, .world-object:focus-visible .hotspot-label { opacity: 1 !important; transform: translate(-50%, -2px); }
+.show-hints .world-object > .asset-image { filter: drop-shadow(0 2px 3px #3a43222a) drop-shadow(0 0 1px #f4de8d55); }
+.show-hints .world-object:hover > .asset-image { filter: brightness(1.07) drop-shadow(0 11px 8px #2d382a50); }
+.breakfast-game { text-align: center; }.filling-tray { display: flex; justify-content: center; gap: 1rem; padding: 1rem 0; }.filling-tray button { width: 145px; padding: 1rem !important; display: grid; gap: .6rem; }.filling-tray .asset-image { height: 72px; }.filling-tray strong { font-size: .8rem; }
+.breakfast-orders { display: grid; grid-template-columns: repeat(3,1fr); gap: .8rem; margin: 1.4rem 0; }.breakfast-orders article { padding: .7rem; border: 1px dashed #baa1777a; }.breakfast-orders h3 { font-size: .95rem; color: var(--paper-ink); margin-bottom: .5rem; }.breakfast-orders p { font-size: .67rem; color: var(--muted); min-height: 2.7em; }
+.breakfast-orders .order-bowl { width: 100%; min-height: 126px !important; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: .8rem !important; }.order-bowl .asset-image { height: 67px; width: 95px; }.order-bowl > span { font-size: .64rem; }
+.steamer-stage { position: relative; width: 260px; height: 240px; margin: .8rem auto; }.steamer-stage > .asset-image { filter: drop-shadow(0 8px 8px #79603e25); }.steam-caption { font: .95rem var(--font-story); color: var(--muted); }.steam-gauge { width: 230px; height: 6px; margin-bottom: 1rem; }.breakfast-game .button-row { justify-content: center; }
+.steam-clouds { position: absolute; inset: -20px 30px 60%; pointer-events: none; }.steam-clouds i { position: absolute; width: 55px; height: 90px; border-radius: 50%; background: radial-gradient(ellipse,#fff5dabb,transparent 70%); filter: blur(9px); animation: steam-rise 2.2s infinite; left: 8px; }.steam-clouds i:nth-child(2) { left: 70px; animation-delay: -.8s; }.steam-clouds i:nth-child(3) { left: 130px; animation-delay: -1.4s; }.ready .steam-clouds { opacity: 1.2; }
+@keyframes steam-rise { from { opacity: 0; transform: translateY(22px) scale(.7); } 40% { opacity: .85; } to { opacity: 0; transform: translateY(-60px) scale(1.3); } }
+.service-tickets { display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:1rem 0 1.5rem; }.service-tickets button { display:flex;flex-direction:column;align-items:flex-start;gap:.7rem;text-align:left;padding:1.3rem !important; }.service-tickets strong { font:1rem var(--font-story); }.service-tickets small { font-size:.62rem; }.service-tickets span { font-size:.69rem;line-height:1.8; }
+.pot-queues { display:grid;grid-template-columns:1fr 1fr;gap:1.4rem; }.pot-queues section { padding:1rem;border:1px solid #baa47566;text-align:center; }.pot-queues h3 { font-size:1rem;color: var(--paper-ink); }.pot-queues .asset-image { height:105px;max-width:170px;margin:.5rem auto 1rem; }.pot-queues ol { list-style:none;padding:0;text-align:left;min-height:80px; }.pot-queues li { display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;font-size:.75rem;border-bottom:1px dashed #c1ac823d;padding:.7rem 0; }.pot-queues li small { color: var(--muted);font-size:.6rem;margin-left:auto; }.pot-queues li .quiet { padding:.5rem .7rem !important;min-height:28px !important;font-size:.58rem; }.pot-target { font-size:.72rem; }
+.service-notes { display:flex;flex-wrap:wrap;align-items:center;gap:1.5rem;margin:1.3rem 0;padding:.8rem;border-top:1px solid #bcaa794d;border-bottom:1px solid #bcaa794d;font-size:.78rem;color: var(--muted); }.service-notes label { display:flex;align-items:center;gap:.5rem; }
+@media (max-width: 1000px) { .immersive .build-note { display: none; }.immersive .chapter-sidebar { width: 290px; }.immersive .chapter-track { max-width: calc(100vw - 30px); overflow-x: auto; }.immersive .chapter-track > span { font-size: .6rem; }.immersive .scene-caption { top: 20%; }.immersive .scene-paths { right: 16px; }.immersive .scene-paths button { min-width: 135px; font-size: .65rem; } }
+@media (max-width: 720px) {
+  .immersive .topbar { left: 5px; right: 5px; top: 7px; min-height: 66px; }.immersive .brand { font-size: 1.3rem; }.immersive .brand small { font-size: .42rem; }.immersive .chapter-track { top: 76px; gap: .2rem; width: max-content; }.immersive .chapter-track > span { font-size: .55rem; padding: .6rem .8rem; }.immersive .chapter-track b { display: none; }
+  .immersive .scene-window { overflow-x: auto; overflow-y: hidden; }.immersive .scene { position: relative; height: 100%; width: calc(100dvh * 1.7779); min-width: 100%; left: 0; top: 0; transform: none; }.immersive .scene-caption { top: 17%; left: 2.5%; }.immersive .scene-caption h2 { font-size: 1.9rem; }
+  .immersive .chapter-sidebar { left: 8px; bottom: 49px; width: min(245px,calc(100vw - 90px)); padding: 1.3rem 1.2rem; }.immersive .chapter-sidebar h1 { font-size: .72rem; margin: .4rem 0 .2rem; }.immersive .chapter-sidebar .objective-toggle { min-height: 29px; font-size: .57rem; }.immersive .chapter-sidebar .travel-button { font-size: .62rem; }.immersive .chapter-sidebar .sidebar-bottom small { display: none; }.immersive .chapter-beats { display: grid; font-size: .6rem; }.immersive .chapter-intro { font-size: .62rem; }
+  .immersive .scene-paths { top: auto; bottom: 52px; right: 7px; gap: .4rem; }.immersive .scene-paths > span { font-size: .64rem; }.immersive .scene-paths button { min-width: 98px; max-width: 125px; padding: .7rem .7rem; font-size: .59rem; gap: .5rem; }.immersive .scene-paths .icon { width: 12px; }
+  .immersive .scene-controls { right: 9px; bottom: 9px; gap: .5rem; }.immersive .scene-controls > span { display: none !important; }.immersive .scene-controls button { font-size: .57rem; min-height: 29px; padding: .6rem .8rem; }.immersive .status-bar { left: 14px; right: auto; bottom: 14px; padding: 0; max-width: 62%; }.immersive .status-bar > span { display: none; }.immersive .status-bar p { max-width: 100%; font-size: .51rem; }.immersive .mobile-objects { display: none; }
+  .immersive .title-copy { margin-left: 3%; padding-top: 10rem; }.immersive .title-copy h1 { font-size: 4.5rem; }.immersive .title-screen { min-height: 100%; }.immersive .title-corner { right: 1.2rem; bottom: 4rem; }.immersive .discovery-toast { top: 128px; right: 10px; padding: 1.1rem 1.4rem; }
+  .filling-tray { gap: .45rem; }.filling-tray button { width: 30%; padding: 1rem .5rem !important; }.filling-tray .asset-image { height: 50px; }.breakfast-orders { gap: .4rem; }.breakfast-orders article { padding: .4rem; }.breakfast-orders h3 { font-size: .8rem; }.breakfast-orders p { font-size: .58rem; }.breakfast-orders .order-bowl { min-height: 110px !important; padding: .5rem !important; }.order-bowl .asset-image { width: 65px; height: 55px; }.order-bowl > span { font-size: .57rem; }.steamer-stage { width: 210px; height: 200px; }
+  .service-tickets { grid-template-columns:1fr;gap:.5rem; }.service-tickets button { padding:1rem 1.2rem !important;gap:.4rem; }.service-tickets strong {font-size:.88rem;}.pot-queues { gap:.5rem; }.pot-queues section {padding:.6rem;}.pot-queues .asset-image {height:80px;}.pot-queues li {font-size:.65rem;}.pot-target {font-size:.59rem!important;padding:.7rem!important;}.service-notes {gap:.8rem;font-size:.7rem;}
+}

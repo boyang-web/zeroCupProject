@@ -1,0 +1,14 @@
+:root {
+  color-scheme: light;
+  --ink: #2e3b32; --muted: #55462f; --jade: #385347; --deep: #f5f1e7;
+  --paper: #faf6ec; --paper-ink: #2e3b32; --accent: #78502e;
+  --wood-text: #fff1d0; --wood-hover-text: #271d12;
+  --wood-text-shadow: 0 1px 2px #24180e, 0 0 3px #24180e;
+  --scene-text: #fff1d0; --scene-label-surface: #243126;
+  --green: #385347; --seal: #ad5a43;
+  --line: #80755c30; --radius: 4px;
+  --font-body: 'Microsoft YaHei', 'PingFang SC', system-ui, sans-serif;
+  --font-story: 'Noto Serif SC', 'STSong', 'Songti SC', 'SimSun', serif;
+  font-family: var(--font-body); color: var(--ink); background: var(--deep);
+  font-synthesis: none; text-rendering: optimizeLegibility;
+}
