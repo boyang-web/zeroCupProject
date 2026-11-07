@@ -1,0 +1,21 @@
+[
+  {
+    "state": "ready",
+    "xu": "correct speaker",
+    "errors": []
+  },
+  {
+    "state": "arrived",
+    "xu": "correct speaker",
+    "errors": []
+  },
+  {
+    "state": "ended",
+    "xu": "correct speaker",
+    "errors": []
+  },
+  {
+    "mode": "developer",
+    "xu": "correct speaker"
+  }
+]

@@ -29,6 +29,8 @@ export const progression: NonNullable<ContentPack['progression']> = {
 };
 
 export const recipes: Recipe[] = [
+  { id: 'xu-tofu-rice', title: '许叔的豆腐烧菜饭', subtitle: '夜饭小馆 · 两份饭分开核对', asset: 'night-bowl', condition: { kind: 'flag', id: 'night-played' },
+    ingredients: ['米饭', '豆腐烧菜', '辣酱，按吃法另放'], steps: ['豆腐切块，入锅煎到表面微黄。', '添少许水与调味汁，烧到豆腐入味。', '盛米饭，浇上豆腐烧菜。先问辣酱放哪里。', '堂食用浅碗；留餐确认时间后再盛，辣酱另杯，筷子放盒外。'] },
   { id: 'osmanthus-rice', title: '桂花米酒', subtitle: '奶奶的旧方 · 先誊清这一页', asset: 'recipe-rice', condition: { kind: 'clue', id: 'book' },
     note: "糖这一句有两种笔迹。奶奶原先记了用量，后来被划去，旁边添了“尝过再放”。她不许我把划掉的地方涂黑，说留着，省得下回又问到底几勺。桂花在关火后撒，我另起一行。",
     ingredients: ['甜酒酿两大勺', '清水一小碗', '干桂花一小撮', '糖，尝过再添'],

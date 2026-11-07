@@ -4,6 +4,7 @@ import { uiRegions } from './ui-regions.ts';
 import { arrivalHomeRegions } from './arrival-home-regions.ts';
 import { morningRegions } from './morning-regions.ts';
 import { noonRegions } from './noon-regions.ts';
+import { nightRegions } from './night-regions.ts';
 const base = import.meta.env?.BASE_URL ?? '/';
 const placeholder = (file: string, label: string, source: string): Asset => ({
   url: `${base}assets/placeholders/${file}`, label, source, placeholder: true,
@@ -14,6 +15,8 @@ const homeSprite = (id: keyof typeof arrivalHomeRegions, label: string): Asset =
 });
 export const assets: Record<string, Asset> = {
   'journal-paper': { url: `${base}assets/journal/paper-fibers-v1.png`, label: '百味录 · 细纤维书写纸', source: '内置 imagegen；独立纸面材质，见 docs/art/百味录纸张材质-v1.md', placeholder: false },
+  ...Object.fromEntries(Object.entries(nightRegions).map(([id, s]) => [id, { url: `${base}assets/${s.file}`, label: id, region: s.region, source: '内置 imagegen；第四章暖木夜饭素材，见 docs/art/night/prompts.md', placeholder: false, alphaCutoff: .15 }])),
+  ...Object.fromEntries(['front', 'kitchen', 'counter'].map(id => [`night-${id}`, { url: `${base}assets/night/${id}-v1.png`, label: `夜饭小馆 · ${id}`, source: '内置 imagegen；由第四章三场景效果图资产化，见 docs/art/night/prompts.md', placeholder: false }])),
   ...Object.fromEntries(Object.entries(spriteRegions).filter(([id]) => !id.startsWith('ui-')).map(([id, sprite]) => [id, { url: `${base}assets/${sprite.file}`, label: id, source: '内置 imagegen；独立精灵区域，见 docs/art/第二章素材.md', placeholder: false, region: sprite.region, alphaCutoff: .13 }])),
   ...Object.fromEntries(Object.entries(morningRegions).map(([id, sprite]) => [id, { url: `${base}assets/${sprite.file}`, label: sprite.label, source: '内置 imagegen；第二章经营与生活分区，见 docs/art/第二章环境与人物-v2.md', placeholder: false, region: sprite.region }])),
   ...Object.fromEntries(Object.entries(noonRegions).map(([id, sprite]) => [id, { url: `${base}assets/${sprite.file}`, label: sprite.label, source: '内置 imagegen；第三章营业与出餐布局，见 docs/art/第三章琴记场景与人物-v2.md', placeholder: false, region: sprite.region, alphaCutoff: .08, ...(id === 'noon-menu' ? { inscription: { lines: ['琴记清汤面', '半份也做', '忌口请写在单上'] } } : {}) }])),

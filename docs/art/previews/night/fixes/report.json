@@ -1,0 +1,56 @@
+[
+  {
+    "person": "xu",
+    "viewport": "desktop",
+    "portrait": "complete",
+    "pageErrors": []
+  },
+  {
+    "person": "luo",
+    "viewport": "desktop",
+    "portrait": "complete",
+    "pageErrors": []
+  },
+  {
+    "person": "liang",
+    "viewport": "desktop",
+    "portrait": "complete",
+    "pageErrors": []
+  },
+  {
+    "person": "xu",
+    "viewport": "short",
+    "portrait": "complete",
+    "pageErrors": []
+  },
+  {
+    "person": "luo",
+    "viewport": "short",
+    "portrait": "complete",
+    "pageErrors": []
+  },
+  {
+    "person": "liang",
+    "viewport": "short",
+    "portrait": "complete",
+    "pageErrors": []
+  },
+  {
+    "person": "xu",
+    "viewport": "mobile",
+    "portrait": "complete",
+    "pageErrors": []
+  },
+  {
+    "person": "luo",
+    "viewport": "mobile",
+    "portrait": "complete",
+    "pageErrors": []
+  },
+  {
+    "person": "liang",
+    "viewport": "mobile",
+    "portrait": "complete",
+    "pageErrors": []
+  }
+]

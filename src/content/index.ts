@@ -1,16 +1,17 @@
 import type { ContentPack } from '../core/contracts.ts';
 import { assets } from './assets.ts';
 import { arrival, commission, arrivalGame } from './chapters/arrival.ts';
-import { shopChapters, shopDialogues, shopGames } from './chapters/shops.ts';
+import { night, nightDialogues, nightGame, nightClues } from './chapters/night.ts';
 import { epilogue } from './chapters/epilogue.ts';
 import { morning, morningDialogues, morningGame } from './chapters/morning.ts';
 import { noon, noonDialogues, noonGame } from './chapters/noon.ts';
 import { progression, recipes, collection } from './progression.ts';
 export const content: ContentPack = {
-  id: 'baiwei-homecoming', version: 4, firstChapter: 'arrival', assets, progression, recipes, collection,
-  chapters: [arrival, morning, noon, ...shopChapters, epilogue], dialogues: [commission, ...morningDialogues, ...noonDialogues, ...shopDialogues], minigames: [arrivalGame, morningGame, noonGame, ...shopGames],
-  quests: [arrival, morning, noon, ...shopChapters, epilogue].map(c => ({ id: c.questId, chapterId: c.id, title: c.title, text: c.objective })),
+  id: 'baiwei-homecoming', version: 5, firstChapter: 'arrival', assets, progression, recipes, collection,
+  chapters: [arrival, morning, noon, night, epilogue], dialogues: [commission, ...morningDialogues, ...noonDialogues, ...nightDialogues], minigames: [arrivalGame, morningGame, noonGame, nightGame],
+  quests: [arrival, morning, noon, night, epilogue].map(c => ({ id: c.questId, chapterId: c.id, title: c.title, text: c.objective })),
   clues: [
+    ...nightClues,
     { id: 'tian-curtain', title: '门帘上的旧针脚', text: '琴记门帘的边，田姨补过三回。新换的那幅，下午再带来。', category: 'detail' },
     { id: 'qin-recipe-tip', title: '清汤与煮面分开', text: '琴姐让清汤另温，面另起水煮，捞进碗后再兑汤。葱最后问过再撒，别临时从不要葱的那碗里捡。', category: 'detail' },
     { id: 'job-gap', title: '我这次回来', text: "简历停在“能够适应”，后头还没想好填什么。上一份工作的结束日期倒很清楚，只占一小格；可那个“至今”，不能再留在那里了。\n\n昨晚奶奶叫我洗手吃饭，我说吃完再改。今天屏幕亮起来，仍是那一句。我先看了一遍有没有新消息，明明没有发出什么，又不知在等谁回。\n\n还没有买返程票。到站的票根留在信封里，原想整理行李时扔掉，包却还没拆完。", category: 'life', asset: 'arrival-phone' },

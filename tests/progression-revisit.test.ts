@@ -95,7 +95,7 @@ test('old demo arrivals restart explicitly, while later saves gain a valid journ
     const legacy: any = structuredClone(previous); legacy.schemaVersion = 2; legacy.contentVersion = 3; delete legacy.journey;
     const raw = JSON.stringify({ format: 'baiwei-save', version: 1, savedAt: new Date().toISOString(), state: legacy });
     const result = decodeSave(raw, content); assert.ok(result.ok); assert.ok(result.value.notice);
-    assert.equal(result.value.state.schemaVersion, 3); assert.equal(result.value.state.contentVersion, 4);
+    assert.equal(result.value.state.schemaVersion, 3); assert.equal(result.value.state.contentVersion, content.version);
     if (previous.chapterId === 'arrival') assert.ok(!result.value.state.flags.includes('entrusted'));
     else { assert.deepEqual(result.value.state.decisions, previous.decisions); assert.deepEqual(result.value.state.inventory, previous.inventory); }
     assert.equal(JSON.parse(raw).state.contentVersion, 3);

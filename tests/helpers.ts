@@ -48,3 +48,21 @@ export function noonDecision(previous=finishMorning(),deep=false){
 export function finishNoon(previous=finishMorning(),kind:'limit'|'counter'|'overload'='limit'){
   return choices(noonDecision(previous,kind==='limit'),kind==='limit'?['noon-show-limit','noon-limit-ask-qin','noon-agree','noon-limit-record']:kind==='counter'?['noon-write-counter','noon-counter-agree','noon-counter-record']:['noon-promise-fast','noon-overpromise','noon-overload-record']);
 }
+export function nightCounterReady(previous=finishNoon()) {
+  let s=act(previous,{type:'travel'});
+  s=act(s,{type:'talk',hotspotId:'night-person'});s=choices(s,['night-listen','night-thanks']);
+  s=act(s,{type:'talk',hotspotId:'night-luo'});s=choices(s,['night-luo-order']);
+  s=act(s,{type:'interact',hotspotId:'night-table',actionId:'night-wipe'});
+  s=act(s,{type:'move',sceneId:'night-kitchen'});s=act(s,{type:'inspect',hotspotId:'night-phone'});
+  s=act(s,{type:'finish-minigame',gameId:'night-game',result:{status:'completed',score:100,assisted:false}});
+  return act(s,{type:'move',sceneId:'night-counter'});
+}
+export function nightDecision(previous=finishNoon()) {
+  let s=act(nightCounterReady(previous),{type:'talk',hotspotId:'night-handoff-clip'});
+  return choices(s,['night-xu-let-luo-leave','night-luo-leave']);
+}
+export function finishNight(kind:'pickup'|'cancelled'|'missed'='pickup',previous=finishNoon()) {
+  let s=nightDecision(previous);
+  s=choices(s,kind==='pickup'?['night-agree','night-pass-box','night-pickup-record','night-lock-up','night-farewell']:kind==='cancelled'?['night-cancel','night-cancel-record','night-fold-xu-note','night-farewell']:['night-overpromise','night-missed-record','night-fold-xu-note','night-farewell']);
+  return s;
+}

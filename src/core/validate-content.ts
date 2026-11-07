@@ -123,6 +123,11 @@ export function validateContent(pack: ContentPack): string[] {
   }
   for (const game of pack.minigames) {
     condition(game.condition, game.id);
+    if (game.packing) {
+      unique(`${game.id} 分装单`, game.packing.orders.map(o => o.id));
+      if (game.packing.orders.length < 2) errors.push(`${game.id}: 至少需要两张分装单`);
+      for (const o of game.packing.orders) if (!['bowl', 'box'].includes(o.vessel) || !['rim', 'cup'].includes(o.sauce) || !['beside', 'outside'].includes(o.utensils)) errors.push(`${game.id}: 分装要求无效`);
+    }
     if (game.itinerary) {
       const slotIds = unique(`${game.id} 时段`, game.itinerary.slots.map(s => s.id));
       unique(`${game.id} 书签`, game.itinerary.slips.map(s => s.id));

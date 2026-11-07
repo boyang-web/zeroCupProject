@@ -1,0 +1,12 @@
+{
+  "passed": 5,
+  "checks": [
+    "normal-motion full pickup route: progressive dialogue/portraits, phone, wrong food checks, cancel/retry, both orders, bag retained, interrupted/reloaded handoff, home revisit and final chapter",
+    "both cancellation and waiting routes survive reload and interrupted closing; only the matching result/private record is stored and the ending remains reachable",
+    "390px touch phone, reading/choices, bag-independent insulation, shared wooden controls and complete cancellation route remain usable",
+    "real local v4 expanded Qin dialogue and curtain/recipe evidence load in the browser, preserve the v2 noon scene, and allow home return",
+    "both actual unfinished and completed v4 short-night saves migrate in browser without pretending a new pickup occurred"
+  ],
+  "pageErrors": [],
+  "mode": "normal isolated local Chrome; Chromium sandbox enabled; raw v4 saves and current validated saves"
+}

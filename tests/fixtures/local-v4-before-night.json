@@ -1,0 +1,607 @@
+{
+  "noonDialogue": {
+    "format": "baiwei-save",
+    "version": 1,
+    "savedAt": "2026-11-07T12:00:00.000Z",
+    "state": {
+      "schemaVersion": 3,
+      "contentId": "baiwei-homecoming",
+      "contentVersion": 4,
+      "phase": "playing",
+      "chapterId": "noon",
+      "visited": [
+        "arrival",
+        "morning",
+        "noon"
+      ],
+      "flags": [
+        "arrival-greeted",
+        "arrival-introduced",
+        "entrusted",
+        "arrival-slow",
+        "arrival-instructions",
+        "arrival-packed",
+        "morning-listened",
+        "ning-heard",
+        "ning-plan-heard",
+        "morning-played",
+        "chen-at-table",
+        "morning-plan",
+        "morning-ended",
+        "noon-listened",
+        "tian-heard",
+        "chuan-heard",
+        "noon-played",
+        "noon-limited",
+        "noon-ended"
+      ],
+      "clues": [
+        "book",
+        "schedule",
+        "bus-note",
+        "morning-record",
+        "tian-order",
+        "chuan-count",
+        "capacity",
+        "order-limit",
+        "noon-record"
+      ],
+      "inventory": {
+        "small-key": 1,
+        "baiwei-book": 1
+      },
+      "metrics": {
+        "attention": 0,
+        "listening": 5,
+        "research": 5,
+        "care": 0
+      },
+      "quests": {
+        "commission": "completed",
+        "morning": "completed",
+        "noon": "completed"
+      },
+      "rewards": [
+        "arrival-ate",
+        "arrival-remember",
+        "arrival-ready",
+        "arrival-commission",
+        "arrival-set-off",
+        "inspect-book",
+        "arrival-route-reward",
+        "morning-listen",
+        "morning-thanks",
+        "morning-read",
+        "read-chen-bus-note",
+        "ning-ask-school",
+        "ning-ask-plan",
+        "ning-plan-close",
+        "morning-game-reward",
+        "morning-invite",
+        "morning-show-papers",
+        "morning-let-father-answer",
+        "morning-let-ning-answer",
+        "morning-agree",
+        "morning-trial-close",
+        "noon-listen",
+        "noon-thanks",
+        "tian-listen",
+        "tian-order-close",
+        "chuan-listen",
+        "chuan-ask-limit",
+        "chuan-count-close",
+        "read-receipt-printer",
+        "read-order-phone",
+        "noon-game-reward",
+        "noon-show-limit",
+        "noon-limit-ask-qin",
+        "noon-agree",
+        "noon-limit-record"
+      ],
+      "decisions": {
+        "arrival-approach": "accept-commission",
+        "morning": "morning-agree",
+        "noon": "noon-agree"
+      },
+      "achievements": [
+        "first-page",
+        "ready-to-go",
+        "two-papers"
+      ],
+      "dialogue": {
+        "id": "noon-talk",
+        "nodeId": "after-limit"
+      },
+      "sceneId": "noon-front",
+      "seenScenes": [
+        "arrival-main",
+        "morning-front",
+        "morning-kitchen",
+        "morning-yard",
+        "noon-front",
+        "noon-corner",
+        "noon-kitchen"
+      ],
+      "journey": {
+        "chapterId": "noon",
+        "sceneId": "noon-front"
+      }
+    }
+  },
+  "noonEvidence": {
+    "format": "baiwei-save",
+    "version": 1,
+    "savedAt": "2026-11-07T12:00:00.000Z",
+    "state": {
+      "schemaVersion": 3,
+      "contentId": "baiwei-homecoming",
+      "contentVersion": 4,
+      "phase": "playing",
+      "chapterId": "noon",
+      "visited": [
+        "arrival",
+        "morning",
+        "noon"
+      ],
+      "flags": [
+        "arrival-greeted",
+        "arrival-introduced",
+        "entrusted",
+        "arrival-slow",
+        "arrival-instructions",
+        "arrival-packed",
+        "morning-listened",
+        "ning-heard",
+        "ning-plan-heard",
+        "morning-played",
+        "chen-at-table",
+        "morning-plan",
+        "morning-ended",
+        "noon-listened",
+        "tian-heard",
+        "chuan-heard",
+        "noon-played",
+        "noon-limited",
+        "noon-ended"
+      ],
+      "clues": [
+        "book",
+        "schedule",
+        "bus-note",
+        "morning-record",
+        "tian-order",
+        "chuan-count",
+        "capacity",
+        "order-limit",
+        "noon-record",
+        "qin-recipe-tip",
+        "tian-curtain"
+      ],
+      "inventory": {
+        "small-key": 1,
+        "baiwei-book": 1
+      },
+      "metrics": {
+        "attention": 0,
+        "listening": 5,
+        "research": 5,
+        "care": 0
+      },
+      "quests": {
+        "commission": "completed",
+        "morning": "completed",
+        "noon": "completed"
+      },
+      "rewards": [
+        "arrival-ate",
+        "arrival-remember",
+        "arrival-ready",
+        "arrival-commission",
+        "arrival-set-off",
+        "inspect-book",
+        "arrival-route-reward",
+        "morning-listen",
+        "morning-thanks",
+        "morning-read",
+        "read-chen-bus-note",
+        "ning-ask-school",
+        "ning-ask-plan",
+        "ning-plan-close",
+        "morning-game-reward",
+        "morning-invite",
+        "morning-show-papers",
+        "morning-let-father-answer",
+        "morning-let-ning-answer",
+        "morning-agree",
+        "morning-trial-close",
+        "noon-listen",
+        "noon-thanks",
+        "tian-listen",
+        "tian-order-close",
+        "chuan-listen",
+        "chuan-ask-limit",
+        "chuan-count-close",
+        "read-receipt-printer",
+        "read-order-phone",
+        "noon-game-reward",
+        "noon-show-limit",
+        "noon-limit-ask-qin",
+        "noon-agree",
+        "noon-limit-record",
+        "noon-after-limit-recipe",
+        "noon-record-qin-recipe",
+        "read-patched-curtain"
+      ],
+      "decisions": {
+        "arrival-approach": "accept-commission",
+        "morning": "morning-agree",
+        "noon": "noon-agree"
+      },
+      "achievements": [
+        "first-page",
+        "ready-to-go",
+        "two-papers"
+      ],
+      "dialogue": null,
+      "sceneId": "noon-front",
+      "seenScenes": [
+        "arrival-main",
+        "morning-front",
+        "morning-kitchen",
+        "morning-yard",
+        "noon-front",
+        "noon-corner",
+        "noon-kitchen"
+      ],
+      "journey": {
+        "chapterId": "noon",
+        "sceneId": "noon-front"
+      }
+    }
+  },
+  "earlyHome": {
+    "format": "baiwei-save",
+    "version": 1,
+    "savedAt": "2026-11-07T12:00:00.000Z",
+    "state": {
+      "schemaVersion": 3,
+      "contentId": "baiwei-homecoming",
+      "contentVersion": 4,
+      "phase": "playing",
+      "chapterId": "arrival",
+      "visited": [
+        "arrival",
+        "morning"
+      ],
+      "flags": [
+        "arrival-greeted",
+        "arrival-introduced",
+        "entrusted",
+        "arrival-slow",
+        "arrival-instructions",
+        "arrival-packed"
+      ],
+      "clues": [
+        "book",
+        "job-gap"
+      ],
+      "inventory": {
+        "small-key": 1,
+        "baiwei-book": 1
+      },
+      "metrics": {
+        "attention": 0,
+        "listening": 0,
+        "research": 0,
+        "care": 0
+      },
+      "quests": {
+        "commission": "completed",
+        "morning": "active"
+      },
+      "rewards": [
+        "arrival-ate",
+        "arrival-remember",
+        "arrival-ready",
+        "arrival-commission",
+        "arrival-set-off",
+        "inspect-book",
+        "arrival-route-reward",
+        "arrival-read-phone"
+      ],
+      "decisions": {
+        "arrival-approach": "accept-commission"
+      },
+      "achievements": [
+        "first-page",
+        "ready-to-go"
+      ],
+      "dialogue": {
+        "id": "commission",
+        "nodeId": "grandma-early-return"
+      },
+      "sceneId": "arrival-main",
+      "seenScenes": [
+        "arrival-main",
+        "morning-front"
+      ],
+      "journey": {
+        "chapterId": "morning",
+        "sceneId": "morning-front"
+      }
+    }
+  },
+  "shortActive": {
+    "format": "baiwei-save",
+    "version": 1,
+    "savedAt": "2026-11-07T12:00:00.000Z",
+    "state": {
+      "schemaVersion": 3,
+      "contentId": "baiwei-homecoming",
+      "contentVersion": 4,
+      "phase": "playing",
+      "chapterId": "night",
+      "visited": [
+        "arrival",
+        "morning",
+        "noon",
+        "night"
+      ],
+      "flags": [
+        "arrival-greeted",
+        "arrival-introduced",
+        "entrusted",
+        "arrival-slow",
+        "arrival-instructions",
+        "arrival-packed",
+        "morning-listened",
+        "ning-heard",
+        "ning-plan-heard",
+        "morning-played",
+        "chen-at-table",
+        "morning-plan",
+        "morning-ended",
+        "noon-listened",
+        "tian-heard",
+        "chuan-heard",
+        "noon-played",
+        "noon-limited",
+        "noon-ended",
+        "night-listened"
+      ],
+      "clues": [
+        "book",
+        "schedule",
+        "bus-note",
+        "morning-record",
+        "tian-order",
+        "chuan-count",
+        "capacity",
+        "order-limit",
+        "noon-record",
+        "late-note"
+      ],
+      "inventory": {
+        "small-key": 1,
+        "baiwei-book": 1
+      },
+      "metrics": {
+        "attention": 0,
+        "listening": 5,
+        "research": 5,
+        "care": 2
+      },
+      "quests": {
+        "commission": "completed",
+        "morning": "completed",
+        "noon": "completed",
+        "night": "active"
+      },
+      "rewards": [
+        "arrival-ate",
+        "arrival-remember",
+        "arrival-ready",
+        "arrival-commission",
+        "arrival-set-off",
+        "inspect-book",
+        "arrival-route-reward",
+        "morning-listen",
+        "morning-thanks",
+        "morning-read",
+        "read-chen-bus-note",
+        "ning-ask-school",
+        "ning-ask-plan",
+        "ning-plan-close",
+        "morning-game-reward",
+        "morning-invite",
+        "morning-show-papers",
+        "morning-let-father-answer",
+        "morning-let-ning-answer",
+        "morning-agree",
+        "morning-trial-close",
+        "noon-listen",
+        "noon-thanks",
+        "tian-listen",
+        "tian-order-close",
+        "chuan-listen",
+        "chuan-ask-limit",
+        "chuan-count-close",
+        "read-receipt-printer",
+        "read-order-phone",
+        "noon-game-reward",
+        "noon-show-limit",
+        "noon-limit-ask-qin",
+        "noon-agree",
+        "noon-limit-record",
+        "night-read",
+        "night-listen",
+        "night-thanks"
+      ],
+      "decisions": {
+        "arrival-approach": "accept-commission",
+        "morning": "morning-agree",
+        "noon": "noon-agree"
+      },
+      "achievements": [
+        "first-page",
+        "ready-to-go",
+        "two-papers"
+      ],
+      "dialogue": null,
+      "sceneId": "night-main",
+      "seenScenes": [
+        "arrival-main",
+        "morning-front",
+        "morning-kitchen",
+        "morning-yard",
+        "noon-front",
+        "noon-corner",
+        "noon-kitchen",
+        "night-main"
+      ],
+      "journey": {
+        "chapterId": "night",
+        "sceneId": "night-main"
+      }
+    }
+  },
+  "shortFinished": {
+    "format": "baiwei-save",
+    "version": 1,
+    "savedAt": "2026-11-07T12:00:00.000Z",
+    "state": {
+      "schemaVersion": 3,
+      "contentId": "baiwei-homecoming",
+      "contentVersion": 4,
+      "phase": "playing",
+      "chapterId": "night",
+      "visited": [
+        "arrival",
+        "morning",
+        "noon",
+        "night"
+      ],
+      "flags": [
+        "arrival-greeted",
+        "arrival-introduced",
+        "entrusted",
+        "arrival-slow",
+        "arrival-instructions",
+        "arrival-packed",
+        "morning-listened",
+        "ning-heard",
+        "ning-plan-heard",
+        "morning-played",
+        "chen-at-table",
+        "morning-plan",
+        "morning-ended",
+        "noon-listened",
+        "tian-heard",
+        "chuan-heard",
+        "noon-played",
+        "noon-limited",
+        "noon-ended",
+        "night-listened",
+        "night-played"
+      ],
+      "clues": [
+        "book",
+        "schedule",
+        "bus-note",
+        "morning-record",
+        "tian-order",
+        "chuan-count",
+        "capacity",
+        "order-limit",
+        "noon-record",
+        "late-note"
+      ],
+      "inventory": {
+        "small-key": 1,
+        "baiwei-book": 1
+      },
+      "metrics": {
+        "attention": 0,
+        "listening": 5,
+        "research": 5,
+        "care": 4
+      },
+      "quests": {
+        "commission": "completed",
+        "morning": "completed",
+        "noon": "completed",
+        "night": "completed"
+      },
+      "rewards": [
+        "arrival-ate",
+        "arrival-remember",
+        "arrival-ready",
+        "arrival-commission",
+        "arrival-set-off",
+        "inspect-book",
+        "arrival-route-reward",
+        "morning-listen",
+        "morning-thanks",
+        "morning-read",
+        "read-chen-bus-note",
+        "ning-ask-school",
+        "ning-ask-plan",
+        "ning-plan-close",
+        "morning-game-reward",
+        "morning-invite",
+        "morning-show-papers",
+        "morning-let-father-answer",
+        "morning-let-ning-answer",
+        "morning-agree",
+        "morning-trial-close",
+        "noon-listen",
+        "noon-thanks",
+        "tian-listen",
+        "tian-order-close",
+        "chuan-listen",
+        "chuan-ask-limit",
+        "chuan-count-close",
+        "read-receipt-printer",
+        "read-order-phone",
+        "noon-game-reward",
+        "noon-show-limit",
+        "noon-limit-ask-qin",
+        "noon-agree",
+        "noon-limit-record",
+        "night-read",
+        "night-listen",
+        "night-thanks",
+        "night-game-reward",
+        "night-decide",
+        "night-agree"
+      ],
+      "decisions": {
+        "arrival-approach": "accept-commission",
+        "morning": "morning-agree",
+        "noon": "noon-agree",
+        "night": "night-agree"
+      },
+      "achievements": [
+        "first-page",
+        "ready-to-go",
+        "two-papers"
+      ],
+      "dialogue": null,
+      "sceneId": "night-main",
+      "seenScenes": [
+        "arrival-main",
+        "morning-front",
+        "morning-kitchen",
+        "morning-yard",
+        "noon-front",
+        "noon-corner",
+        "noon-kitchen",
+        "night-main"
+      ],
+      "journey": {
+        "chapterId": "night",
+        "sceneId": "night-main"
+      }
+    }
+  }
+}
