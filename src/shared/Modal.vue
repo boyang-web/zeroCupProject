@@ -13,7 +13,7 @@ onBeforeUnmount(() => { dialog.value?.close(); previous?.focus(); });
 </script>
 <template>
   <dialog ref="dialog" class="modal" :class="variant ? 'modal--' + variant : ''" aria-labelledby="modal-title" @cancel.prevent="emit('close')">
-    <WoodFrame :kind="variant === 'conversation' ? 'ui-frame' : variant === 'book' ? 'ui-book' : 'ui-menu'" />
+    <WoodFrame v-if="variant !== 'book'" :kind="variant === 'conversation' ? 'ui-frame' : 'ui-menu'" />
     <UiOrnament v-if="variant !== 'conversation'" class="modal-corner-flower" kind="osmanthus" />
     <header class="modal-header"><h2 id="modal-title">{{ title }}</h2><div class="modal-header-actions"><slot name="actions" /><UiButton tone="icon" aria-label="关闭面板" @click="emit('close')"><Icon name="close" /></UiButton></div></header>
     <div class="modal-body"><slot /></div>

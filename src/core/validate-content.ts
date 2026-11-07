@@ -106,7 +106,17 @@ export function validateContent(pack: ContentPack): string[] {
   for (const dialogue of pack.dialogues) {
     const nodes = unique(`${dialogue.id} 节点`, dialogue.nodes.map(n => n.id)); ref(nodes, dialogue.entry, dialogue.id);
     for (const entry of dialogue.entries ?? []) { condition(entry.condition, dialogue.id); ref(nodes, entry.nodeId, dialogue.id); }
-    for (const node of dialogue.nodes) if (node.portrait && !pack.assets[node.portrait]) errors.push(`${node.id}: 人物立绘不存在`);
+    for (const node of dialogue.nodes) {
+      if (node.portrait && !pack.assets[node.portrait]) errors.push(`${node.id}: 人物立绘不存在`);
+      if (typeof node.text !== 'string' || !node.text.trim()) errors.push(`${dialogue.id}/${node.id}: 对白正文为空`);
+      if (node.beats) {
+        if (!Array.isArray(node.beats) || !node.beats.length) errors.push(`${dialogue.id}/${node.id}: 对话回合为空`);
+        else for (const beat of node.beats) {
+          if (!['speech','narration'].includes(beat.kind) || typeof beat.text!=='string' || !beat.text.trim() || beat.kind==='speech' && !beat.speaker?.trim()) errors.push(`${dialogue.id}/${node.id}: 对话回合缺少正文或说话人`);
+          if (beat.portrait && !pack.assets[beat.portrait]) errors.push(`${dialogue.id}/${node.id}: 回合立绘不存在 ${beat.portrait}`);
+        }
+      }
+    }
     for (const node of dialogue.nodes) for (const choice of node.choices) {
       action(choice); if (choice.next) ref(nodes, choice.next, choice.id);
     }
@@ -132,6 +142,9 @@ export function validateContent(pack: ContentPack): string[] {
     ref(chapters, game.chapterId, game.id); if (game.assistedItem) ref(items, game.assistedItem, game.id); action(game.reward);
   }
   unique('食谱', (pack.recipes ?? []).map(r => r.id));
+  for (const [id, asset] of Object.entries(pack.assets)) {
+    if (asset.inscription && (!asset.region || !Array.isArray(asset.inscription.lines) || asset.inscription.lines.length < 1 || asset.inscription.lines.length > 3 || asset.inscription.lines.some(line => typeof line !== 'string' || !line.trim()))) errors.push(`${id}: 图像上的文字需要独立区域和一至三行内容`);
+  }
   for (const recipe of pack.recipes ?? []) { condition(recipe.condition, recipe.id); if (!pack.assets[recipe.asset]) errors.push(`${recipe.id}: 食谱插图不存在`); }
   unique('收集物件', (pack.collection ?? []).map(e => e.id));
   for (const entry of pack.collection ?? []) { condition(entry.condition, entry.id); if (!pack.assets[entry.asset]) errors.push(`${entry.id}: 收藏插图不存在`); if (entry.study) action(entry.study); }
@@ -142,6 +155,7 @@ export function validateContent(pack: ContentPack): string[] {
     ref(chapters, guide.chapterId, guide.id); condition(guide.condition, guide.id); condition(guide.complete, guide.id);
     const owner = pack.chapters.find(c => c.id === guide.chapterId);
     if (guide.target && (!owner || !hotspotsOf(owner).some(h => h.id === guide.target))) errors.push(`${guide.id}: 引导物件不存在`);
+    if (guide.control && (!['journal', 'menu', 'departure', 'home'].includes(guide.control) || guide.target)) errors.push(`${guide.id}: 教学指向无效`);
   }
   pack.achievements.forEach(a => condition(a.condition, a.id)); pack.endings.forEach(e => condition(e.condition, e.id));
   if (!pack.endings.length || pack.endings.at(-1)?.condition) errors.push('最后需要一个无条件兜底结局');

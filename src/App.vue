@@ -35,11 +35,13 @@ const game = useGame(content, storage);
 const { state, chapter, scene, node, ending, canTravel, message, developer } = game;
 const { hints, reducedMotion, volume } = useSettings(storage);
 const ambience = createAmbience(content.assets.ambience!.url);
-const themeStyle = woodVariables(content.assets);
+const themeStyle = { ...woodVariables(content.assets), '--journal-paper': `url("${content.assets['journal-paper']!.url}")` };
 const audioMessage = ref(''), objectivesOpen = ref(false), fullscreen = ref(false), viewHome = ref(false), closeView = ref(false);
 const showingHome = computed(() => state.value.phase === 'title' || viewHome.value);
 const returning = computed(() => isRevisiting(state.value));
+const returnSceneTitle = computed(() => { const anchor = content.chapters.find(c => c.id === state.value.journey.chapterId); return anchor && scenesOf(anchor).find(s => s.id === state.value.journey.sceneId)?.title; });
 const unlocked = (id: FeatureId) => featureUnlocked(state.value, content, id, { developer: developer.value });
+const homeAvailable = computed(() => unlocked('revisit') && state.value.phase === 'playing' && state.value.journey.chapterId !== 'arrival');
 const allowed = (condition?: import('./core/contracts').Condition) => developer.value || matches(state.value, condition);
 const guide = computed(() => developer.value ? undefined : currentGuide(state.value, content));
 const recipeCount = computed(() => (content.recipes ?? []).filter(r => allowed(r.condition)).length);
@@ -49,7 +51,7 @@ type Panel = { kind: 'inspect'; hotspot: Hotspot } | { kind: 'minigame'; gameId:
   | { kind: 'notice'; title: string; text: string };
 const panel = ref<Panel | null>(null);
 const title = computed(() => {
-  if (node.value) return node.value.speaker;
+  if (node.value) return node.value.beats?.length ? '交谈' : node.value.speaker;
   const p = panel.value; if (!p) return '';
   if (p.kind === 'inspect') return p.hotspot.label;
   if (p.kind === 'minigame') return content.minigames.find(g => g.id === p.gameId)?.title ?? '动动手';
@@ -174,7 +176,7 @@ onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); ambience.di
     <aside v-if="developer" class="developer-bar" aria-label="测试模式"><strong>开发者测试</strong><span>前置限制已放开</span><button @click="developerTools">测试工具 · F8</button><button @click="exitDeveloper">退出测试</button></aside>
     <header v-if="!showingHome" class="topbar">
       <span class="brand"><span class="brand-seal">味</span><span>百味录<small>{{ returning ? '回访 · ' : '' }}长明巷</small></span></span>
-      <nav class="toolbar" aria-label="游戏菜单"><UiButton v-if="unlocked('journal')" :tone="pendingEntry ? 'jade' : 'paper'" @click="openPanel('journal')"><Icon name="book" />百味录<span class="entry-count">{{ recipeCount }}</span></UiButton><UiButton tone="wood" @click="openPanel('menu')"><Icon name="menu" /><span>菜单</span></UiButton></nav>
+      <nav class="toolbar" aria-label="游戏菜单"><UiButton v-if="unlocked('journal')" data-tutorial-control="journal" :tone="pendingEntry ? 'jade' : 'paper'" @click="openPanel('journal')"><Icon name="book" />百味录<span class="entry-count">{{ recipeCount }}</span></UiButton><UiButton tone="wood" data-tutorial-control="menu" @click="openPanel('menu')"><Icon name="menu" /><span>菜单</span></UiButton></nav>
     </header>
     <main ref="region">
       <TitleScreen v-if="showingHome" :content="content" :has-save="hasProgress" :reduced-motion="reducedMotion" @start="requestStart" @continue="continueStory" @saves="openPanel('saves')" @settings="openPanel('settings')" />
@@ -182,9 +184,9 @@ onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); ambience.di
         <nav v-if="unlocked('chapterTrack')" class="chapter-track" aria-label="旅程进度"><span v-for="c in content.chapters" :key="c.id" :class="{ current: c.id === state.journey.chapterId, visited: state.visited.includes(c.id) }" :aria-current="c.id === state.journey.chapterId ? 'step' : undefined"><b>{{ String(c.number).padStart(2, '0') }}</b><span v-if="c.id === state.journey.chapterId">{{ c.title }}</span></span></nav>
         <div v-if="state.phase === 'playing'" class="play-layout">
           <SceneView :developer="developer" :chapter="chapter" :content="content" :state="state" :hints="hints && unlocked('objectHints')" :guide-target="!panel && !node && !closeView ? guide?.target : undefined" :blocked="!!panel || !!node" :reduced-motion="reducedMotion" @framing="closeView = $event" @interact="interact" @move="id => game.dispatch({ type: 'move', sceneId: id })" @option="(hotspot, actionId) => game.dispatch({ type: 'interact', hotspotId: hotspot.id, actionId })" />
-          <GuideHint v-if="guide && !panel && !node && !closeView" :guide="guide" />
-          <aside v-if="unlocked('inventory') || canTravel || returning" class="chapter-sidebar" :class="{ expanded: objectivesOpen, ready: canTravel || returning }"><WoodFrame kind="ui-toast" /><div class="objective"><button class="objective-toggle quiet" :aria-expanded="objectivesOpen" @click="objectivesOpen = !objectivesOpen"><Icon name="leaf" />{{ returning ? '回到熟悉的地方' : '手头的事' }} {{ objectivesOpen ? '−' : '+' }}</button><h1 v-if="objectivesOpen">{{ returning ? scene.description : chapter.objective }}</h1></div><ol v-if="chapter.beats && objectivesOpen && !returning" class="chapter-beats"><li v-for="(beat, i) in chapter.beats" :key="beat.label" :class="{ done: matches(state, beat.condition) }"><span><Icon v-if="matches(state, beat.condition)" name="check" /><template v-else>{{ i + 1 }}</template></span>{{ beat.label }}</li></ol><div v-if="canTravel || returning" class="sidebar-bottom"><UiButton tone="jade" @click="travel">{{ returning ? '回到原来的行程' : chapter.exitLabel ?? '往前走' }}<Icon name="arrow" /></UiButton></div></aside>
-          <div class="scene-controls"><span><Icon name="pin" />{{ scene.title }}</span><UiButton v-if="unlocked('objectHints')" tone="quiet" :aria-pressed="hints" @click="hints = !hints"><Icon name="look" />{{ hints ? '收起提示' : '物件提示' }}</UiButton></div>
+          <GuideHint v-if="guide && !panel && !node && !closeView" :key="guide.id" :guide="guide" :reduced-motion="reducedMotion" />
+          <aside v-if="unlocked('inventory') || canTravel || returning" class="chapter-sidebar" :class="{ expanded: objectivesOpen, ready: canTravel || returning }"><WoodFrame kind="ui-toast" /><div class="objective"><button class="objective-toggle quiet" :aria-expanded="objectivesOpen" @click="objectivesOpen = !objectivesOpen"><Icon name="leaf" />{{ returning ? '回到熟悉的地方' : '手头的事' }} {{ objectivesOpen ? '−' : '+' }}</button><h1 v-if="objectivesOpen">{{ returning ? scene.description : chapter.objective }}</h1></div><ol v-if="chapter.beats && objectivesOpen && !returning" class="chapter-beats"><li v-for="(beat, i) in chapter.beats" :key="beat.label" :class="{ done: matches(state, beat.condition) }"><span><Icon v-if="matches(state, beat.condition)" name="check" /><template v-else>{{ i + 1 }}</template></span>{{ beat.label }}</li></ol><div v-if="canTravel || returning" class="sidebar-bottom"><UiButton tone="jade" data-tutorial-control="departure" @click="travel">{{ returning ? '回到原来的行程' : chapter.exitLabel ?? '往前走' }}<Icon name="arrow" /></UiButton></div></aside>
+          <div class="scene-controls"><span><Icon name="pin" />{{ scene.title }}</span><UiButton v-if="homeAvailable" class="home-revisit" data-tutorial-control="home" tone="wood" @click="returning ? travel() : revisit('arrival')"><Icon name="pin" />{{ returning ? '回到' + (returnSceneTitle ?? '原行程') : '回奶奶家' }}</UiButton><UiButton v-if="unlocked('objectHints')" tone="quiet" :aria-pressed="hints" @click="hints = !hints"><Icon name="look" />{{ hints ? '收起提示' : '物件提示' }}</UiButton></div>
         </div>
         <section v-else class="ending-screen" :style="{ backgroundImage: `linear-gradient(90deg, #152a29ed, #152a29cc), url('${content.assets['title-homecoming']!.url}')` }"><p class="eyebrow">第五章 · {{ chapter.title }}</p><h1>{{ ending.title }}</h1><p class="ending-copy">{{ ending.text }}</p><div class="outcomes"><article v-for="c in content.chapters.filter(c => c.number > 1 && c.number < 5)" :key="c.id"><small>{{ c.title }}</small><p>{{ state.quests[c.questId] === 'completed' ? '这一页写下了。' : '还有几行空着。' }}</p></article></div><div class="button-row"><UiButton tone="jade" @click="openPanel('journal')">翻翻百味录</UiButton><UiButton v-if="unlocked('revisit')" @click="openPanel('revisit')">回访老街</UiButton><UiButton @click="openPanel('saves')">读档</UiButton><UiButton @click="viewHome = true">回到首页</UiButton></div></section>
       </template>
@@ -194,8 +196,8 @@ onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); ambience.di
     <Modal v-if="node || panel" :title="title" :variant="modalVariant" @close="closeModal">
       <template #actions><UiButton v-if="developer && panel?.kind !== 'developer'" tone="quiet" @click="developerTools">测试工具</UiButton></template>
       <DeveloperTools v-if="panel?.kind === 'developer'" :content="content" :state="state" @jump="debugJump" @dialogue="debugDialogue" @game="debugGame" @hotspot="debugObject" @panel="openPanel" @reset="resetTest" @exit="exitDeveloper" />
-      <DialogueView :developer="developer" v-else-if="node" :node="node" :state="state" :content="content" @choose="id => game.dispatch({ type: 'choose', choiceId: id })" />
-      <InspectionView :developer="developer" v-else-if="panel?.kind === 'inspect' && inspect" :inspection="inspect" :state="state" :activity="inspectActivity" :prop-asset="inspectAsset" :journal-available="unlocked('journal')" @examined="examined" @option="useOption" @journal="openPanel('journal')" @activity="panel = { kind: 'minigame', gameId: inspectActivity!.id }" />
+      <DialogueView :developer="developer" v-else-if="node" :key="state.dialogue!.id + ':' + node.id" :node="node" :state="state" :content="content" :reduced-motion="reducedMotion" @choose="id => game.dispatch({ type: 'choose', choiceId: id })" />
+      <InspectionView :developer="developer" v-else-if="panel?.kind === 'inspect' && inspect" :key="panel.hotspot.id" :inspection="inspect" :state="state" :activity="inspectActivity" :prop-asset="inspectAsset" :journal-available="unlocked('journal')" :reduced-motion="reducedMotion" @examined="examined" @option="useOption" @journal="openPanel('journal')" @activity="panel = { kind: 'minigame', gameId: inspectActivity!.id }" />
       <MinigameHost :developer="developer" v-else-if="panel?.kind === 'minigame' && minigame" :definition="minigame" :state="state" :reduced-motion="reducedMotion" :assets="content.assets" @finish="finish" />
       <JournalView :developer="developer" v-else-if="panel?.kind === 'journal'" :content="content" :state="state" :reduced-motion="reducedMotion" :new-entry-id="pendingEntry" @read="pendingEntry = undefined" />
       <CollectionView :developer="developer" v-else-if="panel?.kind === 'collection'" :content="content" :state="state" @study="entryId => game.dispatch({ type: 'study-collection', entryId })" />

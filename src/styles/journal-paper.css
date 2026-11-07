@@ -1,0 +1,44 @@
+.immersive .modal--book { padding:10px 12px; width:min(1160px,calc(100vw - 38px)); box-shadow:none; }
+.immersive .modal--book .modal-header { padding:0 18px 12px; }
+.immersive .modal--book .modal-header h2 { padding:6px 13px; color:#e9ddbd; font-size:14px; letter-spacing:.15em; text-shadow:0 1px 4px #221b13; }
+.immersive .modal--book .modal-body { padding:0 15px 12px; max-height:calc(100dvh - 112px); }
+.modal--book .modal-corner-flower { right:28px; top:36px; width:73px; height:66px; z-index:4; }
+.journal-book { isolation:isolate; min-height:590px; padding:13px 17px 54px; border-radius:7px 9px 8px 7px; background:repeating-linear-gradient(0deg,#8f9a7a16 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,#1d2b1c19 0 1px,transparent 1px 3px),#627157; border:1px solid #3c4d35; box-shadow:0 17px 26px #211b1555,inset 0 0 0 2px #b7b99a66; }
+.journal-book::before { content:''; position:absolute; z-index:0; inset:17px 14px 46px; border-radius:3px 4px 5px 3px; background:repeating-linear-gradient(0deg,#eee1c1 0 1px,#b8a784 1px 2px,#f8edcf 2px 4px); box-shadow:0 2px 0 #a08a63,0 5px 0 #ded0ad,0 7px 0 #8b7654,0 9px 4px #18221466; }
+.book-spread { z-index:1; min-height:535px; background:#f7eed7; border-radius:3px 5px 4px 3px; box-shadow:0 1px 5px #45351f40; }
+.book-page { padding:29px 43px 49px; background-color:#f5ecd4; background-image:linear-gradient(0deg,#9e77300a,transparent 14%,#fffdf526 75%,#a7803008),var(--journal-paper); background-size:100% 100%,420px 420px; color:#51412c; }
+.book-page--left { border:0; border-radius:3px 0 0 3px; box-shadow:inset -22px 0 24px -24px #725a36b3,inset 1px 1px 0 #fff9e7; }
+.book-page--right { border-radius:0 5px 4px 0; background-position:0 0,140px 80px; box-shadow:inset 22px 0 25px -24px #725a36cc,inset -1px 1px 0 #fffdf0; }
+.book-page--right::after { content:''; position:absolute; bottom:0; right:0; width:19px; height:21px; background:linear-gradient(135deg,#fff9e3 35%,#d3c3a080 65%,#f6ebce 68%); clip-path:polygon(100% 0,100% 100%,0 100%); pointer-events:none; }
+.book-binding { position:absolute; z-index:3; top:0; bottom:0; left:calc(50% - 14px); width:28px; background:linear-gradient(90deg,transparent,#644a2413 34%,#3e321d25 49%,#fff9df88 53%,#8870430c 75%,transparent); pointer-events:none; }
+.book-binding i { position:absolute; top:18%; left:7px; width:14px; height:7px; border-top:1px solid #8d754688; border-bottom:1px solid #fff5d8; border-radius:50%; box-shadow:0 -1px 1px #4b3a2422; }
+.book-binding i:nth-child(2) { top:50%; }.book-binding i:nth-child(3) { top:82%; }
+.book-page-kicker { color:#8b7859; letter-spacing:.08em; font-size:11px; margin-bottom:15px; }
+.book-page h2 { font-size:34px; color:#51402a; margin-bottom:13px; }
+.recipe-illustration { height:164px; margin:9px 0 12px; }
+.recipe-ingredients { margin-top:11px; }.recipe-ingredients p { margin:6px 0; font-size:16px; line-height:1.7; }
+.recipe-method { gap:23px; }.recipe-method li { font-size:19px; line-height:1.95; color:#51422e; }
+.recipe-margin-note { margin:29px 0 13px 24px; padding:10px 0 0; border-top:1px solid #9d835532; }
+.recipe-margin-note > small { font:11px/1.8 var(--font-story); color:#8e7959; }
+.recipe-margin-note p { font:16px/1.95 var(--font-story); margin:8px 0 0; color:#776044; }
+.book-page .book-flower { left:72px; bottom:6px; width:67px; height:54px; opacity:.65; }
+.book-page-number { font-size:11px; right:25px; bottom:16px; color:#9b8865; }.book-page--left .book-page-number { right:auto; left:25px; }
+.book-ribbons { right:-7px; top:27px; }.book-pagination { color:#f4e6be; gap:22px; }.book-pagination small { color:#ead8b3; }.book-pagination .ui-button { color:#f4e8c7; }
+.book-opening-cover { background:repeating-linear-gradient(0deg,#c5cba311 0 1px,transparent 1px 3px),repeating-linear-gradient(90deg,#24351f22 0 1px,transparent 1px 3px),#637259; border-radius:4px 7px 7px 3px; }
+.book-opening-cover > span,.physical-book__title { color:#58482e; background-image:var(--journal-paper); background-size:260px; box-shadow:inset 0 0 0 3px #fff8dc50,0 1px 3px #26351f55; border:1px solid #ab9874; }
+.book-turning-leaf { left:50%; right:17px; top:13px; bottom:54px; background-color:#f4ead0; background-image:linear-gradient(90deg,#6c512c3b,transparent 9%,#fff9e540 65%,#78603b17),var(--journal-paper); background-size:100% 100%,420px 420px; box-shadow:0 5px 17px #4a392c40; border-radius:0 5px 4px 0; }
+.physical-book__pages { background-color:#f5ecd3; background-image:linear-gradient(90deg,#67533226,transparent 11%),var(--journal-paper); background-size:100% 100%,330px 330px; box-shadow:2px 1px 0 #d3c19b,4px 2px 0 #f1e5c7,6px 3px 0 #b6a178,8px 5px 0 #f0e3c2,10px 8px 17px #50331735; }
+.physical-book__cover { background:repeating-linear-gradient(90deg,#24351e1c 0 1px,transparent 1px 3px),repeating-linear-gradient(0deg,#b8c29f12 0 1px,transparent 1px 3px),#65745b; }
+.life-manuscript { font-size:19px; line-height:2.05; color:#55442f; }
+@media (max-width:900px) { .book-page { padding:25px 28px 44px; }.recipe-method li { font-size:18px; }.recipe-margin-note { margin-left:12px; } }
+@media (max-width:720px) {
+  .immersive .modal--book { padding:5px 0; width:calc(100vw - 14px); }
+  .immersive .modal--book .modal-header { padding:0 13px 10px; }.immersive .modal--book .modal-body { padding:0 7px 12px; }
+  .journal-book { padding:10px 10px 48px; min-height:510px; }
+  .journal-book::before { inset:14px 7px 40px; }.book-spread { background:transparent; border:0; box-shadow:none; }
+  .book-page { padding:25px 24px 43px; border-radius:3px; }.book-page--left { box-shadow:inset 0 -12px 20px -22px #725a36cc; }.book-page--right { margin-top:4px; border:0; box-shadow:inset 0 12px 20px -22px #725a36cc; }
+  .book-binding { display:none; }.book-ribbons { right:-1px; top:23px; }.book-ribbons button { width:30px; }.book-ribbons button .ui-ornament { width:30px; }
+  .recipe-illustration { height:172px; }.recipe-method li { font-size:18px; }.recipe-margin-note { margin-left:0; margin-top:25px; }.recipe-margin-note p { font-size:16px; }
+  .book-opening-cover { left:6%; width:88%; top:10px; }.book-turning-leaf { left:10px; right:10px; top:10px; bottom:48px; }
+  .modal--book .modal-corner-flower { width:59px; height:53px; right:11px; top:45px; }
+}

@@ -7,7 +7,7 @@ import { sceneOf } from '../src/core/scenes.ts';
 import { validateContent } from '../src/core/validate-content.ts';
 import { createSaveRepository, decodeSave } from '../src/infrastructure/saves.ts';
 import { frameSizes, frameSlices } from '../src/presentation/frame-layout.ts';
-import { act, choices, completeArrival, finishMorning, finishNoon } from './helpers.ts';
+import { act, choices, completeArrival, enterMorning, finishMorning, finishNoon, reachArrivalApproach } from './helpers.ts';
 
 test('the opening exposes observation first, recipes after the book, and no later systems', () => {
   let s = act(createState(content), { type: 'start' });
@@ -20,8 +20,20 @@ test('the opening exposes observation first, recipes after the book, and no late
   assert.equal(featureUnlocked(s, content, 'journal'), true);
   assert.deepEqual(content.recipes!.filter(r => matches(s, r.condition)).map(r => r.id), ['osmanthus-rice']);
   for (const id of ['lifeNotes', 'collection', 'revisit'] as const) assert.equal(featureUnlocked(s, content, id), false);
-  s = completeArrival(); assert.equal(currentGuide(s, content), undefined); assert.equal(featureUnlocked(s, content, 'inventory'), true);
+  s = completeArrival(); assert.equal(currentGuide(s, content)?.control, 'departure'); assert.equal(featureUnlocked(s, content, 'inventory'), true);
+  s = act(s, { type: 'travel' }); assert.equal(currentGuide(s, content)?.control, 'home');
+  assert.equal(featureUnlocked(s, content, 'revisit'), true); assert.equal(featureUnlocked(s, content, 'lifeNotes'), false);
 });
+test('the tutorial still points to grandmother when the final commission instructions were closed early', () => {
+  let state = act(reachArrivalApproach(), { type: 'choose', choiceId: 'accept-commission' });
+  state = act(state, { type: 'close-dialogue' });
+  assert.equal(currentGuide(state, content)?.target, 'grandma');
+  state = act(state, { type: 'talk', hotspotId: 'grandma' });
+  assert.equal(state.dialogue?.nodeId, 'instructions');
+  state = act(state, { type: 'choose', choiceId: 'arrival-set-off' });
+  assert.equal(currentGuide(state, content)?.target, 'book');
+});
+
 test('life records and revisits open after every family outcome, while collection opens later', () => {
   for (const outcome of ['trial', 'table', 'defer'] as const) {
     let s = finishMorning(outcome);
@@ -40,6 +52,28 @@ test('a revisit records grandmothers story and resumes the exact scene without r
   s = act(s, { type: 'resume-journey' });
   assert.equal(s.chapterId, anchor.chapterId); assert.equal(s.sceneId, anchor.sceneId);
   assert.deepEqual(s.decisions, decisions); assert.deepEqual(s.inventory, inventory); assert.equal(s.quests.morning, 'completed');
+});
+
+test('every active Chen room can return home before the family ending and resume with its progress intact', () => {
+  const front = enterMorning();
+  const kitchen = act(choices(act(front, { type: 'talk', hotspotId: 'morning-person' }), ['morning-listen', 'morning-thanks']), { type: 'move', sceneId: 'morning-kitchen' });
+  const yard = act(kitchen, { type: 'move', sceneId: 'morning-yard' });
+  for (const origin of [front, kitchen, yard]) {
+    let state = act(origin, { type: 'revisit', chapterId: 'arrival' });
+    assert.deepEqual(state.journey, origin.journey); assert.equal(state.quests.morning, 'active');
+    assert.equal(featureUnlocked(state, content, 'lifeNotes'), false);
+    const book = content.chapters[0].hotspots.find(h => h.id === 'book')!;
+    assert.ok(matches(state, book.condition));
+    state = act(state, { type: 'talk', hotspotId: 'grandma' }); assert.equal(state.dialogue?.nodeId, 'grandma-early-return');
+    state = choices(state, ['grandma-early-book', 'grandma-record-first-story']);
+    assert.ok(state.clues.includes('grandma-first-page')); assert.equal(featureUnlocked(state, content, 'lifeNotes'), false);
+    state = act(state, { type: 'interact', hotspotId: 'tea', actionId: 'offer-tea' });
+    state = act(state, { type: 'resume-journey' });
+    assert.equal(state.sceneId, origin.sceneId); assert.deepEqual(state.journey, origin.journey);
+    assert.deepEqual(state.decisions, origin.decisions); assert.deepEqual(state.inventory, origin.inventory);
+    assert.ok(state.flags.includes('tea-offered')); assert.equal(state.quests.morning, 'active');
+    assert.equal(state.rewards.filter(id => id === 'arrival-route-reward').length, 1);
+  }
 });
 test('unvisited locations and premature revisits cannot be opened through direct commands', () => {
   const s = completeArrival();
@@ -109,7 +143,9 @@ test('new content references for recipes, guides and collection fragments are ch
   const broken = structuredClone(content);
   broken.recipes![0]!.asset = 'missing-art'; broken.progression!.guides[0]!.target = 'missing-object';
   broken.collection![0]!.study!.effects = [{ kind: 'clue', id: 'missing-fragment' }];
+  broken.progression!.guides[1]!.control = 'menu';
   const errors = validateContent(broken).join('\n'); assert.match(errors, /食谱插图/); assert.match(errors, /引导物件/); assert.match(errors, /missing-fragment/);
+  assert.match(errors, /教学指向无效/);
 });
 test('all panel corners are square slices and floral art is never a stretchable skin', () => {
   assert.equal(frameSizes['ui-osmanthus'], undefined);

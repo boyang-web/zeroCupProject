@@ -8,6 +8,9 @@ import './styles/wood-ui.css';
 import './styles/immersive.css';
 import './styles/objects-and-book.css';
 import './styles/developer.css';
+import './styles/reading-and-guides.css';
+import './styles/journal-paper.css';
+import './styles/noon-service.css';
 const issues = validateContent(content);
 if (issues.length) {
   const message = document.createElement('pre'); message.textContent = `内容配置需要修复：\n${issues.join('\n')}`;

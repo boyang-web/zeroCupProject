@@ -19,11 +19,12 @@ export interface Action {
   condition?: Condition; unavailable?: string; onceKey?: string; feedback?: string;
 }
 export interface DialogueChoice extends Action { next?: string; decision?: string }
-export interface DialogueNode { id: string; speaker: string; text: string; choices: DialogueChoice[]; portrait?: string; direction?: string }
+export interface DialogueBeat { kind: 'speech' | 'narration'; text: string; speaker?: string; portrait?: string; direction?: string }
+export interface DialogueNode { id: string; speaker: string; text: string; choices: DialogueChoice[]; portrait?: string; direction?: string; beats?: DialogueBeat[] }
 export interface Dialogue { id: string; entry: string; entries?: { condition: Condition; nodeId: string }[]; nodes: DialogueNode[] }
-export interface Exhibit { kind: 'book' | 'letter' | 'photo' | 'note'; kicker: string; title: string; lines: string[]; caption?: string }
+export interface Exhibit { kind: 'book' | 'letter' | 'photo' | 'note'; kicker: string; title: string; lines: string[]; caption?: string; footer?: string }
 export type Interaction =
-  | { kind: 'inspect'; text: string; action?: Action; options?: Action[]; exhibit?: Exhibit; activityId?: string; journalLink?: boolean; manipulation?: 'book' | 'flip' | 'unfold' | 'phone'; versions?: { condition: Condition; text: string }[] }
+  | { kind: 'inspect'; text: string; action?: Action; options?: Action[]; exhibit?: Exhibit; activityId?: string; journalLink?: boolean; manipulation?: 'book' | 'flip' | 'unfold' | 'phone'; versions?: { condition: Condition; text: string; exhibit?: Exhibit }[]; }
   | { kind: 'dialogue'; dialogueId: string }
   | { kind: 'minigame'; gameId: string };
 export interface Hotspot {
@@ -63,8 +64,8 @@ export interface Chapter {
 }
 export interface Entry { id: string; title: string; text: string; category?: 'life' | 'detail'; asset?: string }
 export type FeatureId = 'journal' | 'inventory' | 'objectHints' | 'chapterTrack' | 'lifeNotes' | 'collection' | 'revisit';
-export interface GuideStep { id: string; chapterId: string; title: string; text: string; target?: string; condition?: Condition; complete: Condition }
-export interface Recipe { id: string; title: string; subtitle: string; ingredients: string[]; steps: string[]; asset: string; condition: Condition }
+export interface GuideStep { id: string; chapterId: string; title: string; text: string; target?: string; control?: 'journal' | 'menu' | 'departure' | 'home'; condition?: Condition; complete: Condition }
+export interface Recipe { id: string; title: string; subtitle: string; note?: string; ingredients: string[]; steps: string[]; asset: string; condition: Condition }
 export interface CollectionEntry { id: string; title: string; asset: string; condition: Condition; description: string; detail: string; study?: Action }
 export interface Item extends Entry { icon: string }
 export interface QuestDefinition extends Entry { chapterId: string; autoStart?: boolean }
@@ -78,7 +79,7 @@ export interface MinigameDefinition {
   breakfast?: { fillings: string[]; orders: { id: string; person: string; hint: string; filling: string; count: number }[] };
   service?: { pots: number; tickets: { id: string; person: string; cook: number; deadline: number; note: string; half?: boolean; noScallion?: boolean }[] };
 }
-export interface Asset { url: string; label: string; source: string; placeholder: boolean; region?: { x: number; y: number; width: number; height: number; canvasWidth: number; canvasHeight: number }; alphaCutoff?: number }
+export interface Asset { url: string; label: string; source: string; placeholder: boolean; region?: { x: number; y: number; width: number; height: number; canvasWidth: number; canvasHeight: number }; alphaCutoff?: number; inscription?: { lines: string[]; color?: string } }
 export interface ContentPack {
   id: string; version: number; firstChapter: string;
   chapters: Chapter[]; dialogues: Dialogue[]; minigames: MinigameDefinition[];

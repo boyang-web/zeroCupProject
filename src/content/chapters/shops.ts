@@ -1,4 +1,6 @@
 import type { Chapter, Dialogue, MinigameDefinition } from '../../core/contracts.ts';
+import { scriptNode, type DialogueSeed } from '../narrative.ts';
+import { nightScripts } from '../scripts/night.ts';
 
 // The fourth chapter keeps its short draft until the next content pass.
 const seeds = [
@@ -6,7 +8,6 @@ const seeds = [
     person: '许叔', object: '留餐饭盒', module: 'packing', metric: 'care', clue: 'late-note',
     opening: '还没吃？坐。那只饭盒先别动，有人下夜班来取。你这份我再给你盛。',
     note: '纸条上只写着“十点四十，谢谢”。最后一个字的笔画挤进了折痕。',
-    concern: '我十一点关。他要赶不及，得先来个信。不然我在这儿等，他在路上急，谁也睡不好。',
     game: '装好留餐', instruction: '把主食、热菜和餐具放好，再看看保温。前面借的袋子用得上。', target: 75,
   },
 ];
@@ -24,19 +25,19 @@ export const shopChapters: Chapter[] = seeds.map(s => ({
   ],
 }));
 export const shopDialogues: Dialogue[] = seeds.map(s => ({
-  id: `${s.id}-talk`, entry: 'opening', nodes: [
-    { id: 'opening', speaker: s.person, text: s.opening, choices: [
-      { id: `${s.id}-listen`, label: '你慢慢说，我听着。', next: 'concern', effects: [{ kind: 'flag', id: `${s.id}-listened` }, { kind: 'metric', id: s.metric, amount: 1 }] },
-      { id: `${s.id}-decide`, label: '忙完了，我们接着说刚才的事。', next: 'decision', condition: { kind: 'flag', id: `${s.id}-played` }, unavailable: '先把手里的活做完。', effects: [] },
+  id: `${s.id}-talk`, entry: 'opening', nodes: ([
+    { id: 'opening', speaker: s.person, choices: [
+      { id: `${s.id}-listen`, label: '都这么晚了，还要等？', next: 'concern', effects: [{ kind: 'flag', id: `${s.id}-listened` }, { kind: 'metric', id: s.metric, amount: 1 }] },
+      { id: `${s.id}-decide`, label: '饭盒收好了。明天还留吗？', next: 'decision', condition: { kind: 'flag', id: `${s.id}-played` }, unavailable: '先把手里的活做完。', effects: [] },
       { id: `${s.id}-bye`, label: '我先看看。', effects: [] },
     ] },
-    { id: 'concern', speaker: s.person, text: s.concern, choices: [{ id: `${s.id}-thanks`, label: '知道了，我想想。', effects: [] }] },
-    { id: 'decision', speaker: s.person, text: '那就从明天试试？哪儿不合适，再坐下来改。', choices: [
-      { id: `${s.id}-agree`, label: '先把能做的写清楚，再试。', decision: s.id, condition: { kind: 'flag', id: `${s.id}-listened` }, unavailable: '还没听完对方的打算。', effects: [{ kind: 'quest', id: s.id, status: 'completed' }, { kind: 'metric', id: s.metric, amount: 1 }] },
-      { id: `${s.id}-overpromise`, label: '先照原来的办，往后再说。', decision: s.id, effects: [{ kind: 'quest', id: s.id, status: 'failed' }] },
+    { id: 'concern', speaker: s.person, choices: [{ id: `${s.id}-thanks`, label: '那我先帮你装这一份。', effects: [] }] },
+    { id: 'decision', speaker: s.person, choices: [
+      { id: `${s.id}-agree`, label: '写上十一点，也当面跟他说。', decision: s.id, condition: { kind: 'flag', id: `${s.id}-listened` }, unavailable: '还没听完对方的打算。', effects: [{ kind: 'quest', id: s.id, status: 'completed' }, { kind: 'metric', id: s.metric, amount: 1 }] },
+      { id: `${s.id}-overpromise`, label: '还是先别定死，照原来等他吧。', decision: s.id, effects: [{ kind: 'quest', id: s.id, status: 'failed' }] },
       { id: `${s.id}-later`, label: '再等一下。', effects: [] },
     ] },
-  ],
+  ] satisfies DialogueSeed[]).map(node => scriptNode(node, nightScripts[node.id])),
 }));
 export const shopGames: MinigameDefinition[] = seeds.map(s => ({
   id: `${s.id}-game`, chapterId: s.id, module: s.module, title: s.game,
