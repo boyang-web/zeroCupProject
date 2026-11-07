@@ -7,6 +7,7 @@ const registry: Record<string, MinigameLoader> = {
   steamer: async () => ({ component: (await import('./TuningGame.vue')).default }),
   rolling: async () => ({ component: (await import('./TuningGame.vue')).default }),
   packing: async () => ({ component: (await import('./PackingGame.vue')).default }),
+  'dual-packing': async () => ({ component: (await import('./DualPackingGame.vue')).default }),
 };
 export function registerMinigame(id: string, loader: MinigameLoader) {
   if (registry[id]) throw new Error(`小游戏模块已注册：${id}`);

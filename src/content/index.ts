@@ -1,16 +1,17 @@
 import type { ContentPack } from '../core/contracts.ts';
 import { assets } from './assets.ts';
 import { arrival, commission, arrivalGame } from './chapters/arrival.ts';
-import { shopChapters, shopDialogues, shopGames } from './chapters/shops.ts';
+import { night, nightDialogues, nightGame, nightClues } from './chapters/night.ts';
 import { epilogue } from './chapters/epilogue.ts';
 import { morning, morningDialogues, morningGame } from './chapters/morning.ts';
 import { noon, noonDialogues, noonGame } from './chapters/noon.ts';
 import { progression, recipes, collection } from './progression.ts';
 export const content: ContentPack = {
-  id: 'baiwei-homecoming', version: 4, firstChapter: 'arrival', assets, progression, recipes, collection,
-  chapters: [arrival, morning, noon, ...shopChapters, epilogue], dialogues: [commission, ...morningDialogues, ...noonDialogues, ...shopDialogues], minigames: [arrivalGame, morningGame, noonGame, ...shopGames],
-  quests: [arrival, morning, noon, ...shopChapters, epilogue].map(c => ({ id: c.questId, chapterId: c.id, title: c.title, text: c.objective })),
+  id: 'baiwei-homecoming', version: 5, firstChapter: 'arrival', assets, progression, recipes, collection,
+  chapters: [arrival, morning, noon, night, epilogue], dialogues: [commission, ...morningDialogues, ...noonDialogues, ...nightDialogues], minigames: [arrivalGame, morningGame, noonGame, nightGame],
+  quests: [arrival, morning, noon, night, epilogue].map(c => ({ id: c.questId, chapterId: c.id, title: c.title, text: c.objective })),
   clues: [
+    ...nightClues,
     { id: 'job-gap', title: '我这次回来', text: '上份工作已经结束。这趟回长明巷，暂时没有买返程票。手机里还存着没改完的简历。', category: 'life', asset: 'phone-stand' },
     { id: 'grandma-first-page', title: '奶奶的第一张食谱', text: '刚搬到长明巷时，奶奶也把米酒煮糊过。隔壁的大姐教过她，后来她开始拿本子记做法。大姐已经搬走，书里仍留着她写的几行字。', category: 'life', asset: 'recipe-rice' },
     { id: 'photo-margin', title: '背板的小字', text: '“第一次来长明巷，认门认了三回。”这句话写在旧照片背板的边缘，奶奶还没讲过。', category: 'detail' },

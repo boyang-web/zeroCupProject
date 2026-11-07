@@ -3,6 +3,7 @@ import { spriteRegions } from './sprite-regions.ts';
 import { uiRegions } from './ui-regions.ts';
 import { arrivalHomeRegions } from './arrival-home-regions.ts';
 import { morningRegions } from './morning-regions.ts';
+import { nightRegions } from './night-regions.ts';
 const base = import.meta.env?.BASE_URL ?? '/';
 const placeholder = (file: string, label: string, source: string): Asset => ({
   url: `${base}assets/placeholders/${file}`, label, source, placeholder: true,
@@ -12,6 +13,8 @@ const homeSprite = (id: keyof typeof arrivalHomeRegions, label: string): Asset =
   source: '内置 imagegen；老宅生活布局独立素材，见 docs/art/第一章老宅环境-v4.md', placeholder: false,
 });
 export const assets: Record<string, Asset> = {
+  ...Object.fromEntries(Object.entries(nightRegions).map(([id, s]) => [id, { url: `${base}assets/${s.file}`, label: id, region: s.region, source: '内置 imagegen；第四章暖木夜饭素材，见 docs/art/night/prompts.md', placeholder: false, alphaCutoff: .15 }])),
+  ...Object.fromEntries(['front', 'kitchen', 'counter'].map(id => [`night-${id}`, { url: `${base}assets/night/${id}-v1.png`, label: `夜饭小馆 · ${id}`, source: '内置 imagegen；由第四章三场景效果图资产化，见 docs/art/night/prompts.md', placeholder: false }])),
   ...Object.fromEntries(Object.entries(spriteRegions).filter(([id]) => !id.startsWith('ui-')).map(([id, sprite]) => [id, { url: `${base}assets/${sprite.file}`, label: id, source: '内置 imagegen；独立精灵区域，见 docs/art/第二章素材.md', placeholder: false, region: sprite.region, alphaCutoff: .13 }])),
   ...Object.fromEntries(Object.entries(morningRegions).map(([id, sprite]) => [id, { url: `${base}assets/${sprite.file}`, label: sprite.label, source: '内置 imagegen；第二章经营与生活分区，见 docs/art/第二章环境与人物-v2.md', placeholder: false, region: sprite.region }])),
   ...Object.fromEntries(Object.entries(uiRegions).map(([id, sprite]) => [id, { url: `${base}assets/${sprite.file}`, label: id, source: '内置 imagegen；桂影旧木 UI v2，见 docs/art/入口与第一章UI-v2.md', placeholder: false, region: sprite.region, alphaCutoff: .15 }])),

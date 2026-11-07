@@ -1,6 +1,6 @@
 import type { Chapter, Dialogue, MinigameDefinition } from '../../core/contracts.ts';
 
-// The fourth chapter keeps its short draft until the next content pass.
+// Frozen v4 short draft: used only to validate old saves before migration.
 const seeds = [
   { id: 'night', number: 4, title: '夜里有饭', subtitle: '卷帘门留着半人高。', time: '深夜', next: 'epilogue', asset: 'night', position: 'center', tint: 'night',
     person: '许叔', object: '留餐饭盒', module: 'packing', metric: 'care', clue: 'late-note',

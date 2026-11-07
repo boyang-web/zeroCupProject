@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {content} from '../src/content/index.ts';
 import {createState,resolveEnding,transition} from '../src/core/engine.ts';
 import {validateContent} from '../src/core/validate-content.ts';
-import {act,choices,enterMorning,finishMorning,finishNoon,morningDecision} from './helpers.ts';
+import {act,choices,enterMorning,finishMorning,finishNoon,finishNight,morningDecision} from './helpers.ts';
 test('five chapters and all scene/content references are valid',()=>{assert.equal(content.chapters.length,5);assert.deepEqual(validateContent(content),[]);});
 test('locked travel, out-of-scene objects and unknown dialogue commands do not mutate state',()=>{
   const s=act(createState(content),{type:'start'});const copy=structuredClone(s);
@@ -11,14 +11,12 @@ test('locked travel, out-of-scene objects and unknown dialogue commands do not m
   assert.equal(transition(s,{type:'choose',choiceId:'accept-commission'},content).changed,false);
   assert.equal(transition(s,{type:'inspect',hotspotId:'morning-note'},content).changed,false);assert.deepEqual(s,copy);
 });
-test('all eighteen shop outcome combinations reach chapter five and all three endings',()=>{
+test('all twenty-seven shop outcome combinations can leave chapter four',()=>{
   const endings=new Set<string>();
-  for(const a of ['trial','table','defer'] as const)for(const b of ['limit','counter','overload'] as const)for(const success of [true,false]){
-    let s=act(finishNoon(finishMorning(a),b),{type:'travel'});
+  for(const a of ['trial','table','defer'] as const)for(const b of ['limit','counter','overload'] as const)for(const result of ['pickup','cancelled','missed'] as const){
+    let s=finishNight(result,finishNoon(finishMorning(a),b));
     assert.equal(s.quests.morning,a==='defer'?'failed':'completed');assert.equal(s.quests.noon,b==='overload'?'failed':'completed');
-    if(success){s=act(s,{type:'talk',hotspotId:'night-person'});s=choices(s,['night-listen','night-thanks']);}
-    s=act(s,{type:'finish-minigame',gameId:'night-game',result:{status:'completed',score:80,assisted:false}});
-    s=act(s,{type:'talk',hotspotId:'night-person'});s=choices(s,['night-decide',success?'night-agree':'night-overpromise']);s=act(s,{type:'travel'});
+    s=act(s,{type:'travel'});
     assert.equal(s.phase,'ending');assert.equal(s.chapterId,'epilogue');assert.deepEqual(s.visited,['arrival','morning','noon','night','epilogue']);endings.add(resolveEnding(s,content).id);
   }
   assert.equal(endings.size,3);

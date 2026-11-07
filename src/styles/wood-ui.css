@@ -33,9 +33,10 @@
 .immersive .modal--conversation .modal-header { padding: 3px 16px; }
 .immersive .modal--conversation .modal-header h2 { font-size: 13px; opacity: .65; }
 .immersive .modal--conversation .modal-body { max-height: min(560px,calc(100dvh - 145px)); padding-top: 4px; }
-.immersive .dialogue-portrait { position: absolute; left: 3px; bottom: 0; width: 188px; height: 355px; pointer-events: none; }
-.immersive .dialogue-portrait .asset-image { object-position: bottom; mask-image: linear-gradient(#000 85%,transparent); }
-.immersive .conversation.with-portrait { margin-left: 185px; min-height: 230px; }
+.immersive .dialogue-layout.has-portrait { display:grid; grid-template-columns:188px minmax(0,1fr); gap:16px; align-items:start; }
+.immersive .dialogue-layout .dialogue-portrait { position:relative; left:auto; bottom:auto; width:100%; height:330px; pointer-events:none; mask-image:none; }
+.immersive .dialogue-layout .dialogue-portrait .asset-image { width:100%; height:100%; object-fit:contain; object-position:top; mask-image:none; }
+.immersive .dialogue-layout .conversation.with-portrait { margin-left:0; min-height:230px; }
 .immersive .speaker-row { display: flex; align-items: center; gap: 12px; }
 .immersive .speaker-row h3 { font-size: 26px; color: #516448; margin-bottom: 0; }
 .immersive .speaker-row > span { flex: 1; height: 1px; background: linear-gradient(90deg,#a9926359,transparent); }
@@ -76,4 +77,7 @@
   .immersive .modal--conversation { width: calc(100vw - 20px); bottom: 16px; }.immersive .dialogue-portrait { display: none; }.immersive .conversation.with-portrait { margin-left: 0; min-height: 0; }.immersive .dialogue-text { font-size: 17px; line-height: 1.85; }.immersive .speaker-row h3 { font-size: 24px; }.immersive .choice { font-size: 14px; }
   .immersive .inspection-layout.has-artifact { grid-template-columns: 1fr; gap: 18px; padding: 0; }.modal-corner-flower { width: 74px; height: 62px; right: -4px; top: -23px; }
   .collection-detail { grid-template-columns: 1fr; }.collection-detail .asset-image { height: 170px; }.inventory-grid { grid-template-columns: 1fr; }
+  .immersive .dialogue-layout.has-portrait { grid-template-columns:1fr; gap:12px; }
+  .immersive .dialogue-layout .dialogue-portrait { display:block; width:105px; height:180px; justify-self:center; }
+  .immersive .dialogue-layout .conversation.with-portrait { min-height:0; }
 }

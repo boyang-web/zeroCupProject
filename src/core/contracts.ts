@@ -21,7 +21,7 @@ export interface Action {
 export interface DialogueChoice extends Action { next?: string; decision?: string }
 export interface DialogueNode { id: string; speaker: string; text: string; choices: DialogueChoice[]; portrait?: string; direction?: string }
 export interface Dialogue { id: string; entry: string; entries?: { condition: Condition; nodeId: string }[]; nodes: DialogueNode[] }
-export interface Exhibit { kind: 'book' | 'letter' | 'photo' | 'note'; kicker: string; title: string; lines: string[]; caption?: string }
+export interface Exhibit { kind: 'book' | 'letter' | 'photo' | 'note'; kicker: string; title: string; lines: string[]; caption?: string; phone?: { time: string; heading: string; footer: string } }
 export type Interaction =
   | { kind: 'inspect'; text: string; action?: Action; options?: Action[]; exhibit?: Exhibit; activityId?: string; journalLink?: boolean; manipulation?: 'book' | 'flip' | 'unfold' | 'phone'; versions?: { condition: Condition; text: string }[] }
   | { kind: 'dialogue'; dialogueId: string }
@@ -77,6 +77,7 @@ export interface MinigameDefinition {
   itinerary?: { slips: { id: string; title: string; detail: string; slot: string }[]; slots: { id: string; label: string; time: string }[] };
   breakfast?: { fillings: string[]; orders: { id: string; person: string; hint: string; filling: string; count: number }[] };
   service?: { pots: number; tickets: { id: string; person: string; cook: number; deadline: number; note: string; half?: boolean; noScallion?: boolean }[] };
+  packing?: { orders: { id: string; person: string; hint: string; vessel: 'bowl' | 'box'; sauce: 'rim' | 'cup'; utensils: 'beside' | 'outside' }[] };
 }
 export interface Asset { url: string; label: string; source: string; placeholder: boolean; region?: { x: number; y: number; width: number; height: number; canvasWidth: number; canvasHeight: number }; alphaCutoff?: number }
 export interface ContentPack {

@@ -1,0 +1,29 @@
+[
+  {
+    "path": "pickup",
+    "quest": "completed",
+    "decision": "night-agree",
+    "errors": []
+  },
+  {
+    "path": "cancelled",
+    "quest": "completed",
+    "decision": "night-cancel",
+    "errors": []
+  },
+  {
+    "path": "missed",
+    "quest": "failed",
+    "decision": "night-overpromise",
+    "errors": []
+  },
+  {
+    "touch": "390x844",
+    "phone": "readable",
+    "packing": "completed"
+  },
+  {
+    "motion": "camera zoom and return verified",
+    "fullscreen": "enter and exit verified"
+  }
+]

@@ -1,6 +1,7 @@
 import type { ContentPack, GameState } from '../core/contracts.ts';
 import { firstSceneOf, hotspotsOf, scenesOf } from '../core/scenes.ts';
 import { createState, transition } from '../core/engine.ts';
+import { shopChapters, shopDialogues, shopGames } from '../content/chapters/shops.ts';
 
 export interface StoragePort { getItem(key: string): string | null; setItem(key: string, value: string): void; removeItem(key: string): void }
 export const slots = ['auto', 'checkpoint', 'manual-1', 'manual-2', 'manual-3'] as const;
@@ -38,6 +39,38 @@ export function decodeSave(raw: string, content: ContentPack): SaveResult<SaveEn
     const data: unknown = JSON.parse(raw);
     if (!object(data) || data.format !== 'baiwei-save' || data.version !== 1 || typeof data.savedAt !== 'string' || !Number.isFinite(Date.parse(data.savedAt))) throw new Error('存档格式不受支持。');
     let s = data.state;
+    if (content.version === 5 && object(s) && s.contentId === content.id && [2, 3, 4].includes(Number(s.contentVersion))) {
+      // Validate against the actual short chapter before changing any records.
+      const legacy: ContentPack = { ...content, version: 4,
+        chapters: content.chapters.map(c => c.id === 'night' ? shopChapters[0]! : c),
+        dialogues: [...content.dialogues.filter(d => !d.id.startsWith('night-')), ...shopDialogues],
+        minigames: [...content.minigames.filter(g => g.chapterId !== 'night'), ...shopGames],
+      };
+      const checked = decodeSave(raw, legacy);
+      if (!checked.ok) throw new Error(checked.error);
+      const updated = structuredClone(checked.value.state);
+      updated.contentVersion = content.version;
+      const hasNight = updated.visited.includes('night');
+      const concluded = ['completed', 'failed'].includes(updated.quests.night ?? '');
+      updated.seenScenes = updated.seenScenes.map(id => id === 'night-main' ? 'night-front' : id);
+      if (updated.sceneId === 'night-main') updated.sceneId = 'night-front';
+      if (updated.journey.sceneId === 'night-main') updated.journey.sceneId = 'night-front';
+      if (hasNight && !concluded) {
+        updated.flags = updated.flags.filter(id => !id.startsWith('night-'));
+        updated.rewards = updated.rewards.filter(id => !id.startsWith('night-'));
+        updated.metrics.care = 0;
+        delete updated.decisions.night;
+        if (updated.chapterId === 'night') { updated.sceneId = 'night-front'; updated.dialogue = null; }
+      } else if (hasNight) {
+        // A short-version success is not proof that the new pickup occurred.
+        updated.flags = [...new Set([...updated.flags, 'night-legacy', 'night-ended'])];
+        if (updated.chapterId === 'night') updated.dialogue = null;
+      }
+      const knownRewards = new Set(actionsOf(content).map(a => a.onceKey ?? a.id));
+      updated.rewards = updated.rewards.filter(id => knownRewards.has(id));
+      data.state = s = updated;
+      data.notice = hasNight ? concluded ? '已保留第四章短版结果；没有补写取餐、回信或私话。可回访查看旧记录。' : '第四章已扩写，从店门重新读起；前三章及已看过的纸条保留。' : checked.value.notice ?? '已接上原进度，第四章将使用新版内容。';
+    }
     if (object(s)) {
       const migrated = migratePrevious(s, content);
       if (migrated) { s = migrated; data.state = migrated; data.notice = migrated.chapterId==='morning'?'已接上旧进度。第二章从陈家店门口重新读起。':migrated.chapterId==='noon'?'已接上旧进度。第三章从琴记店堂重新读起。':'已接上原来的进度。'; }

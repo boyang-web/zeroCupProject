@@ -16,10 +16,10 @@ function pointerEnd(event: PointerEvent) {
 }
 </script>
 <template>
-  <figure class="physical-object" :class="['physical-object--' + kind, { opened }]">
+  <figure class="physical-object" :class="['physical-object--' + kind, { opened, 'physical-object--message': !!exhibit?.phone }]">
     <button type="button" class="physical-object__surface" :aria-label="kind === 'phone' ? '点亮或熄灭手机屏幕' : kind === 'book' ? '翻开或合上旧书' : kind === 'unfold' ? '展开或折起信纸' : '翻看物件正反面'" :aria-pressed="opened" @click="toggle" @pointerdown="downX = $event.clientX" @pointerup="pointerEnd">
       <template v-if="kind === 'phone'">
-        <span class="physical-phone"><span class="phone-camera"></span><span v-if="opened" class="phone-screen"><small>备忘录 · 草稿</small><strong>{{ exhibit?.title }}</strong><span v-for="line in exhibit?.lines" :key="line">{{ line }}</span><small>最近编辑：昨晚</small></span><span v-else class="phone-asleep"><span>07:12</span><small>长明巷 · 秋</small></span><span class="phone-home"></span></span>
+        <span class="physical-phone"><span class="phone-camera"></span><span v-if="opened" class="phone-screen"><small>{{ exhibit?.phone?.heading ?? '备忘录 · 草稿' }}</small><strong>{{ exhibit?.title }}</strong><span v-for="line in exhibit?.lines" :key="line">{{ line }}</span><small>{{ exhibit?.phone?.footer ?? '最近编辑：昨晚' }}</small></span><span v-else class="phone-asleep"><span>{{ exhibit?.phone?.time ?? '07:12' }}</span><small>长明巷 · 秋</small></span><span class="phone-home"></span></span>
       </template>
       <template v-else-if="kind === 'book'">
         <span class="physical-book__pages"><small>{{ exhibit?.kicker }}</small><strong>{{ exhibit?.lines[0] }}</strong><span v-for="line in exhibit?.lines.slice(1)" :key="line">{{ line }}</span></span>

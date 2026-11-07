@@ -7,8 +7,7 @@ import { computed } from 'vue';
 const props = defineProps<{ node: DialogueNode; state: GameState; content: ContentPack; developer?: boolean }>();
 const portraitAsset = computed(() => {
   const asset=props.node.portrait?props.content.assets[props.node.portrait]:undefined;
-  if(!asset?.region)return asset;
-  return {...asset,region:{...asset.region,height:Math.min(asset.region.height,asset.region.width*1.55)}};
+  return asset;
 });
 const emit = defineEmits<{ choose: [id: string] }>();
 const decisionAhead = computed(() => props.node.choices.some(c => c.decision && !props.state.decisions[c.decision]));
@@ -17,6 +16,7 @@ function conflict(state: GameState, decision: string | undefined, id: string) {
 }
 </script>
 <template>
+  <div class="dialogue-layout" :class="{ 'has-portrait': portraitAsset }">
   <div v-if="portraitAsset" class="dialogue-portrait"><AssetImage :asset="portraitAsset" :alt="node.speaker" /></div>
   <div class="conversation" :class="{ 'with-portrait': node.portrait }" :key="node.id">
   <div class="speaker-row"><h3>{{ node.speaker }}</h3><span></span><small>巷里的话</small></div>
@@ -30,5 +30,6 @@ function conflict(state: GameState, decision: string | undefined, id: string) {
     </div>
   </div>
   <p v-if="decisionAhead && !developer" class="decision-guidance">选定后，这句话会留下记录。选择前的进度会单独保存，可以从菜单里读取。</p>
+  </div>
   </div>
 </template>
