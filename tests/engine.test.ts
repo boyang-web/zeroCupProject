@@ -49,7 +49,7 @@ test('validation detects duplicate ids, cycles, missing references and bad sprit
   const broken=structuredClone(content);broken.chapters[0].next='arrival';broken.chapters[0].asset='missing';broken.chapters[0].exit={kind:'flag',id:'missing-flag'};broken.dialogues[0].nodes[0].choices[0].next='absent';broken.items.push({...broken.items[0]});const text=validateContent(broken).join('\n');for(const word of ['循环','场景资产','absent','重复','missing-flag'])assert.ok(text.includes(word),word);
 });
 test('copy and art replacement do not alter domain transitions',()=>{
-  const copy=structuredClone(content);copy.chapters[0].description='换过的文字';copy.assets.courtyard.url='/new.png';assert.deepEqual(transition(createState(content),{type:'start'},content).state,transition(createState(copy),{type:'start'},copy).state);
+  const copy=structuredClone(content);copy.chapters[0].description='换过的文字';copy.assets[copy.chapters[0].asset].url='/new.png';assert.deepEqual(transition(createState(content),{type:'start'},content).state,transition(createState(copy),{type:'start'},copy).state);
 });
 test('side quests still register without engine modifications',()=>{
   const copy=structuredClone(content);copy.quests.push({id:'optional',chapterId:'arrival',autoStart:true,title:'看看窗外',text:'桂花开了。'});assert.deepEqual(validateContent(copy),[]);assert.equal(transition(createState(copy),{type:'start'},copy).state.quests.optional,'active');

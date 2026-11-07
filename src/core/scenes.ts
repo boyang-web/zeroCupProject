@@ -1,7 +1,7 @@
 import type { Chapter, ContentPack, GameState, SceneDefinition } from './contracts.ts';
 import { matches } from './conditions.ts';
 export function scenesOf(chapter: Chapter): SceneDefinition[] {
-  return chapter.scenes ?? [{ id: `${chapter.id}-main`, title: chapter.title, description: chapter.description, asset: chapter.asset, hotspots: chapter.hotspots, links: [], position: chapter.position, tint: chapter.tint, foreground: chapter.foreground, variants: chapter.variants }];
+  return chapter.scenes ?? [{ id: `${chapter.id}-main`, title: chapter.title, description: chapter.description, asset: chapter.asset, hotspots: chapter.hotspots, links: [], position: chapter.position, tint: chapter.tint, foreground: chapter.foreground, variants: chapter.variants, camera: chapter.camera, decorations: chapter.decorations }];
 }
 export function firstSceneOf(chapter: Chapter) { return chapter.firstScene ?? scenesOf(chapter)[0].id; }
 export function sceneOf(state: GameState, content: ContentPack) {

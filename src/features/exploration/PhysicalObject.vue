@@ -23,7 +23,7 @@ function pointerEnd(event: PointerEvent) {
       </template>
       <template v-else-if="kind === 'book'">
         <span class="physical-book__pages"><small>{{ exhibit?.kicker }}</small><strong>{{ exhibit?.lines[0] }}</strong><span v-for="line in exhibit?.lines.slice(1)" :key="line">{{ line }}</span></span>
-        <span class="physical-book__cover"><span class="physical-book__title">百味录</span><small>长明巷食录</small></span>
+        <span class="physical-book__cover"><span class="physical-book__title">{{ exhibit?.title ?? '百味录' }}</span><small>{{ exhibit?.kicker ?? '长明巷食录' }}</small></span>
       </template>
       <template v-else-if="kind === 'unfold'">
         <span class="physical-letter__sheet"><strong>{{ exhibit?.title }}</strong><span v-for="line in exhibit?.lines" :key="line">{{ line }}</span></span><span class="physical-letter__flap"></span><span class="physical-letter__front"></span>

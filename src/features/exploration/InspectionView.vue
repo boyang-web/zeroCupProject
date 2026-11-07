@@ -24,7 +24,7 @@ const emit = defineEmits<{ option: [id: string]; activity: []; examined: []; jou
       <div v-if="inspection.options" class="choice-list"><div v-for="option in inspection.options" :key="option.id"><button class="choice" :disabled="!developer && (!matches(state, option.condition) || state.rewards.includes(option.onceKey ?? option.id))" @click="emit('option', option.id)"><Icon name="arrow" /><span>{{ !developer && state.rewards.includes(option.onceKey ?? option.id) ? '已经办了' : option.label }}</span></button><small v-if="!developer && !matches(state, option.condition)">{{ option.unavailable }}</small><p v-if="option.feedback && state.rewards.includes(option.onceKey ?? option.id)" class="object-response">{{ option.feedback }}</p></div></div>
       <div v-if="activity" class="inspection-activity"><UiButton tone="jade" :disabled="!developer && !matches(state, activity.condition)" @click="emit('activity')"><Icon name="book" />{{ state.rewards.includes(activity.reward.onceKey ?? activity.reward.id) ? '再看看走访书签' : '整理走访书签' }}<Icon name="arrow" /></UiButton><small v-if="!developer && !matches(state, activity.condition)">{{ activity.unavailable }}</small></div>
       <span v-if="inspection.action && state.rewards.includes(inspection.action.onceKey ?? inspection.action.id)" class="entry-recorded"><Icon name="check" /> 已看过这处细节</span>
-      <UiButton v-if="inspection.manipulation === 'book' && journalAvailable" tone="quiet" @click="emit('journal')">翻开誊清的食谱 →</UiButton>
+      <UiButton v-if="inspection.journalLink && journalAvailable" tone="quiet" @click="emit('journal')">翻开誊清的食谱 →</UiButton>
     </div>
   </div>
 </template>

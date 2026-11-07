@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="730" viewBox="0 0 1100 730">
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#69775c" stroke-width="1.5"/></marker>
+    <pattern id="paving" width="72" height="48" patternUnits="userSpaceOnUse"><path d="M0 0H72V48H0ZM36 0V48" fill="none" stroke="#d3c6ad" stroke-width="1"/></pattern>
+  </defs>
+  <rect width="1100" height="730" rx="16" fill="#f8f1df"/>
+  <g font-family="Microsoft YaHei, sans-serif" fill="#4d3b28">
+    <text x="55" y="52" font-size="26">第一章小院 · 空间与镜头草案</text>
+    <text x="55" y="82" font-size="14" fill="#807359">俯视示意；镜头沿预设路线靠近，保留桌、人物、墙与巷道的远近关系</text>
+    <rect x="150" y="130" width="650" height="470" fill="#e9dfca" stroke="#a68d68" stroke-width="3"/>
+    <rect x="158" y="210" width="634" height="382" fill="url(#paving)"/>
+    <rect x="150" y="130" width="650" height="80" fill="#d5dcc7" stroke="#a68d68" stroke-width="2"/>
+    <rect x="500" y="145" width="185" height="48" fill="#6c7c60" rx="3"/>
+    <path d="M560 145V193M623 145V193M500 169H685" stroke="#d5dcc7" stroke-width="2"/>
+    <text x="545" y="177" fill="#f8f1df" font-size="16">绿窗 · D3</text>
+    <rect x="215" y="151" width="50" height="40" fill="#f8f0da" stroke="#9a6544" stroke-width="3"/>
+    <text x="195" y="229" font-size="16">墙上日历</text>
+    <rect x="810" y="100" width="175" height="330" fill="#dbe3d0" stroke="#a68d68" stroke-width="2"/>
+    <path d="M832 400V136M897 400V136M962 400V136" stroke="#bdc8b2" stroke-width="2"/>
+    <text x="843" y="150" font-size="18">巷道 · D4</text>
+    <path d="M800 260H850V350H800" fill="#f8f1df" stroke="#7a8b6c" stroke-width="5"/>
+    <text x="856" y="302" font-size="15">开门处</text>
+    <path d="M924 370V202" stroke="#69775c" stroke-width="2" marker-end="url(#arrow)"/>
+    <circle cx="195" cy="330" r="65" fill="#99ab7d" fill-opacity=".5"/>
+    <circle cx="168" cy="380" r="42" fill="#82976d" fill-opacity=".6"/>
+    <text x="154" y="325" font-size="17">桂花树</text>
+    <text x="140" y="435" font-size="14">近枝另拆 D0</text>
+    <g transform="translate(596 337) rotate(-13)">
+      <rect x="-58" y="-43" width="116" height="92" rx="38" fill="#cba973" stroke="#97744d" stroke-width="3"/>
+      <ellipse cx="0" cy="0" rx="34" ry="31" fill="#71856c"/>
+      <path d="M-7 15L-32 53" stroke="#4c6048" stroke-width="9" marker-end="url(#arrow)"/>
+    </g>
+    <text x="665" y="335" font-size="17">奶奶 / 藤椅 · D2</text>
+    <text x="665" y="359" font-size="14" fill="#807359">共用座位与朝向</text>
+    <g transform="translate(540 441) rotate(-13)">
+      <rect x="-140" y="-52" width="280" height="104" rx="4" fill="#b58758" stroke="#7f5838" stroke-width="4"/>
+      <rect x="-30" y="-25" width="45" height="46" fill="#6e7b59" stroke="#eee4c9"/>
+      <circle cx="65" cy="0" r="15" fill="#bfcbb3" stroke="#65816b" stroke-width="3"/>
+      <rect x="-101" y="-13" width="32" height="20" fill="#f5e9cf"/>
+    </g>
+    <text x="700" y="455" font-size="17">桌与器物 · D1</text>
+    <text x="700" y="479" font-size="14" fill="#807359">同组移动，杯底不漂移</text>
+    <g fill="none" stroke="#69775c" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#arrow)">
+      <path d="M330 555Q378 575 430 555"/>
+      <path d="M330 555Q340 448 385 390"/>
+      <path d="M330 555Q330 398 275 275"/>
+    </g>
+    <g fill="#f8f1df" stroke="#69775c" stroke-width="3">
+      <circle cx="330" cy="555" r="25"/><circle cx="430" cy="555" r="22"/><circle cx="385" cy="390" r="22"/><circle cx="275" cy="275" r="22"/>
+    </g>
+    <g text-anchor="middle" fill="#536447" font-size="16"><text x="330" y="561">C0</text><text x="430" y="561">C1</text><text x="385" y="396">C2</text><text x="275" y="281">C3</text></g>
+    <text x="285" y="633" font-size="16">院中全景</text>
+    <text x="459" y="561" font-size="14">桌边</text>
+    <text x="337" y="360" font-size="14">交谈</text>
+    <text x="290" y="263" font-size="14">墙边</text>
+    <text x="55" y="686" font-size="15" fill="#807359">建议制作顺序：空间灰模与三张取景样稿 → 补绘完整背景 → 独立分层资产 → 透视相机与交互验收</text>
+  </g>
+</svg>

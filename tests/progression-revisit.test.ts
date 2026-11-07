@@ -33,7 +33,7 @@ test('life records and revisits open after every family outcome, while collectio
 test('a revisit records grandmothers story and resumes the exact scene without resetting choices', () => {
   let s = finishMorning('table'); const anchor = structuredClone(s.journey), decisions = structuredClone(s.decisions), inventory = structuredClone(s.inventory);
   s = act(s, { type: 'revisit', chapterId: 'arrival' });
-  assert.ok(isRevisiting(s)); assert.deepEqual(s.journey, anchor); assert.equal(sceneOf(s, content).time, '回访 · 奶奶的小院');
+  assert.ok(isRevisiting(s)); assert.deepEqual(s.journey, anchor); assert.equal(sceneOf(s, content).time, '回访 · 奶奶的老宅');
   assert.equal(transition(s, { type: 'travel' }, content).changed, false);
   s = act(s, { type: 'talk', hotspotId: 'grandma' }); assert.equal(s.dialogue?.nodeId, 'grandma-later');
   s = choices(s, ['grandma-ask-first-page', 'grandma-record-first-story']); assert.ok(s.clues.includes('grandma-first-page'));
@@ -88,11 +88,22 @@ test('collection details require the system and an actually examined object, and
   s = act(s, { type: 'talk', hotspotId: 'grandma' }); s = act(s, { type: 'choose', choiceId: 'grandma-ask-photo-margin' });
   assert.equal(s.dialogue?.nodeId, 'grandma-new-neighbor');
 });
-test('revisiting at night preserves placements and changes the courtyard lighting', () => {
+test('revisiting at night preserves placements and changes the old-home lighting', () => {
   let s = finishMorning(); s = act(s, { type: 'revisit', chapterId: 'arrival' }); s = act(s, { type: 'interact', hotspotId: 'tea', actionId: 'offer-tea' });
   s = act(s, { type: 'resume-journey' }); s = finishNoon(s); s = act(s, { type: 'travel' });
   s = act(s, { type: 'revisit', chapterId: 'arrival' });
-  assert.equal(sceneOf(s, content).asset, 'courtyard-evening'); assert.ok(s.flags.includes('tea-offered'));
+  assert.equal(sceneOf(s, content).asset, 'arrival-home-evening'); assert.ok(s.flags.includes('tea-offered'));
+});
+
+test('the packed book leaves the desk and returns with the player on a later home visit', () => {
+  const book = content.chapters[0].hotspots.find(h => h.id === 'book')!;
+  assert.ok(matches(act(createState(content), { type: 'start' }), book.condition));
+  const packed = completeArrival();
+  assert.equal(matches(packed, book.condition), false);
+  assert.ok(featureUnlocked(packed, content, 'journal'));
+  const returned = act(finishMorning(), { type: 'revisit', chapterId: 'arrival' });
+  assert.ok(matches(returned, book.condition));
+  assert.equal(returned.inventory['baiwei-book'], 1);
 });
 test('new content references for recipes, guides and collection fragments are checked', () => {
   const broken = structuredClone(content);

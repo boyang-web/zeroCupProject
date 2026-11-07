@@ -23,21 +23,28 @@ export interface DialogueNode { id: string; speaker: string; text: string; choic
 export interface Dialogue { id: string; entry: string; entries?: { condition: Condition; nodeId: string }[]; nodes: DialogueNode[] }
 export interface Exhibit { kind: 'book' | 'letter' | 'photo' | 'note'; kicker: string; title: string; lines: string[]; caption?: string }
 export type Interaction =
-  | { kind: 'inspect'; text: string; action?: Action; options?: Action[]; exhibit?: Exhibit; activityId?: string; manipulation?: 'book' | 'flip' | 'unfold' | 'phone'; versions?: { condition: Condition; text: string }[] }
+  | { kind: 'inspect'; text: string; action?: Action; options?: Action[]; exhibit?: Exhibit; activityId?: string; journalLink?: boolean; manipulation?: 'book' | 'flip' | 'unfold' | 'phone'; versions?: { condition: Condition; text: string }[] }
   | { kind: 'dialogue'; dialogueId: string }
   | { kind: 'minigame'; gameId: string };
 export interface Hotspot {
   id: string; label: string; x: number; y: number; icon: string;
+  cameraView?: string;
   interaction: Interaction; condition?: Condition; completed?: Condition;
   sprite?: { asset: string; width: number; height: number; z?: number };
-  variants?: { condition: Condition; x?: number; y?: number; asset?: string }[];
+  variants?: { condition: Condition; x?: number; y?: number; asset?: string; width?: number; height?: number; cameraView?: string }[];
   drag?: { actionId: string; target: { x: number; y: number; width: number; height: number }; hint: string };
 }
 export interface SceneLink { sceneId: string; label: string; condition?: Condition; unavailable?: string }
+// Framing is presentation data; camera position is never a saved narrative fact.
+export interface SceneCameraView { id: string; label: string; x: number; y: number; zoom: number }
+export interface SceneCamera { views: SceneCameraView[] }
+export interface SceneDecoration { id: string; asset: string; x: number; y: number; width: number; height: number; z?: number; condition?: Condition }
 export interface SceneDefinition {
   id: string; title: string; description: string; asset: string; hotspots: Hotspot[];
   links: SceneLink[]; position?: string; tint?: string;
   foreground?: { clipPath: string; z: number };
+  camera?: SceneCamera;
+  decorations?: SceneDecoration[];
   variants?: { condition: Condition; asset?: string; description?: string; time?: string; tint?: string }[];
   time?: string;
 }
@@ -51,6 +58,8 @@ export interface Chapter {
   revisitDescription?: string;
   scenes?: SceneDefinition[]; firstScene?: string;
   foreground?: SceneDefinition['foreground']; variants?: SceneDefinition['variants'];
+  camera?: SceneCamera;
+  decorations?: SceneDecoration[];
 }
 export interface Entry { id: string; title: string; text: string; category?: 'life' | 'detail'; asset?: string }
 export type FeatureId = 'journal' | 'inventory' | 'objectHints' | 'chapterTrack' | 'lifeNotes' | 'collection' | 'revisit';

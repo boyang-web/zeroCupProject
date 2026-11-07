@@ -54,7 +54,7 @@ export const content: ContentPack = {
     { id: 'insulated-bag', title: '陈伯的保温袋', icon: '袋', text: '他让你先拿着，跑完几家再还。内衬刚换过，摸着有点厚。' },
   ],
   metrics: [
-    { id: 'attention', title: '留心', text: '在归家的小院中，留意到那些不曾说出口的照顾。' },
+    { id: 'attention', title: '留心', text: '在老宅里看看物件，听奶奶把话说完。' },
     { id: 'listening', title: '倾听', text: '在家庭小店中了解与参与的经历。' },
     { id: 'research', title: '调研', text: '在老店中了解需求并参与劳动的经历。' },
     { id: 'care', title: '照应', text: '在夜间小馆中体察与提供帮助的经历。' },

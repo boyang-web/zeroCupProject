@@ -55,6 +55,23 @@ export function validateContent(pack: ContentPack): string[] {
     ref(sceneIds, firstSceneOf(chapter), chapter.id);
     for (const scene of scenes) {
       if (!pack.assets[scene.asset]) errors.push(`${scene.id}: 场景资产不存在`);
+      const views = unique(`${scene.id} 镜头视角`, (scene.camera?.views ?? []).map(v => v.id));
+      for (const view of scene.camera?.views ?? []) {
+        if (![view.x, view.y, view.zoom].every(Number.isFinite) || view.x < 0 || view.x > 100 || view.y < 0 || view.y > 100 || view.zoom < 1 || view.zoom > 2) errors.push(`${scene.id}/${view.id}: 镜头参数超出范围`);
+      }
+      for (const h of scene.hotspots) {
+        if (h.cameraView) ref(views, h.cameraView, h.id);
+        for (const variant of h.variants ?? []) {
+          if (variant.cameraView) ref(views, variant.cameraView, h.id);
+          if (variant.width !== undefined && (!Number.isFinite(variant.width) || variant.width <= 0 || variant.width > 100) || variant.height !== undefined && (!Number.isFinite(variant.height) || variant.height <= 0 || variant.height > 100)) errors.push(`${h.id}: 变化尺寸超出范围`);
+        }
+      }
+      unique(`${scene.id} 陈设`, (scene.decorations ?? []).map(d => d.id));
+      for (const decoration of scene.decorations ?? []) {
+        if (!pack.assets[decoration.asset]) errors.push(`${decoration.id}: 陈设资产不存在`);
+        condition(decoration.condition, decoration.id);
+        if (![decoration.x, decoration.y, decoration.width, decoration.height].every(Number.isFinite) || decoration.x < 0 || decoration.x > 100 || decoration.y < 0 || decoration.y > 100 || decoration.width <= 0 || decoration.height <= 0) errors.push(`${decoration.id}: 陈设位置或尺寸无效`);
+      }
       for (const variant of scene.variants ?? []) { condition(variant.condition, scene.id); if (variant.asset && !pack.assets[variant.asset]) errors.push(`${scene.id}: 变化场景资产不存在`); }
       for (const link of scene.links) { ref(sceneIds, link.sceneId, scene.id); condition(link.condition, scene.id); }
     }

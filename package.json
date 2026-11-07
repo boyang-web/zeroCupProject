@@ -6,6 +6,7 @@
   "engines": { "node": ">=24.15.0" },
   "scripts": {
     "dev": "vite --configLoader native --host 127.0.0.1",
+    "preview:local": "node scripts/local-preview.mjs",
     "typecheck": "vue-tsc --noEmit",
     "build": "vue-tsc --noEmit && vite build --configLoader native",
     "preview": "vite preview --host 127.0.0.1",

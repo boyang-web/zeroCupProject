@@ -36,7 +36,7 @@ const { state, chapter, scene, node, ending, canTravel, message, developer } = g
 const { hints, reducedMotion, volume } = useSettings(storage);
 const ambience = createAmbience(content.assets.ambience!.url);
 const themeStyle = woodVariables(content.assets);
-const audioMessage = ref(''), objectivesOpen = ref(false), fullscreen = ref(false), viewHome = ref(false);
+const audioMessage = ref(''), objectivesOpen = ref(false), fullscreen = ref(false), viewHome = ref(false), closeView = ref(false);
 const showingHome = computed(() => state.value.phase === 'title' || viewHome.value);
 const returning = computed(() => isRevisiting(state.value));
 const unlocked = (id: FeatureId) => featureUnlocked(state.value, content, id, { developer: developer.value });
@@ -181,8 +181,8 @@ onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); ambience.di
       <template v-else>
         <nav v-if="unlocked('chapterTrack')" class="chapter-track" aria-label="旅程进度"><span v-for="c in content.chapters" :key="c.id" :class="{ current: c.id === state.journey.chapterId, visited: state.visited.includes(c.id) }" :aria-current="c.id === state.journey.chapterId ? 'step' : undefined"><b>{{ String(c.number).padStart(2, '0') }}</b><span v-if="c.id === state.journey.chapterId">{{ c.title }}</span></span></nav>
         <div v-if="state.phase === 'playing'" class="play-layout">
-          <SceneView :developer="developer" :chapter="chapter" :content="content" :state="state" :hints="hints && unlocked('objectHints')" :guide-target="!panel && !node ? guide?.target : undefined" :reduced-motion="reducedMotion" @interact="interact" @move="id => game.dispatch({ type: 'move', sceneId: id })" @option="(hotspot, actionId) => game.dispatch({ type: 'interact', hotspotId: hotspot.id, actionId })" />
-          <GuideHint v-if="guide && !panel && !node" :guide="guide" />
+          <SceneView :developer="developer" :chapter="chapter" :content="content" :state="state" :hints="hints && unlocked('objectHints')" :guide-target="!panel && !node && !closeView ? guide?.target : undefined" :blocked="!!panel || !!node" :reduced-motion="reducedMotion" @framing="closeView = $event" @interact="interact" @move="id => game.dispatch({ type: 'move', sceneId: id })" @option="(hotspot, actionId) => game.dispatch({ type: 'interact', hotspotId: hotspot.id, actionId })" />
+          <GuideHint v-if="guide && !panel && !node && !closeView" :guide="guide" />
           <aside v-if="unlocked('inventory') || canTravel || returning" class="chapter-sidebar" :class="{ expanded: objectivesOpen, ready: canTravel || returning }"><WoodFrame kind="ui-toast" /><div class="objective"><button class="objective-toggle quiet" :aria-expanded="objectivesOpen" @click="objectivesOpen = !objectivesOpen"><Icon name="leaf" />{{ returning ? '回到熟悉的地方' : '手头的事' }} {{ objectivesOpen ? '−' : '+' }}</button><h1 v-if="objectivesOpen">{{ returning ? scene.description : chapter.objective }}</h1></div><ol v-if="chapter.beats && objectivesOpen && !returning" class="chapter-beats"><li v-for="(beat, i) in chapter.beats" :key="beat.label" :class="{ done: matches(state, beat.condition) }"><span><Icon v-if="matches(state, beat.condition)" name="check" /><template v-else>{{ i + 1 }}</template></span>{{ beat.label }}</li></ol><div v-if="canTravel || returning" class="sidebar-bottom"><UiButton tone="jade" @click="travel">{{ returning ? '回到原来的行程' : chapter.exitLabel ?? '往前走' }}<Icon name="arrow" /></UiButton></div></aside>
           <div class="scene-controls"><span><Icon name="pin" />{{ scene.title }}</span><UiButton v-if="unlocked('objectHints')" tone="quiet" :aria-pressed="hints" @click="hints = !hints"><Icon name="look" />{{ hints ? '收起提示' : '物件提示' }}</UiButton></div>
         </div>
