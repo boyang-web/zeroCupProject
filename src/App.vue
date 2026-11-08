@@ -51,6 +51,7 @@ type Panel = { kind: 'inspect'; hotspot: Hotspot } | { kind: 'minigame'; gameId:
   | { kind: 'journal' | 'saves' | 'settings' | 'restart' | 'menu' | 'inventory' | 'collection' | 'revisit' | 'achievements' | 'developer' }
   | { kind: 'notice'; title: string; text: string };
 const panel = ref<Panel | null>(null);
+const dialogueReader=ref<InstanceType<typeof DialogueView>>();
 const { presented: presentedGuide, minimized: guideMinimized, visible: guideVisible, focused: guideFocused, chrome: guideChrome, allowsObject } = useTutorialPresentation({
   guide: () => guide.value,
   suspended: () => !!panel.value || !!node.value || closeView.value,
@@ -212,10 +213,10 @@ onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); ambience.di
     <Transition name="hud-reveal" appear><footer v-if="!showingHome && !guideChrome" class="status-bar"><span>长明巷</span><p role="status" aria-live="polite">{{ message }}</p><span>{{ developer ? '测试进度独立保存' : '进度自动保存' }}</span></footer></Transition>
     <p v-if="!showingHome && guideChrome" class="sr-only" role="status">{{ message }}</p>
     <Transition name="discovery"><aside v-if="discovery && showDiscovery" class="discovery-toast" role="status"><WoodFrame kind="ui-toast" /><Icon name="book" /><div><small>{{ discovery.text }}</small><strong>{{ discovery.title }}</strong><button v-if="discovery.book" class="quiet" @click="openPanel('journal'); discovery = undefined">翻开看看 →</button></div><UiButton tone="icon" aria-label="收起发现提示" @click="discovery = undefined"><Icon name="close" /></UiButton></aside></Transition>
-    <Modal v-if="node || panel" :title="title" :variant="modalVariant" @close="closeModal">
+    <Modal v-if="node || panel" :title="title" :variant="modalVariant" :advance-reading="!!node && panel?.kind !== 'developer'" @advance="dialogueReader?.advanceReading()" @close="closeModal">
       <template #actions><UiButton v-if="developer && panel?.kind !== 'developer'" tone="quiet" @click="developerTools">测试工具</UiButton></template>
       <DeveloperTools v-if="panel?.kind === 'developer'" :content="content" :state="state" @jump="debugJump" @dialogue="debugDialogue" @game="debugGame" @hotspot="debugObject" @panel="openPanel" @reset="resetTest" @exit="exitDeveloper" />
-      <DialogueView :developer="developer" v-else-if="node" :key="state.dialogue!.id + ':' + node.id" :node="node" :state="state" :content="content" :reduced-motion="reducedMotion" @choose="choose" />
+      <DialogueView ref="dialogueReader" :developer="developer" v-else-if="node" :key="state.dialogue!.id + ':' + node.id" :node="node" :state="state" :content="content" :reduced-motion="reducedMotion" @choose="choose" />
       <InspectionView :developer="developer" v-else-if="panel?.kind === 'inspect' && inspect" :key="panel.hotspot.id" :inspection="inspect" :state="state" :activity="inspectActivity" :prop-asset="inspectAsset" :journal-available="unlocked('journal')" :reduced-motion="reducedMotion" @examined="examined" @option="useOption" @journal="openPanel('journal')" @activity="panel = { kind: 'minigame', gameId: inspectActivity!.id }" />
       <MinigameHost :developer="developer" v-else-if="panel?.kind === 'minigame' && minigame" :definition="minigame" :state="state" :reduced-motion="reducedMotion" :assets="content.assets" @finish="finish" />
       <JournalView :developer="developer" v-else-if="panel?.kind === 'journal'" :content="content" :state="state" :reduced-motion="reducedMotion" :new-entry-id="pendingEntry" @read="pendingEntry = undefined" />

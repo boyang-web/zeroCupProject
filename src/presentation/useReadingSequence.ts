@@ -64,5 +64,5 @@ export function useReadingSequence(source: ReadingSource, clock: Schedule = sche
   }, { flush: 'sync' });
   watch(() => source.reduced?.(), reduced => { if (reduced) showAll(); }, { flush: 'sync' });
   onScopeDispose(stop);
-  return { visibleCounts, visibleActions, textDone, finishText };
+  return { visibleCounts, visibleActions, textDone, finishText, revealActions: showAll };
 }

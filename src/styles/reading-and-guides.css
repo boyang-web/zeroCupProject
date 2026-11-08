@@ -9,6 +9,8 @@
 .immersive .conversation--narration .dialogue-text { font-size:18px; line-height:2; color:#5c4930; }
 .immersive .home-revisit.ui-button { padding:8px 14px; min-height:35px; font-size:13px; }
 .reading-controls { display:flex; align-items:center; min-height:36px; margin:4px 0; color:#8b7555; font:12px/1.6 var(--font-story); }
+.modal--reading .modal-header h2,.modal--reading .modal-body { cursor:pointer; }
+.reading-touch-hint { margin-left:14px; color:#9a8567; font-size:11px; }
 .immersive .reading-controls .ui-button { font-size:13px; padding:5px 0; min-height:30px; }
 .reading-action { visibility:hidden; pointer-events:none; }
 .reading-action.is-ready { visibility:visible; pointer-events:auto; animation:reading-action-appear .24s ease-out both; }

@@ -69,6 +69,23 @@ test('changing a node or closing the view cancels the previous reading schedule'
   assert.deepEqual(reading.visibleCounts.value, [1]); assert.equal(reading.visibleActions.value, 0); assert.equal(timer.pending, 0);
 });
 
+test('an explicit tap at the final line can reveal all answers and cancels their remaining animation',()=>{
+  const timer=clock(),scope=effectScope();
+  const reading=scope.run(()=>useReadingSequence({texts:()=>['说完这一句再回答。'],actions:()=>4},timer.schedule))!;
+  reading.finishText();timer.tick(180);assert.equal(reading.visibleActions.value,1);
+  reading.revealActions();assert.equal(reading.visibleActions.value,4);assert.equal(timer.pending,0);
+  timer.tick(5000);assert.equal(reading.visibleActions.value,4);
+  scope.stop();
+});
+
+test('a new reading restarts after rapid reveal even when both turns have the same words',()=>{
+  const timer=clock(),scope=effectScope(),page=ref(0);
+  const reading=scope.run(()=>useReadingSequence({identity:()=>String(page.value),texts:()=>['好。'],actions:()=>2},timer.schedule))!;
+  reading.revealActions();page.value++;
+  assert.equal(reading.textDone.value,false);assert.equal(reading.visibleActions.value,0);assert.deepEqual(reading.visibleCounts.value,[0]);
+  reading.finishText();scope.stop();timer.tick(5000);assert.equal(reading.visibleActions.value,0);
+});
+
 test('unlocking the recipe link does not rewind already read text, and reduced motion removes the wait', () => {
   const timer = clock(), scope = effectScope(), actions = ref(1), reduced = ref(false);
   const reading = scope.run(() => useReadingSequence({ texts: () => ['旧方子。'], actions: () => actions.value, reduced: () => reduced.value }, timer.schedule))!;

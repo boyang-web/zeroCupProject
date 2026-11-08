@@ -1,0 +1,634 @@
+{
+  "checks": [
+    "Default animation: every authored turn on the complete first-chapter route matches its speaker and text; header, text, portrait area and blank padding reveal or advance exactly once. Full-text/continue/choice buttons do not double-advance; dragging text and backdrop clicks stay put, and repeated last-line taps leave decisions for the player.",
+    "390px touch and keyboard: a tap in window padding advances a completed line, an explicit Enter selects the hungry reply once, and the next scene answers it correctly without horizontal overflow.",
+    "Early home revisit: the complete rice-wine story can still be learned; inspecting and then discussing the grocery slip acknowledges the already-heard neighbour instead of asking who wrote it again.",
+    "Chen desktop staging: early yard, before and after the two papers, all three endings and trial counter have separate prop rectangles and direct centre clicks. Chalk stays on the dry stool, drawing and returned plan use separate upper-shelf spaces, and the customer slip clears both steamer and route sign.",
+    "Chen 390px stages: independent drawing, chalk and plan remain reachable through visible object shortcuts, flip/read correctly and return their camera to overview; page width stays within the viewport.",
+    "Second-chapter conversations also use window-wide advance: the relocated chalk discovery still opens Nings ordinary conversation, keeps the same reward and returns to exploration."
+  ],
+  "pageErrors": [],
+  "layouts": {
+    "front": {
+      "all": [
+        {
+          "id": "morning-person",
+          "x": 651.984375,
+          "y": 260.890625,
+          "w": 280.015625,
+          "h": 513.296875,
+          "hit": "morning-person",
+          "labelEvents": "none"
+        },
+        {
+          "id": "morning-customer",
+          "x": 1068.015625,
+          "y": 482.421875,
+          "w": 100.796875,
+          "h": 22.5,
+          "hit": "morning-customer",
+          "labelEvents": "none"
+        },
+        {
+          "id": "front-steamer",
+          "x": 1179.2265625,
+          "y": 452.703125,
+          "w": 192,
+          "h": 58.53125,
+          "hit": "front-steamer",
+          "labelEvents": "none"
+        },
+        {
+          "id": "front-stool",
+          "x": 503.9765625,
+          "y": 625.609375,
+          "w": 112,
+          "h": 99.046875,
+          "hit": "front-stool",
+          "labelEvents": "none"
+        }
+      ],
+      "overlaps": []
+    },
+    "kitchen": {
+      "all": [
+        {
+          "id": "chen-kitchen",
+          "x": 804,
+          "y": 323.921875,
+          "w": 296.015625,
+          "h": 522.296875,
+          "hit": "chen-kitchen",
+          "labelEvents": "none"
+        },
+        {
+          "id": "morning-object",
+          "x": 1088.0234375,
+          "y": 365.34375,
+          "w": 176,
+          "h": 121.5625,
+          "hit": "morning-object",
+          "labelEvents": "none"
+        },
+        {
+          "id": "morning-note",
+          "x": 515.9765625,
+          "y": 241.96875,
+          "w": 104,
+          "h": 142.28125,
+          "hit": "morning-note",
+          "labelEvents": "none"
+        },
+        {
+          "id": "kneading-board",
+          "x": 451.171875,
+          "y": 540.046875,
+          "w": 384.015625,
+          "h": 94.546875,
+          "hit": "kneading-board",
+          "labelEvents": "none"
+        },
+        {
+          "id": "work-apron",
+          "x": 36.7421875,
+          "y": 317.625,
+          "w": 128,
+          "h": 180.09375,
+          "hit": "work-apron",
+          "labelEvents": "none"
+        },
+        {
+          "id": "chen-knee",
+          "x": 279.9609375,
+          "y": 748.078125,
+          "w": 64,
+          "h": 55.828125,
+          "hit": "chen-knee",
+          "labelEvents": "none"
+        },
+        {
+          "id": "cabinet",
+          "x": 191.9609375,
+          "y": 526.546875,
+          "w": 128,
+          "h": 117.0625,
+          "hit": "cabinet",
+          "labelEvents": "none"
+        }
+      ],
+      "overlaps": []
+    },
+    "yard": {
+      "all": [
+        {
+          "id": "ning-drawing",
+          "x": 914.40625,
+          "y": 342.84375,
+          "w": 100.796875,
+          "h": 52.21875,
+          "hit": "ning-drawing",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning-chalk",
+          "x": 244.765625,
+          "y": 569.765625,
+          "w": 86.390625,
+          "h": 57.625,
+          "hit": "ning-chalk",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning",
+          "x": 475.96875,
+          "y": 238.375,
+          "w": 280.015625,
+          "h": 535.8125,
+          "hit": "ning",
+          "labelEvents": "none"
+        },
+        {
+          "id": "school-letter",
+          "x": 179.1484375,
+          "y": 636.40625,
+          "w": 128,
+          "h": 58.53125,
+          "hit": "school-letter",
+          "labelEvents": "none"
+        },
+        {
+          "id": "chen-bus-note",
+          "x": 847.1953125,
+          "y": 405.875,
+          "w": 136,
+          "h": 55.828125,
+          "hit": "chen-bus-note",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning-family-photo",
+          "x": 771.1875,
+          "y": 338.328125,
+          "w": 76.796875,
+          "h": 58.53125,
+          "hit": "ning-family-photo",
+          "labelEvents": "none"
+        },
+        {
+          "id": "yard-cup",
+          "x": 1116.8203125,
+          "y": 495.03125,
+          "w": 176,
+          "h": 63.03125,
+          "hit": "yard-cup",
+          "labelEvents": "none"
+        }
+      ],
+      "overlaps": []
+    },
+    "decision": {
+      "all": [
+        {
+          "id": "ning-drawing",
+          "x": 914.40625,
+          "y": 342.84375,
+          "w": 100.796875,
+          "h": 52.21875,
+          "hit": "ning-drawing",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning-chalk",
+          "x": 244.765625,
+          "y": 569.765625,
+          "w": 86.390625,
+          "h": 57.625,
+          "hit": "ning-chalk",
+          "labelEvents": "none"
+        },
+        {
+          "id": "morning-table-plan",
+          "x": 904.0078125,
+          "y": 583.28125,
+          "w": 112,
+          "h": 28.8125,
+          "hit": "morning-table-plan",
+          "labelEvents": "none"
+        },
+        {
+          "id": "chen-yard",
+          "x": 620.78125,
+          "y": 427.484375,
+          "w": 336.015625,
+          "h": 400.734375,
+          "hit": "chen-yard",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning",
+          "x": 1184.015625,
+          "y": 409.46875,
+          "w": 320.015625,
+          "h": 400.734375,
+          "hit": "ning",
+          "labelEvents": "none"
+        },
+        {
+          "id": "school-letter",
+          "x": 179.1484375,
+          "y": 636.40625,
+          "w": 128,
+          "h": 58.53125,
+          "hit": "school-letter",
+          "labelEvents": "none"
+        },
+        {
+          "id": "chen-bus-note",
+          "x": 847.1953125,
+          "y": 405.875,
+          "w": 136,
+          "h": 55.828125,
+          "hit": "chen-bus-note",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning-family-photo",
+          "x": 771.1875,
+          "y": 338.328125,
+          "w": 76.796875,
+          "h": 58.53125,
+          "hit": "ning-family-photo",
+          "labelEvents": "none"
+        },
+        {
+          "id": "yard-cup",
+          "x": 1116.8203125,
+          "y": 495.03125,
+          "w": 176,
+          "h": 63.03125,
+          "hit": "yard-cup",
+          "labelEvents": "none"
+        }
+      ],
+      "overlaps": []
+    },
+    "papers": {
+      "all": [
+        {
+          "id": "ning-drawing",
+          "x": 1179.21875,
+          "y": 569.765625,
+          "w": 99.203125,
+          "h": 28.8125,
+          "hit": "ning-drawing",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning-chalk",
+          "x": 244.765625,
+          "y": 569.765625,
+          "w": 86.390625,
+          "h": 57.625,
+          "hit": "ning-chalk",
+          "labelEvents": "none"
+        },
+        {
+          "id": "morning-table-plan",
+          "x": 901.609375,
+          "y": 585.984375,
+          "w": 100.796875,
+          "h": 28.8125,
+          "hit": "morning-table-plan",
+          "labelEvents": "none"
+        },
+        {
+          "id": "chen-yard",
+          "x": 620.78125,
+          "y": 427.484375,
+          "w": 336.015625,
+          "h": 400.734375,
+          "hit": "chen-yard",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning",
+          "x": 1184.015625,
+          "y": 409.46875,
+          "w": 320.015625,
+          "h": 400.734375,
+          "hit": "ning",
+          "labelEvents": "none"
+        },
+        {
+          "id": "school-letter",
+          "x": 179.1484375,
+          "y": 636.40625,
+          "w": 128,
+          "h": 58.53125,
+          "hit": "school-letter",
+          "labelEvents": "none"
+        },
+        {
+          "id": "chen-bus-note",
+          "x": 1016.0078125,
+          "y": 583.28125,
+          "w": 128,
+          "h": 32.40625,
+          "hit": "chen-bus-note",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning-family-photo",
+          "x": 771.1875,
+          "y": 338.328125,
+          "w": 76.796875,
+          "h": 58.53125,
+          "hit": "ning-family-photo",
+          "labelEvents": "none"
+        },
+        {
+          "id": "yard-cup",
+          "x": 1116.8203125,
+          "y": 495.03125,
+          "w": 176,
+          "h": 63.03125,
+          "hit": "yard-cup",
+          "labelEvents": "none"
+        }
+      ],
+      "overlaps": []
+    },
+    "trial": {
+      "all": [
+        {
+          "id": "ning-drawing",
+          "x": 914.40625,
+          "y": 342.84375,
+          "w": 100.796875,
+          "h": 52.21875,
+          "hit": "ning-drawing",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning-chalk",
+          "x": 244.765625,
+          "y": 569.765625,
+          "w": 86.390625,
+          "h": 57.625,
+          "hit": "ning-chalk",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning",
+          "x": 475.96875,
+          "y": 238.375,
+          "w": 280.015625,
+          "h": 535.8125,
+          "hit": "ning",
+          "labelEvents": "none"
+        },
+        {
+          "id": "school-letter",
+          "x": 179.1484375,
+          "y": 636.40625,
+          "w": 128,
+          "h": 58.53125,
+          "hit": "school-letter",
+          "labelEvents": "none"
+        },
+        {
+          "id": "chen-bus-note",
+          "x": 847.1953125,
+          "y": 405.875,
+          "w": 136,
+          "h": 55.828125,
+          "hit": "chen-bus-note",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning-family-photo",
+          "x": 771.1875,
+          "y": 338.328125,
+          "w": 76.796875,
+          "h": 58.53125,
+          "hit": "ning-family-photo",
+          "labelEvents": "none"
+        },
+        {
+          "id": "yard-cup",
+          "x": 1116.8203125,
+          "y": 495.03125,
+          "w": 176,
+          "h": 63.03125,
+          "hit": "yard-cup",
+          "labelEvents": "none"
+        }
+      ],
+      "overlaps": []
+    },
+    "front-trial": {
+      "all": [
+        {
+          "id": "front-trial-plan",
+          "x": 1356.0390625,
+          "y": 287.90625,
+          "w": 88,
+          "h": 103.546875,
+          "hit": "front-trial-plan",
+          "labelEvents": "none"
+        },
+        {
+          "id": "morning-person",
+          "x": 651.984375,
+          "y": 260.890625,
+          "w": 280.015625,
+          "h": 513.296875,
+          "hit": "morning-person",
+          "labelEvents": "none"
+        },
+        {
+          "id": "morning-customer",
+          "x": 1068.015625,
+          "y": 482.421875,
+          "w": 100.796875,
+          "h": 22.5,
+          "hit": "morning-customer",
+          "labelEvents": "none"
+        },
+        {
+          "id": "front-steamer",
+          "x": 1179.2265625,
+          "y": 452.703125,
+          "w": 192,
+          "h": 58.53125,
+          "hit": "front-steamer",
+          "labelEvents": "none"
+        },
+        {
+          "id": "front-stool",
+          "x": 503.9765625,
+          "y": 625.609375,
+          "w": 112,
+          "h": 99.046875,
+          "hit": "front-stool",
+          "labelEvents": "none"
+        }
+      ],
+      "overlaps": []
+    },
+    "table": {
+      "all": [
+        {
+          "id": "ning-drawing",
+          "x": 914.40625,
+          "y": 342.84375,
+          "w": 100.796875,
+          "h": 52.21875,
+          "hit": "ning-drawing",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning-chalk",
+          "x": 244.765625,
+          "y": 569.765625,
+          "w": 86.390625,
+          "h": 57.625,
+          "hit": "ning-chalk",
+          "labelEvents": "none"
+        },
+        {
+          "id": "morning-table-plan",
+          "x": 904.0078125,
+          "y": 583.28125,
+          "w": 112,
+          "h": 28.8125,
+          "hit": "morning-table-plan",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning",
+          "x": 475.96875,
+          "y": 238.375,
+          "w": 280.015625,
+          "h": 535.8125,
+          "hit": "ning",
+          "labelEvents": "none"
+        },
+        {
+          "id": "school-letter",
+          "x": 179.1484375,
+          "y": 636.40625,
+          "w": 128,
+          "h": 58.53125,
+          "hit": "school-letter",
+          "labelEvents": "none"
+        },
+        {
+          "id": "chen-bus-note",
+          "x": 847.1953125,
+          "y": 405.875,
+          "w": 136,
+          "h": 55.828125,
+          "hit": "chen-bus-note",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning-family-photo",
+          "x": 771.1875,
+          "y": 338.328125,
+          "w": 76.796875,
+          "h": 58.53125,
+          "hit": "ning-family-photo",
+          "labelEvents": "none"
+        },
+        {
+          "id": "yard-cup",
+          "x": 1116.8203125,
+          "y": 495.03125,
+          "w": 176,
+          "h": 63.03125,
+          "hit": "yard-cup",
+          "labelEvents": "none"
+        }
+      ],
+      "overlaps": []
+    },
+    "defer": {
+      "all": [
+        {
+          "id": "ning-drawing",
+          "x": 914.40625,
+          "y": 342.84375,
+          "w": 100.796875,
+          "h": 52.21875,
+          "hit": "ning-drawing",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning-chalk",
+          "x": 244.765625,
+          "y": 569.765625,
+          "w": 86.390625,
+          "h": 57.625,
+          "hit": "ning-chalk",
+          "labelEvents": "none"
+        },
+        {
+          "id": "morning-table-plan",
+          "x": 851.203125,
+          "y": 370.75,
+          "w": 54.390625,
+          "h": 24.3125,
+          "hit": "morning-table-plan",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning",
+          "x": 291.953125,
+          "y": 247.375,
+          "w": 280.015625,
+          "h": 535.8125,
+          "hit": "ning",
+          "labelEvents": "none"
+        },
+        {
+          "id": "school-letter",
+          "x": 179.1484375,
+          "y": 636.40625,
+          "w": 128,
+          "h": 58.53125,
+          "hit": "school-letter",
+          "labelEvents": "none"
+        },
+        {
+          "id": "chen-bus-note",
+          "x": 847.1953125,
+          "y": 405.875,
+          "w": 136,
+          "h": 55.828125,
+          "hit": "chen-bus-note",
+          "labelEvents": "none"
+        },
+        {
+          "id": "ning-family-photo",
+          "x": 771.1875,
+          "y": 338.328125,
+          "w": 76.796875,
+          "h": 58.53125,
+          "hit": "ning-family-photo",
+          "labelEvents": "none"
+        },
+        {
+          "id": "yard-cup",
+          "x": 1116.8203125,
+          "y": 495.03125,
+          "w": 176,
+          "h": 63.03125,
+          "hit": "yard-cup",
+          "labelEvents": "none"
+        }
+      ],
+      "overlaps": []
+    }
+  }
+}

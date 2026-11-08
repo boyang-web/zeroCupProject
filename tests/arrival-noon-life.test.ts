@@ -75,6 +75,26 @@ test('opening breakfast responds to having eaten at home while keeping the defau
   assert.ok(dialogueReadings(morning,hungry).some(b=>b.kind==='speech'&&b.speaker==='小满'&&b.text==='还没。'));
 });
 
+test('grandmothers immediate breakfast reply follows both answers even if the spool was already returned',()=>{
+  for(const choiceId of ['arrival-ate','arrival-hungry'])for(const returned of [false,true]){
+    let s=act(createState(content),{type:'start'});
+    if(returned)s=act(s,{type:'interact',hotspotId:'thread-spool',actionId:'return-spool'});
+    s=choices(act(s,{type:'talk',hotspotId:'grandma'}),[choiceId]);
+    const home=speech('home',s);
+    assert.equal(home.includes('吃过一点也好'),choiceId==='arrival-ate');
+    assert.equal(home.includes('已经搁在小几'),returned);
+    if(returned)assert.doesNotMatch(home,/滚过去/);
+  }
+});
+
+test('the grocery-slip talk recognises handwriting learned during an early home visit',()=>{
+  let s=act(act(completeArrival(),{type:'travel'}),{type:'revisit',chapterId:'arrival'});
+  s=act(s,{type:'inspect',hotspotId:'grocery-slip'});
+  const before=speech('osmanthus',s);assert.match(before,/这行细字是谁/);
+  s=choices(act(s,{type:'talk',hotspotId:'grandma'}),['grandma-early-book','grandma-record-first-story']);
+  const after=speech('osmanthus',s);assert.doesNotMatch(after,/这行细字是谁/);assert.match(after,/这行就是你说的/);
+});
+
 test('hearing only the wrong-door story does not invent the separate rice-wine conversation',()=>{
   let s=act(act(finishMorning(),{type:'travel'}),{type:'revisit',chapterId:'arrival'});
   s=act(s,{type:'inspect',hotspotId:'photo'});s=act(s,{type:'study-collection',entryId:'family-photo'});
