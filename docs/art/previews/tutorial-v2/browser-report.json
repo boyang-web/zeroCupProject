@@ -1,0 +1,15 @@
+{
+  "browser": "local Chrome",
+  "sandbox": true,
+  "checks": [
+    "Desktop: only phone accepts mouse, drag and keyboard input; other objects cannot be selected; opening HUD is quiet; yellow frame removed.",
+    "Cancel/reopen and collapse: the lesson remains at the same step; collapsing releases all objects and reopening restores focus.",
+    "Phone-to-grandmother: the next lesson waits for the panel and returning camera; refreshing restores story progress and the correct focus.",
+    "Commission: gradual multi-speaker reading and original choices work; closing final instructions resumes grandmother; the key does not reveal unrelated HUD.",
+    "Book-to-bookmarks-to-departure: journal appears after reading the book; continuous panels retain the camera; real bookmark placement completes; full HUD reveals in order; optional exploration and chapter two remain available.",
+    "390x844 touch simulation: the off-screen grandmother is represented by one visible shortcut; other objects remain locked; the card and shortcut do not overlap; direct shortcut interaction works.",
+    "320x568: the lesson scrolls inside its wood frame, remains inside the viewport and keeps its target accessible.",
+    "Reduced motion: text and actions are immediate, spotlight/thread do not animate, essential settings remain reachable; developer mode releases focus and exiting restores normal progress."
+  ],
+  "pageErrors": []
+}

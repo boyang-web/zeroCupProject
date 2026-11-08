@@ -11,7 +11,7 @@ import { dialogueReadings } from '../../presentation/dialogue-readings';
 import { sceneOf } from '../../core/scenes';
 const props = defineProps<{ node: DialogueNode; state: GameState; content: ContentPack; developer?: boolean; reducedMotion?: boolean }>();
 const readingPage = ref(0), conversation = ref<HTMLElement>();
-const pages = computed(() => dialogueReadings(props.node));
+const pages = computed(() => dialogueReadings(props.node, props.state));
 const current = computed(() => pages.value[readingPage.value] ?? pages.value[0]!);
 const location = computed(() => sceneOf(props.state,props.content).title);
 const lastPage = computed(() => readingPage.value === pages.value.length - 1);

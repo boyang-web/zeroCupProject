@@ -1,0 +1,82 @@
+{
+  "before": 19650,
+  "after": 42237,
+  "ratio": 2.149465648854962,
+  "groups": [
+    {
+      "section": "对白与回合叙述",
+      "before": 11410,
+      "after": 25329,
+      "ratio": 2.2198948290972833
+    },
+    {
+      "section": "物件正文与阶段版本",
+      "before": 5290,
+      "after": 11003,
+      "ratio": 2.079962192816635
+    },
+    {
+      "section": "人生记录",
+      "before": 1310,
+      "after": 2609,
+      "ratio": 1.9916030534351146
+    },
+    {
+      "section": "线索摘记",
+      "before": 1224,
+      "after": 2353,
+      "ratio": 1.9223856209150327
+    },
+    {
+      "section": "三个结尾",
+      "before": 416,
+      "after": 943,
+      "ratio": 2.266826923076923
+    }
+  ],
+  "dialogues": 11,
+  "nodes": 95,
+  "guideInstructions": [
+    {
+      "id": "noon-window",
+      "text": "点碗看看，问问田姨为什么没动筷。",
+      "characters": 16
+    },
+    {
+      "id": "arrival-look",
+      "text": "点一下柜上的手机。",
+      "characters": 9
+    },
+    {
+      "id": "arrival-talk",
+      "text": "点奶奶，听她说完再接话。",
+      "characters": 12
+    },
+    {
+      "id": "arrival-read",
+      "text": "点写字台上的书。",
+      "characters": 8
+    },
+    {
+      "id": "arrival-pack",
+      "text": "打开旧书，点“整理走访书签”。",
+      "characters": 15
+    },
+    {
+      "id": "arrival-leave",
+      "text": "准备好了就出门，也能先在屋里逛逛。",
+      "characters": 17
+    },
+    {
+      "id": "morning-return-home",
+      "text": "点这里回家，回来还接着刚才的事。",
+      "characters": 16
+    },
+    {
+      "id": "life-and-revisit",
+      "text": "翻开《百味录》，看看新记下的事。",
+      "characters": 16
+    }
+  ],
+  "note": "Counts include punctuation; generated dialogue.text is not counted a second time. Short UI labels, recipe ingredients/steps and object-screen excerpts are excluded."
+}

@@ -136,6 +136,17 @@ export function transition(previous: GameState, command: Command, content: Conte
         state.flags = state.flags.filter(id => !exclusiveFlags.includes(id));
       }
       applyAction(state, choice, options);
+      if (choice.activityId) {
+        const activity = content.minigames.find(game => game.id === choice.activityId && game.chapterId === chapter.id);
+        const here = scene.hotspots.find(h => h.interaction.kind === 'minigame' ? h.interaction.gameId === choice.activityId : h.interaction.kind === 'inspect' && h.interaction.activityId === choice.activityId);
+        if (!activity || !options.developer && (!here || !allowed(here.condition) || !allowed(activity.condition))) return deny(activity?.unavailable ?? '先到操作物件所在的地方，再开始。');
+        if (options.developer && !here) {
+          const location = scenesOf(chapter).find(room => room.hotspots.some(h => h.interaction.kind === 'minigame' ? h.interaction.gameId === choice.activityId : h.interaction.kind === 'inspect' && h.interaction.activityId === choice.activityId));
+          if (!location) return deny('这个玩法没有可用场景。');
+          state.sceneId = location.id; addUnique(state.seenScenes, location.id);
+          if (!isRevisiting(state)) state.journey.sceneId = location.id;
+        }
+      }
       if (choice.decision) state.decisions[choice.decision] = choice.id;
       state.dialogue = choice.next ? { id: active!.id, nodeId: choice.next } : null;
     } else if (command.type === 'finish-minigame') {
@@ -153,7 +164,7 @@ export function transition(previous: GameState, command: Command, content: Conte
       if (command.type === 'talk') {
         if (interaction.kind !== 'dialogue') return deny('这里没有可交谈的人。');
         const dialogue = content.dialogues.find(d => d.id === interaction.dialogueId)!;
-        state.dialogue = { id: dialogue.id, nodeId: dialogue.entries?.find(e => matches(state, e.condition))?.nodeId ?? dialogue.entry };
+        state.dialogue = { id: dialogue.id, nodeId: interaction.entry ?? dialogue.entries?.find(e => matches(state, e.condition))?.nodeId ?? dialogue.entry };
       } else {
         if (interaction.kind !== 'inspect') return deny('这里不能这样操作。');
         const action = command.type === 'inspect' ? interaction.action : interaction.options?.find(a => a.id === command.actionId);

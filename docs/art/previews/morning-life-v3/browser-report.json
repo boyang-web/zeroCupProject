@@ -1,0 +1,15 @@
+{
+  "browser": "local Chrome",
+  "sandbox": true,
+  "checks": [
+    "Normal mode full trial route: opening interruptions, independent paper/chalk discoveries, kitchen lesson and direct activity; five real servings, wrong filling, early steam, real steam timing, two packaging corrections; Ning tasting, invitation, two-paper scene, interrupted ending, route journal and lunchbox message to Qin.",
+    "Meal-first and deferred routes both close independently; Ning keeps looking at one sample separate from a formal three-day trial and from no agreement.",
+    "390x844 touch simulation: kitchen lesson, assisted steam with required packaging, paper/props and no horizontal overflow.",
+    "Default motion: authored speech follows narration, text reveals progressively and closing the new dialogue restores the overview.",
+    "A genuine earlier v5 counter-lesson save resumes without resetting progress; the new kitchen route works, cancellation keeps the lesson and retries start a clean cooking round.",
+    "Final layout: folded plan, ledger and classroom drawing stay on the table surface; none covers Chens face before or after showing the papers.",
+    "Desktop final packaging: five distinct buns, errors scroll into view and the corrected meal finishes normally.",
+    "390px final packaging: five distinct buns, errors scroll into view and the corrected meal finishes normally."
+  ],
+  "pageErrors": []
+}

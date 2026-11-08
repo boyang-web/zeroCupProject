@@ -26,6 +26,7 @@ test('repeat inspection and minigames cannot farm rewards or alternative bag pat
   s=act(s,{type:'inspect',hotspotId:'morning-note'});const before=s.metrics.listening;s=transition(s,{type:'inspect',hotspotId:'morning-note'},content).state;assert.equal(s.metrics.listening,before);
   s=act(s,{type:'interact',hotspotId:'cabinet',actionId:'borrow-with-key'});s=transition(s,{type:'interact',hotspotId:'cabinet',actionId:'borrow-by-asking'},content).state;assert.equal(s.inventory['insulated-bag'],1);
   s=act(s,{type:'move',sceneId:'morning-yard'});s=act(s,{type:'talk',hotspotId:'ning'});s=choices(s,['ning-ask-school','ning-school-close']);s=act(s,{type:'move',sceneId:'morning-kitchen'});
+  s=act(s,{type:'talk',hotspotId:'chen-kitchen'});s=act(s,{type:'choose',choiceId:'morning-return-stove'});
   const game={type:'finish-minigame' as const,gameId:'morning-game',result:{status:'completed' as const,score:90,assisted:false}};s=act(s,game);const after=s.metrics.listening;s=transition(s,game,content).state;assert.equal(s.metrics.listening,after);
 });
 test('borrowing by asking works without the key',()=>{

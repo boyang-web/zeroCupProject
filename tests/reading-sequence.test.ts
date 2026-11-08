@@ -46,6 +46,19 @@ test('show-full-text never chooses a response and still reveals actions one at a
   scope.stop();
 });
 
+test('ordinary commas keep a short breath and sentences no longer hold up the following text', () => {
+  const timer = clock(), scope = effectScope();
+  const reading = scope.run(() => useReadingSequence({ texts: () => ['好，接着说。还行。'], actions: () => 1 }, timer.schedule))!;
+  timer.tick(146); assert.deepEqual(reading.visibleCounts.value, [2]);
+  timer.tick(44); assert.deepEqual(reading.visibleCounts.value, [2]);
+  timer.tick(1); assert.deepEqual(reading.visibleCounts.value, [3]);
+  timer.tick(78); assert.deepEqual(reading.visibleCounts.value, [6]);
+  timer.tick(119); assert.deepEqual(reading.visibleCounts.value, [6]);
+  timer.tick(1); assert.deepEqual(reading.visibleCounts.value, [7]);
+  assert.equal(reading.visibleActions.value, 0);
+  scope.stop(); assert.equal(timer.pending, 0);
+});
+
 test('changing a node or closing the view cancels the previous reading schedule', () => {
   const timer = clock(), scope = effectScope(), text = ref('这是一段长话。');
   const reading = scope.run(() => useReadingSequence({ texts: () => [text.value], actions: () => 2 }, timer.schedule))!;

@@ -1,0 +1,15 @@
+{
+  "browser": "local Chrome",
+  "chromiumSandbox": true,
+  "checks": [
+    "Normal-motion opening: one short instant instruction, compact wood window, focus restriction; long phone and grandmother passages are complete; all original commission choices and real bookmark arrangement reach departure.",
+    "Chen family: expanded table scene preserves authored speaker order and all text through pagination; existing outcome choices remain available.",
+    "Noodle shop: expanded Qin and Tian exchanges fit the dialogue window; narration, portrait changes and final options remain readable.",
+    "Night shop: expanded Xu dialogue and object/action feedback work with unchanged ordering and table reward.",
+    "Paper journal: doubled life entry and recipe margin note remain intact; the bottom and page controls are reachable by scrolling.",
+    "390x844 touch simulation: compact tutorial, off-screen target shortcut, long grandmother reading and choice all work without horizontal text clipping.",
+    "Mobile journal: long life manuscript scrolls to its final line and page controls; paper layout stays inside the viewport.",
+    "Ending and compatibility: expanded ending is visible and survives reload from a normal validated save; no developer bypass was used."
+  ],
+  "pageErrors": []
+}

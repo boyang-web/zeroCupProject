@@ -16,7 +16,9 @@ export function validateContent(pack: ContentPack): string[] {
   const clues = unique('线索', pack.clues.map(x => x.id));
   const items = unique('道具', pack.items.map(x => x.id));
   const metrics = unique('属性', pack.metrics.map(x => x.id));
-  const flagIds=new Set([...pack.dialogues.flatMap(d=>d.nodes.flatMap(n=>n.choices)),...pack.minigames.map(g=>g.reward),...(pack.collection??[]).flatMap(e=>e.study?[e.study]:[]),...pack.chapters.flatMap(c=>hotspotsOf(c).flatMap(h=>h.interaction.kind==='inspect'?[h.interaction.action,...(h.interaction.options??[])].filter(a=>a!==undefined):[]))].flatMap(a=>a.effects.filter(e=>e.kind==='flag').map(e=>e.id)));
+  const allActions=[...pack.dialogues.flatMap(d=>d.nodes.flatMap(n=>n.choices)),...pack.minigames.map(g=>g.reward),...(pack.collection??[]).flatMap(e=>e.study?[e.study]:[]),...pack.chapters.flatMap(c=>hotspotsOf(c).flatMap(h=>h.interaction.kind==='inspect'?[h.interaction.action,...(h.interaction.options??[])].filter(a=>a!==undefined):[]))];
+  const flagIds=new Set(allActions.flatMap(a=>a.effects.filter(e=>e.kind==='flag').map(e=>e.id)));
+  const rewardIds=new Set(allActions.map(a=>a.onceKey??a.id));
   unique('成就', pack.achievements.map(x => x.id)); unique('结局', pack.endings.map(x => x.id));
   const ref = (set: Set<string>, id: string, location: string) => { if (!set.has(id)) errors.push(`${location}: 未定义 ${id}`); };
   const condition = (value: Condition | undefined, location: string) => {
@@ -24,6 +26,7 @@ export function validateContent(pack: ContentPack): string[] {
     switch (value.kind) {
       case 'flag': ref(flagIds,value.id,location);break;
       case 'clue': ref(clues, value.id, location); break;
+      case 'reward': ref(rewardIds, value.id, location); break;
       case 'item': ref(items, value.id, location); break;
       case 'metric': ref(metrics, value.id, location); break;
       case 'quest': ref(quests, value.id, location); break;
@@ -84,7 +87,11 @@ export function validateContent(pack: ContentPack): string[] {
       for (const variant of h.variants ?? []) { condition(variant.condition, h.id); if (variant.asset && !pack.assets[variant.asset]) errors.push(`${h.id}: 变化资产不存在`); }
       if (h.x < 0 || h.x > 100 || h.y < 0 || h.y > 100) errors.push(`${h.id}: 热点超出画面`);
       condition(h.condition, h.id); condition(h.completed, h.id);
-      if (h.interaction.kind === 'dialogue') ref(dialogues, h.interaction.dialogueId, h.id);
+      if (h.interaction.kind === 'dialogue') {
+        const interaction=h.interaction;
+        ref(dialogues, interaction.dialogueId, h.id);
+        if (interaction.entry && !pack.dialogues.find(d=>d.id===interaction.dialogueId)?.nodes.some(n=>n.id===interaction.entry)) errors.push(`${h.id}: 物件指定的对白入口不存在`);
+      }
       if (h.interaction.kind === 'minigame') {
         const gameId = h.interaction.gameId;
         ref(games, gameId, h.id);
@@ -116,9 +123,23 @@ export function validateContent(pack: ContentPack): string[] {
           if (beat.portrait && !pack.assets[beat.portrait]) errors.push(`${dialogue.id}/${node.id}: 回合立绘不存在 ${beat.portrait}`);
         }
       }
+      for (const version of node.versions ?? []) {
+        condition(version.condition, `${dialogue.id}/${node.id}`);
+        if (!version.beats.length) errors.push(`${dialogue.id}/${node.id}: 阶段对白为空`);
+        for (const beat of version.beats) {
+          if (!['speech','narration'].includes(beat.kind) || !beat.text?.trim() || beat.kind==='speech' && !beat.speaker?.trim()) errors.push(`${dialogue.id}/${node.id}: 阶段对白缺少正文或说话人`);
+          if (beat.portrait && !pack.assets[beat.portrait]) errors.push(`${dialogue.id}/${node.id}: 阶段对白立绘不存在 ${beat.portrait}`);
+        }
+      }
     }
     for (const node of dialogue.nodes) for (const choice of node.choices) {
       action(choice); if (choice.next) ref(nodes, choice.next, choice.id);
+      if (choice.activityId) {
+        ref(games, choice.activityId, choice.id);
+        if (choice.next) errors.push(`${choice.id}: 不能同时接续对白与物件玩法`);
+        const owner=pack.minigames.find(g=>g.id===choice.activityId)?.chapterId;
+        if (!pack.chapters.some(c=>c.id===owner && hotspotsOf(c).some(h=>h.interaction.kind==='dialogue' && h.interaction.dialogueId===dialogue.id))) errors.push(`${choice.id}: 白话接续玩法的章节不匹配`);
+      }
     }
   }
   for (const game of pack.minigames) {
@@ -136,8 +157,15 @@ export function validateContent(pack: ContentPack): string[] {
       game.itinerary.slips.forEach(s => ref(slotIds, s.slot, game.id));
     }
     if (game.breakfast) {
-      unique(`${game.id} 订单`, game.breakfast.orders.map(o => o.id));
+      const orderIds=unique(`${game.id} 订单`, game.breakfast.orders.map(o => o.id));
       game.breakfast.orders.forEach(o => { if (!game.breakfast!.fillings.includes(o.filling) || o.count < 1) errors.push(`${game.id}: 配餐内容无效`); });
+      for (const task of game.breakfast.packaging ?? []) {
+        ref(orderIds, task.orderId, game.id);
+        const choices=unique(`${game.id}/${task.orderId} 分装选项`,task.choices.map(choice=>choice.id));
+        ref(choices,task.expected,game.id);
+      }
+      for (const filling of Object.keys(game.breakfast.copy?.fillings ?? {})) if (!game.breakfast.fillings.includes(filling)) errors.push(`${game.id}: 馅料说明没有对应馅料 ${filling}`);
+      for (const order of Object.keys(game.breakfast.copy?.wrongFillings ?? {})) ref(orderIds,order,game.id);
     }
     if (game.service) {
       unique(`${game.id} 小票`, game.service.tickets.map(t=>t.id));
@@ -145,6 +173,10 @@ export function validateContent(pack: ContentPack): string[] {
       game.service.tickets.forEach(t=>{if(t.cook<1||t.deadline<t.cook)errors.push(`${game.id}: 小票时间不可达`);});
     }
     ref(chapters, game.chapterId, game.id); if (game.assistedItem) ref(items, game.assistedItem, game.id); action(game.reward);
+  }
+  for (const entry of [...pack.clues,...pack.items,...pack.metrics,...pack.quests,...pack.achievements,...pack.endings]) for (const version of entry.versions ?? []) {
+    condition(version.condition,entry.id);
+    if (!version.text.trim()) errors.push(`${entry.id}: 阶段记录为空`);
   }
   unique('食谱', (pack.recipes ?? []).map(r => r.id));
   for (const [id, asset] of Object.entries(pack.assets)) {
@@ -161,6 +193,8 @@ export function validateContent(pack: ContentPack): string[] {
     const owner = pack.chapters.find(c => c.id === guide.chapterId);
     if (guide.target && (!owner || !hotspotsOf(owner).some(h => h.id === guide.target))) errors.push(`${guide.id}: 引导物件不存在`);
     if (guide.control && (!['journal', 'menu', 'departure', 'home'].includes(guide.control) || guide.target)) errors.push(`${guide.id}: 教学指向无效`);
+    if (guide.focus && !guide.target) errors.push(`${guide.id}: 聚焦教学需要场景物件`);
+    if (guide.chrome && !['minimal', 'book'].includes(guide.chrome)) errors.push(`${guide.id}: 教学界面阶段无效`);
   }
   pack.achievements.forEach(a => condition(a.condition, a.id)); pack.endings.forEach(e => condition(e.condition, e.id));
   if (!pack.endings.length || pack.endings.at(-1)?.condition) errors.push('最后需要一个无条件兜底结局');

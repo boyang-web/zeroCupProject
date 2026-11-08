@@ -10,3 +10,6 @@ export function ordersReady(plan: Breakfast, servings: Record<string, Serving>) 
   return plan.orders.every(o => servings[o.id]?.filling === o.filling && servings[o.id]?.count === o.count);
 }
 export function steamReady(heat: number) { return Number.isFinite(heat) && heat >= 60 && heat <= 85; }
+export function packagingReady(plan: Breakfast, choices: Record<string, string>) {
+  return (plan.packaging ?? []).every(task => choices[task.orderId] === task.expected);
+}

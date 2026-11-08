@@ -16,7 +16,7 @@ test('long narrative pages preserve every character and keep closing quotes with
 test('all authored dialogue and inspection paragraphs remain readable without losing content when paged', () => {
   const texts = content.dialogues.flatMap(d => d.nodes.map(n => n.text));
   for (const chapter of content.chapters) for (const scene of chapter.scenes ?? [{ hotspots: chapter.hotspots }]) for (const hotspot of scene.hotspots) {
-    if (hotspot.interaction.kind === 'inspect') texts.push(hotspot.interaction.text);
+    if (hotspot.interaction.kind === 'inspect') texts.push(hotspot.interaction.text, ...(hotspot.interaction.versions ?? []).map(version => version.text));
   }
   for (const text of texts) {
     const pages = narrativePages(text);

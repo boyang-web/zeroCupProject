@@ -11,7 +11,8 @@
     "build": "vue-tsc --noEmit && vite build --configLoader native",
     "preview": "vite preview --host 127.0.0.1",
     "test": "node --experimental-strip-types --test --test-isolation=none tests/*.test.ts",
-    "check:content": "node --experimental-strip-types scripts/check-content.ts"
+    "check:content": "node --experimental-strip-types scripts/check-content.ts",
+    "export:story": "node --experimental-strip-types scripts/export-story.ts"
   },
   "dependencies": { "vue": "^3.5.22", "three": "0.180.0", "gsap": "^3.13.0" },
   "devDependencies": {

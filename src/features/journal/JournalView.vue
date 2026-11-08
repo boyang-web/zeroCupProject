@@ -8,6 +8,7 @@ import AssetImage from '../../shared/AssetImage.vue';
 import UiButton from '../../shared/UiButton.vue';
 import UiOrnament from '../../presentation/UiOrnament.vue';
 import HandwrittenText from './HandwrittenText.vue';
+import { entryText } from '../../presentation/entry-text';
 const props = defineProps<{ content: ContentPack; state: GameState; reducedMotion: boolean; newEntryId?: string; developer?: boolean }>();
 const emit = defineEmits<{ read: [] }>();
 const tab = ref<'recipes' | 'life'>(props.newEntryId && props.content.clues.some(c => c.id === props.newEntryId && c.category === 'life') ? 'life' : 'recipes');
@@ -18,7 +19,7 @@ let opening: gsap.core.Timeline | undefined, turn: gsap.core.Timeline | undefine
 const canLife = computed(() => featureUnlocked(props.state, props.content, 'lifeNotes', { developer: props.developer }));
 const spreads = computed(() => tab.value === 'recipes'
   ? (props.content.recipes ?? []).filter(r => props.developer || matches(props.state, r.condition)).map(r => ({ id: r.id, title: r.title, subtitle: r.subtitle, note: r.note, asset: r.asset as string | undefined, ingredients: r.ingredients as string[] | undefined, steps: r.steps as string[] | undefined, text: '' }))
-  : props.content.clues.filter(c => c.category === 'life' && (props.developer || props.state.clues.includes(c.id))).map(c => ({ id: c.id, title: c.title, subtitle: '人间百味 · 问过之后写下', note: undefined as string | undefined, asset: c.asset, ingredients: undefined as string[] | undefined, steps: undefined as string[] | undefined, text: c.text })));
+  : props.content.clues.filter(c => c.category === 'life' && (props.developer || props.state.clues.includes(c.id))).map(c => ({ id: c.id, title: c.title, subtitle: '人间百味 · 问过之后写下', note: undefined as string | undefined, asset: c.asset, ingredients: undefined as string[] | undefined, steps: undefined as string[] | undefined, text: entryText(c, props.state) })));
 const spread = computed(() => spreads.value[page.value] ?? spreads.value[0]);
 const animateInk = computed(() => ready.value && !skipWriting.value && spread.value?.id === writingId.value);
 onMounted(async () => {

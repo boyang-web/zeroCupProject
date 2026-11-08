@@ -3,19 +3,22 @@ import type { GuideStep } from '../../core/contracts';
 import WoodFrame from '../../presentation/WoodFrame.vue';
 import Icon from '../../shared/Icon.vue';
 import UiButton from '../../shared/UiButton.vue';
-import ProgressiveText from '../../shared/ProgressiveText.vue';
-import { nextTick, onBeforeUnmount, onMounted, ref, useId } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
 import { placeGuide, type GuideRect } from '../../presentation/guide-layout';
-import { useReadingSequence } from '../../presentation/useReadingSequence';
-const props = defineProps<{ guide: GuideStep; reducedMotion?: boolean }>();
-const card = ref<HTMLElement>(), minimized = ref(false), target = ref<HTMLButtonElement>();
+
+const props = defineProps<{ guide: GuideStep; active: boolean; minimized: boolean; step: number; total: number; reducedMotion?: boolean }>();
+const emit = defineEmits<{ minimize: [value: boolean] }>();
+const card = ref<HTMLElement>(), target = ref<HTMLButtonElement>();
 const box = ref<GuideRect>(), placement = ref({ x: 24, y: 220, path: '' });
 const id = useId().replace(/:/g, '') + '-guide';
-const { visibleCounts, visibleActions, textDone, finishText } = useReadingSequence({ texts: () => [props.guide.text], actions: () => 1, reduced: () => props.reducedMotion });
+const expanded = computed(() => props.active && !props.minimized);
 let frame = 0, resize: ResizeObserver | undefined, movement: MutationObserver | undefined;
 function measure() {
-  frame = 0; if (!card.value || minimized.value) return;
-  let element = props.guide.control ? document.querySelector<HTMLButtonElement>(`[data-tutorial-control="${props.guide.control}"]`) : document.querySelector<HTMLButtonElement>(`.scene-world [data-guide-object="${CSS.escape(props.guide.target ?? '')}"]`);
+  frame = 0;
+  if (!card.value || !expanded.value) return;
+  let element = props.guide.control
+    ? document.querySelector<HTMLButtonElement>(`[data-tutorial-control="${props.guide.control}"]`)
+    : document.querySelector<HTMLButtonElement>(`.scene-world [data-guide-object="${CSS.escape(props.guide.target ?? '')}"]`);
   const world = element?.getBoundingClientRect();
   if (props.guide.target && (!world || world.left < 8 || world.right > innerWidth - 8 || world.top < 70 || world.bottom > innerHeight - 28)) {
     const shortcut = document.querySelector<HTMLButtonElement>(`[data-guide-shortcut="${CSS.escape(props.guide.target)}"]`);
@@ -32,8 +35,14 @@ function measure() {
   if (box.value) placement.value = placeGuide(box.value, { width: card.value.offsetWidth, height: card.value.offsetHeight }, { width: innerWidth, height: innerHeight });
 }
 function requestMeasure() { if (!frame) frame = requestAnimationFrame(measure); }
-function activate() { if (visibleActions.value) { target.value?.focus({ preventScroll: true }); target.value?.click(); } }
-async function reopen() { minimized.value = false; await nextTick(); requestMeasure(); }
+function activate() {
+  if (!expanded.value || !target.value || target.value.disabled) return;
+  target.value.focus({ preventScroll: true }); target.value.click();
+}
+watch(expanded, async expanded => {
+  if (!expanded) return;
+  await nextTick(); requestMeasure();
+});
 onMounted(() => {
   resize = new ResizeObserver(requestMeasure); if (card.value) resize.observe(card.value);
   const world = document.querySelector('.scene-world');
@@ -43,16 +52,27 @@ onMounted(() => {
 onBeforeUnmount(() => { cancelAnimationFrame(frame); resize?.disconnect(); movement?.disconnect(); window.removeEventListener('resize', requestMeasure); window.removeEventListener('scroll', requestMeasure, true); });
 </script>
 <template>
-  <svg v-if="box && !minimized" class="tutorial-pointer" aria-hidden="true">
-    <defs><mask :id="id + '-cutout'"><rect width="100%" height="100%" fill="white" /><rect :x="box.left - 9" :y="box.top - 9" :width="box.width + 18" :height="box.height + 18" rx="4" fill="black" /></mask><marker :id="id + '-arrow'" markerWidth="14" markerHeight="14" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M 1 1 L 11 6 L 1 11 L 4 6 Z" fill="#93642f" stroke="#fff1ce" stroke-width="1.5" /></marker></defs>
-    <rect width="100%" height="100%" fill="#302319" opacity=".25" :mask="`url(#${id}-cutout)`" />
-    <rect :x="box.left - 7" :y="box.top - 7" :width="box.width + 14" :height="box.height + 14" rx="3" fill="none" stroke="#f2da97" stroke-width="1.5" />
-    <path :d="placement.path" fill="none" stroke="#fff1ce" stroke-width="7" /><path :d="placement.path" fill="none" stroke="#93642f" stroke-width="2.5" :marker-end="`url(#${id}-arrow)`" />
-  </svg>
-  <aside v-show="!minimized" ref="card" class="tutorial-window" :style="{ left: placement.x + 'px', top: placement.y + 'px' }" :aria-label="'操作教学：' + guide.title" role="region">
-    <WoodFrame kind="ui-menu" /><header><span><Icon name="look" />操作教学</span><UiButton tone="quiet" aria-label="收起教学" @click="minimized = true">稍后再看</UiButton></header>
-    <h3>{{ guide.title }}</h3><p @click="finishText"><ProgressiveText :text="guide.text" :revealed="visibleCounts[0]" /></p>
-    <div class="tutorial-actions"><UiButton v-if="!textDone" tone="quiet" aria-label="显示教学全文" @click="finishText">显示全文 ›</UiButton><UiButton v-else-if="target" class="reading-action" :class="{ 'is-ready': visibleActions > 0 }" tone="jade" @click="activate">现在试试 <Icon name="arrow" /></UiButton><small v-if="textDone && target">也可以直接点箭头指向的位置</small></div>
-  </aside>
-  <UiButton v-if="minimized" class="tutorial-restore" tone="paper" @click="reopen"><Icon name="look" />展开教学</UiButton>
+  <Transition name="tutorial-veil">
+    <svg v-if="box && expanded" class="tutorial-pointer" aria-hidden="true">
+      <defs>
+        <radialGradient :id="id + '-feather'"><stop offset="0" stop-color="black" /><stop offset=".6" stop-color="black" /><stop offset="1" stop-color="white" /></radialGradient>
+        <mask :id="id + '-light'"><rect width="100%" height="100%" fill="white" /><ellipse :cx="box.left + box.width / 2" :cy="box.top + box.height / 2" :rx="Math.max(box.width * .78, 70)" :ry="Math.max(box.height * .72, 60)" :fill="`url(#${id}-feather)`" /></mask>
+        <marker :id="id + '-arrow'" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M 1 1 L 7 5 L 1 9" fill="none" stroke="#f5ead3" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" /></marker>
+      </defs>
+      <rect class="tutorial-shade" width="100%" height="100%" fill="#251d16" :opacity="guide.focus ? .42 : .2" :mask="`url(#${id}-light)`" />
+      <path class="tutorial-thread" :d="placement.path" pathLength="1" fill="none" stroke="#f5ead3" stroke-width="1.35" stroke-linecap="round" :marker-end="`url(#${id}-arrow)`" />
+    </svg>
+  </Transition>
+  <Transition name="tutorial-card">
+    <aside v-show="expanded" ref="card" class="tutorial-window" :class="{ 'is-positioned': !!box }" :style="{ left: placement.x + 'px', top: placement.y + 'px' }" :inert="!expanded" :aria-hidden="!expanded" :aria-label="'操作教学：' + guide.title" :aria-describedby="id + '-text'" role="region">
+      <WoodFrame kind="ui-menu" />
+      <header><div v-if="total > 1" class="tutorial-progress" :aria-label="`教学第 ${step} 步，共 ${total} 步`"><span>{{ String(step).padStart(2, '0') }}<small> / {{ String(total).padStart(2, '0') }}</small></span><i v-for="n in total" :key="n" :class="{ passed: n < step, current: n === step }" aria-hidden="true"></i></div><UiButton tone="quiet" aria-label="收起教学" title="收起后可以自由看看" @click="emit('minimize', true)">收起 <span aria-hidden="true">−</span></UiButton></header>
+      <h3>{{ guide.title }}</h3>
+      <p :id="id + '-text'">{{ guide.text }}</p>
+      <div class="tutorial-actions">
+        <UiButton v-if="target" class="tutorial-try" tone="jade" @click="activate">{{ guide.control === 'departure' ? '出门' : '试一下' }} <Icon name="arrow" /></UiButton>
+      </div>
+    </aside>
+  </Transition>
+  <Transition name="hud-reveal"><UiButton v-if="active && minimized" class="tutorial-restore" tone="paper" @click="emit('minimize', false)"><Icon name="leaf" />继续教学 <Icon name="arrow" /></UiButton></Transition>
 </template>

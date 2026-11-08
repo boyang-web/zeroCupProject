@@ -19,15 +19,17 @@ test('moving the front stool changes Chens pose and removes the spare copy', () 
   assert.equal(chen.variants!.find(v => matches(state, v.condition))!.asset, 'chen-seated');
 });
 
-test('the meal uses seated people and hides their empty seats without duplicating Chen', () => {
+test('the meal uses seated people, then clearing breakfast returns Chen to the counter', () => {
   const state = morningDecision();
   assert.equal(matches(state, front.hotspots.find(h => h.id === 'morning-person')!.condition), false);
   assert.ok(matches(state, yard.hotspots.find(h => h.id === 'chen-yard')!.condition));
   assert.equal(yard.hotspots.find(h => h.id === 'ning')!.variants!.find(v => matches(state, v.condition))!.asset, 'ning-seated');
   assert.equal(yard.decorations!.filter(d => d.id.endsWith('empty-seat') && matches(state, d.condition)).length, 0);
   const after = finishMorning('table');
-  assert.equal(matches(after, front.hotspots.find(h => h.id === 'morning-person')!.condition), false);
-  assert.ok(matches(after, yard.hotspots.find(h => h.id === 'chen-yard')!.condition));
+  assert.equal(matches(after, front.hotspots.find(h => h.id === 'morning-person')!.condition), true);
+  assert.equal(matches(after, yard.hotspots.find(h => h.id === 'chen-yard')!.condition), false);
+  assert.equal(yard.decorations!.filter(d => d.id.endsWith('empty-seat') && matches(after, d.condition)).length, 2);
+  assert.equal(matches(after, yard.decorations!.find(d=>d.id==='family-breakfast')!.condition), false);
   const later = act(after, { type: 'travel' });
   assert.ok(matches(later, front.hotspots.find(h => h.id === 'morning-person')!.condition));
   assert.equal(matches(later, yard.hotspots.find(h => h.id === 'chen-yard')!.condition), false);

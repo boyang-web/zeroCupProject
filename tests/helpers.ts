@@ -28,8 +28,9 @@ export function morningDecision(deep=false){
   s=act(s,{type:'move',sceneId:'morning-yard'});
   if(deep)s=act(s,{type:'inspect',hotspotId:'chen-bus-note'});
   s=act(s,{type:'talk',hotspotId:'ning'});s=choices(s,['ning-ask-school',...(deep?['ning-ask-plan','ning-plan-close']:['ning-school-close'])]);
-  s=act(s,{type:'move',sceneId:'morning-kitchen'});s=act(s,{type:'finish-minigame',gameId:'morning-game',result:{status:'completed',score:90,assisted:false}});
-  s=act(s,{type:'move',sceneId:'morning-front'});s=act(s,{type:'talk',hotspotId:'morning-person'});s=choices(s,['morning-invite']);
+  s=act(s,{type:'move',sceneId:'morning-kitchen'});s=act(s,{type:'talk',hotspotId:'chen-kitchen'});s=act(s,{type:'choose',choiceId:'morning-return-stove'});s=act(s,{type:'finish-minigame',gameId:'morning-game',result:{status:'completed',score:90,assisted:false}});
+  s=act(s,{type:'move',sceneId:'morning-yard'});s=act(s,{type:'talk',hotspotId:'ning'});s=choices(s,['ning-ready-bye']);
+  s=act(s,{type:'move',sceneId:'morning-kitchen'});s=act(s,{type:'move',sceneId:'morning-front'});s=act(s,{type:'talk',hotspotId:'morning-person'});s=choices(s,['morning-invite']);
   s=act(s,{type:'move',sceneId:'morning-kitchen'});s=act(s,{type:'move',sceneId:'morning-yard'});return act(s,{type:'talk',hotspotId:'chen-yard'});
 }
 export function finishMorning(kind:'trial'|'table'|'defer'='trial'){

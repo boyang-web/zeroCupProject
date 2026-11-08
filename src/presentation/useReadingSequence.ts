@@ -39,7 +39,7 @@ export function useReadingSequence(source: ReadingSource, clock: Schedule = sche
     visibleCounts.value[passage]!++;
     const atEnd = visibleCounts.value[passage] === passages[passage]!.length;
     if (atEnd && passage === passages.length - 1) { finishPassages(); return; }
-    later(advance, atEnd || /[。！？!?…\n]/u.test(character) ? 220 : /[，、；：,;:]/u.test(character) ? 100 : 26);
+    later(advance, atEnd || /[。！？!?…\n]/u.test(character) ? 120 : /[，、；：,;:]/u.test(character) ? 45 : 26);
   }
   function showAll() {
     stop(); visibleCounts.value = passages.map(p => p.length); textDone.value = true;
