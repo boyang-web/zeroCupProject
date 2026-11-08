@@ -1,6 +1,6 @@
 import type { Chapter, Condition, Dialogue, Hotspot, MinigameDefinition } from '../../core/contracts.ts';
 import { scriptNode, type DialogueSeed } from '../narrative.ts';
-import { qinScripts, chuanScripts, tianScripts } from '../scripts/noon.ts';
+import { qinScripts, chuanScripts, tianScripts, chuanAfterMeal } from '../scripts/noon.ts';
 const flag = (id: string): Condition => ({ kind: 'flag', id });
 const clue = (id: string): Condition => ({ kind: 'clue', id });
 const all = (...conditions: Condition[]): Condition => ({ kind: 'all', conditions });
@@ -490,37 +490,37 @@ const kitchen: Hotspot[] = [
     }
   },
   {
-    "id": "noon-board",
-    "label": "案上的擀面杖",
-    "x": 35.4,
-    "y": 72.6,
-    "cameraView": "kneading",
-    "icon": "look",
-    "sprite": {
-      "asset": "morning-board",
-      "width": 22,
-      "height": 11,
-      "z": 6
-    },
-    "completed": {
-      "kind": "clue",
-      "id": "two-pots"
-    },
-    "interaction": {
-      "kind": "inspect",
-      "text": "案上留着一团做半份的小面，看着没多少，揉开、撒粉、转过来擀，动作却没有跟着少一半。琴姐擀到一边停下，你以为要切了，她又翻过来，将厚的地方补了两下。\n\n她说一头厚一头薄，入锅就有的硬有的烂，不是捞晚一点能补回来。你要记半份三分钟，得先让案上的活做完，别把从揉到擀都算成抬一下手，等到锅边才发现面还在这里。\n\n你顺着她的动作看，手要从哪边扶、案面哪里该再撒点粉，都比站门口想的具体。她将擀好的面放到干处，拿走刮下来的碎末，才给下一团留位置。\n\n锅在旁边滚着，琴姐将面放好，又伸手去拿漏勺。你在纸上补了从案板到锅边这一段，写到最后才抬头，她已经在问下一张要下哪份。",
-      "action": {
-        "id": "read-noon-board",
-        "label": "记在页边",
-        "effects": [
-          {
-            "kind": "clue",
-            "id": "two-pots"
-          }
-        ]
-      }
-    }
+  "id": "noon-board",
+  "label": "案上的擀面杖",
+  "x": 35.4,
+  "y": 72.6,
+  "cameraView": "kneading",
+  "icon": "look",
+  "sprite": {
+    "asset": "morning-board",
+    "width": 22,
+    "height": 11,
+    "z": 6
   },
+  "completed": {
+    "kind": "clue",
+    "id": "two-pots"
+  },
+  "interaction": {
+    "kind": "inspect",
+    "text": "案上留着一团做半份的小面，看着没多少，揉开、撒粉、转过来擀，动作却没有跟着少一半。琴姐擀到一边停下，你以为要切了，她又翻过来，将厚的地方补了两下。\n\n她说一头厚一头薄，入锅就有的硬有的烂，不是捞晚一点能补回来。她指了指旁边已经擀好的那一份，说纸上的三分钟从下锅算，案上的准备得提前做完，不能把揉、擀这些也塞在那三分钟里。\n\n你顺着她的动作看，手要从哪边扶、案面哪里该再撒点粉，都比站门口想的具体。她将擀好的面放到干处，拿走刮下来的碎末，才给下一团留位置。\n\n锅在旁边滚着，琴姐将面放好，又伸手去拿漏勺。你在纸上补了从案板到锅边这一段，写到最后才抬头，她已经在问下一张要下哪份。",
+    "action": {
+      "id": "read-noon-board",
+      "label": "记在页边",
+      "effects": [
+        {
+          "kind": "clue",
+          "id": "two-pots"
+        }
+      ]
+    }
+  }
+},
   {
     "id": "noon-seasoning",
     "label": "调味罐",
@@ -540,23 +540,41 @@ const kitchen: Hotspot[] = [
     }
   },
   {
-    "id": "noon-chopsticks",
-    "label": "多留的一双筷子",
-    "x": 84.6,
-    "y": 51.7,
-    "cameraView": "serving",
-    "icon": "look",
-    "sprite": {
-      "asset": "noon-chopsticks",
-      "width": 6.2,
-      "height": 3.2,
-      "z": 6
-    },
-    "interaction": {
-      "kind": "inspect",
-      "text": "出餐架多留了一双筷子，没套进外送那种餐具里，也没搭在刚洗的碗上。你以为谁漏拿，伸手要收，琴姐从门里说别动，是你的。\n\n你说现在还没点，她叫你等会儿点，不是非得先有人喊半份整份，才能给你留一双。奶奶让你来问做法，又没叫你端半天碗，最后空着肚子回去。\n\n你把筷子放回原处，她路过时又拿出一双短一点的，搁在架子另一头。你问那是谁的，她只说自己用，不用放进装盒子的那一堆，收台面时看见了就能找得到。\n\n架上忽然有两份都还没开吃的餐具。你记住自己这一双在哪儿，免得一忙，又替人装走了。"
-    }
+  "id": "noon-chopsticks",
+  "label": "多留的一双筷子",
+  "x": 84.6,
+  "y": 51.7,
+  "cameraView": "serving",
+  "icon": "look",
+  "sprite": {
+    "asset": "noon-chopsticks",
+    "width": 6.2,
+    "height": 3.2,
+    "z": 6
   },
+  "interaction": {
+    "kind": "inspect",
+    "text": "出餐架留着一双干净筷子，没有装进外送餐具里。你以为谁漏拿，伸手想收，琴姐从门里笑着说，是给你的。\n\n她让你先在旁边搁着，等这几份端出去，就给你下面。奶奶托你来问做法，她也正想留你吃一碗，边吃边说总比空着肚子站这里好。\n\n架子另一头还有她自己那双短一点的筷子。你把两份分开，她路过就认得出，也不用忙起来又到处找。",
+    "versions": [
+      {
+        "condition": {
+          "kind": "any",
+          "conditions": [
+            {
+              "kind": "clue",
+              "id": "noon-record"
+            },
+            {
+              "kind": "clue",
+              "id": "noon-unfinished"
+            }
+          ]
+        },
+        "text": "你用过的那双筷子已经和碗收在一起，出餐架还留着琴姐自己那份。她将短一点的那双往里让，给刚洗好的碗腾位置。\n\n你问她什么时候吃，她说这几张收好了就下，面还留着。她也给自己放着餐具，看见了，总好想起来坐一会儿。"
+      }
+    ]
+  }
+},
   {
     "id": "noon-tasting",
     "label": "尝清汤的小碟",
@@ -674,55 +692,55 @@ const corner: Hotspot[] = [
     }
   },
   {
-    "id": "receipt-printer",
-    "label": "吐单机",
-    "x": 29,
-    "y": 62.5,
-    "cameraView": "printer",
-    "icon": "look",
-    "sprite": {
-      "asset": "printer",
-      "width": 9.5,
-      "height": 9.4,
-      "z": 6
-    },
-    "completed": {
-      "kind": "clue",
-      "id": "capacity"
-    },
-    "interaction": {
-      "kind": "inspect",
-      "text": "机器吐的新纸还卷着，底下压着一张算到半截的草纸。阿川写了下锅、捞面、兑汤、装盒，前两项有数，后两项只剩加号，十五分钟外头圈着问号。\n\n你提起一角，底下还有昨天那半张。他说不是忘了扔，是今天一对，漏的还是那几步。装好盒子总得叫对人，出去认一趟号码，手里的这一碗又不能跟着耽搁。\n\n原纸要留给阿川，晚上还得跟琴姐一起看。你若怕从柜边讲到面案又漏一句，可以抄一份，没填的地方照着留白，别顺手替他算成零。",
-      "action": {
-        "id": "read-receipt-printer",
-        "label": "记在页边",
-        "effects": [
-          {
-            "kind": "clue",
-            "id": "capacity"
-          }
-        ]
-      },
-      "options": [
+  "id": "receipt-printer",
+  "label": "吐单机",
+  "x": 29,
+  "y": 62.5,
+  "cameraView": "printer",
+  "icon": "look",
+  "sprite": {
+    "asset": "printer",
+    "width": 9.5,
+    "height": 9.4,
+    "z": 6
+  },
+  "completed": {
+    "kind": "clue",
+    "id": "capacity"
+  },
+  "interaction": {
+    "kind": "inspect",
+    "text": "机器吐的新纸还卷着，底下压着一张算到半截的草纸。阿川写了下锅、捞面、兑汤、装盒，前两项有数，后两项只剩加号，十五分钟外头圈着问号。\n\n你提起一角，底下还有昨天那半张。他说不是忘了扔，是今天一对，漏的还是那几步。装好盒子总得叫对人，出去认一趟号码，手里的这一碗又不能跟着耽搁。\n\n原纸要留给阿川，晚上还得跟琴姐一起看。你若怕从柜边讲到面案又漏一句，可以抄一份，没填的地方照着留白，别顺手替他算成零。",
+    "action": {
+      "id": "read-receipt-printer",
+      "label": "记在页边",
+      "effects": [
         {
-          "id": "copy-noon-timing",
-          "label": "抄一份，拿去面案一起看",
-          "condition": {
-            "kind": "flag",
-            "id": "chuan-heard"
-          },
-          "unavailable": "先问阿川，这张算到哪里了。",
-          "feedback": "阿川把原纸按住，另给你一张空的：“这张你拿着。原来没填的别替我填，问清了我自己改。”你抄好下锅后头的几项，背面留空，等会儿还能接着记。",
-          "effects": [
-            {
-              "kind": "flag",
-              "id": "noon-timing-copy"
-            }
-          ]
+          "kind": "clue",
+          "id": "capacity"
         }
       ]
-    }
-  },
+    },
+    "options": [
+      {
+        "id": "copy-noon-timing",
+        "label": "抄一份，拿去面案一起看",
+        "condition": {
+          "kind": "flag",
+          "id": "chuan-heard"
+        },
+        "unavailable": "先问阿川，这张算到哪里了。",
+        "feedback": "阿川把原纸按住，另给你一张空的：“这张你拿着。没填的先留空，咱们到姨那儿问清，再一起补。”你将下锅后头几项抄好，背面还有地方接着记。",
+        "effects": [
+          {
+            "kind": "flag",
+            "id": "noon-timing-copy"
+          }
+        ]
+      }
+    ]
+  }
+},
   {
     "id": "order-phone",
     "label": "接单手机",
@@ -806,48 +824,48 @@ const corner: Hotspot[] = [
     }
   },
   {
-    "id": "old-ledger",
-    "label": "旧点单簿",
-    "x": 39,
-    "y": 64,
-    "cameraView": "ledger",
-    "icon": "look",
-    "sprite": {
-      "asset": "morning-ledger-flat",
-      "width": 12.5,
-      "height": 4.5,
-      "z": 6
-    },
-    "completed": {
-      "kind": "clue",
-      "id": "familiar-names"
-    },
-    "interaction": {
-      "kind": "inspect",
-      "manipulation": "book",
-      "text": "旧账本按名字写了不少小字，田姨半份不葱，阿宁醋少一点，奶奶后面画了一只小碗，添着尝了再加。你认出名字，原来每个人来吃饭时总说的那两句，也会被人这样记下来。\n\n并不是一条写过就再不动，有的旧偏好划掉，旁边标着日子。琴姐说那人从前一点辣都不要，后来连着三回来自己添，她才将旧字改了，省得下次想当然替人拦着。\n\n你说照这个看，熟客一来就知道要什么，琴姐却叫你别只看名字。今天想多吃一点，哪天嗓子不舒服，人都可以改口，记着是为了少漏一句，不是以后替他把每次都点完。\n\n她让你将簿子留在柜边，拿新单去问眼前的人。你合好时特意没夹进食谱，免得奶奶的米酒做法旁边，又混进去一页别人今天吃什么。",
-      "exhibit": {
-        "kind": "book",
-        "kicker": "琴记 · 点单簿",
-        "title": "点单簿",
-        "lines": [
-          "田姨：半份，不葱。",
-          "阿宁：醋少一点。",
-          "阿婆：小碗，醋少一点。"
-        ]
-      },
-      "action": {
-        "id": "read-old-ledger",
-        "label": "记住熟客的这一页",
-        "effects": [
-          {
-            "kind": "clue",
-            "id": "familiar-names"
-          }
-        ]
-      }
-    }
+  "id": "old-ledger",
+  "label": "旧点单簿",
+  "x": 39,
+  "y": 64,
+  "cameraView": "ledger",
+  "icon": "look",
+  "sprite": {
+    "asset": "morning-ledger-flat",
+    "width": 12.5,
+    "height": 4.5,
+    "z": 6
   },
+  "completed": {
+    "kind": "clue",
+    "id": "familiar-names"
+  },
+  "interaction": {
+    "kind": "inspect",
+    "manipulation": "book",
+    "text": "旧账本按名字写了不少小字，田姨半份不葱，阿宁醋少一点，奶奶后面画了一只小碗，添着尝了再加。你认出名字，原来每个人来吃饭时总说的那两句，也会被人这样记下来。\n\n并不是一条写过就再不动，有的旧偏好划掉，旁边标着日子。琴姐说那人从前一点辣都不要，后来连着三回来自己添，她才将旧字改了，省得下次想当然替人拦着。\n\n你说照这个看，熟客一来就知道要什么，琴姐却叫你别只看名字。今天想多吃一点，哪天嗓子不舒服，人都可以改口，记着是为了少漏一句，不是以后替他把每次都点完。\n\n她让你将簿子留在柜边，拿新单去问眼前的人。你合好时特意没夹进食谱，免得奶奶的米酒做法旁边，又混进去一页别人今天吃什么。",
+    "exhibit": {
+      "kind": "book",
+      "kicker": "琴记 · 点单簿",
+      "title": "点单簿",
+      "lines": [
+        "田姨：半份，不葱。",
+        "阿宁：醋少一点。",
+        "阿婆：小碗，醋自己添。"
+      ]
+    },
+    "action": {
+      "id": "read-old-ledger",
+      "label": "记住熟客的这一页",
+      "effects": [
+        {
+          "kind": "clue",
+          "id": "familiar-names"
+        }
+      ]
+    }
+  }
+},
   {
     "id": "rejected-slip",
     "label": "取消的一单",
@@ -2168,7 +2186,7 @@ const tianNodes: DialogueSeed[] = [
 ];
 export const noonDialogues: Dialogue[] = [
   {id:'noon-talk',entry:'opening',entries:[{"condition":{"kind":"all","conditions":[{"kind":"flag","id":"noon-limited"},{"kind":"not","condition":{"kind":"reward","id":"noon-limit-record"}}]},"nodeId":"limited-end"},{"condition":{"kind":"all","conditions":[{"kind":"flag","id":"noon-counter"},{"kind":"not","condition":{"kind":"reward","id":"noon-counter-record"}}]},"nodeId":"counter-end"},{"condition":{"kind":"all","conditions":[{"kind":"flag","id":"noon-overload"},{"kind":"not","condition":{"kind":"reward","id":"noon-overload-record"}}]},"nodeId":"overload-end"},{"condition":{"kind":"flag","id":"noon-limited"},"nodeId":"after-limit"},{"condition":{"kind":"flag","id":"noon-counter"},"nodeId":"after-counter"},{"condition":{"kind":"flag","id":"noon-overload"},"nodeId":"after-overload"},{"condition":{"kind":"flag","id":"noon-ended"},"nodeId":"after"},{"condition":{"kind":"flag","id":"noon-played"},"nodeId":"decision"},{"condition":{"kind":"flag","id":"noon-listened"},"nodeId":"preparing"}],nodes:qinNodes.map(n=>scriptNode({portrait:'qin',...n},qinScripts[n.id]))},
-  {id:'chuan-talk',entry:'opening',entries:[{condition:flag('noon-played'),nodeId:'after'},{condition:flag('chuan-heard'),nodeId:'count'}],nodes:chuanNodes.map(n=>scriptNode({portrait:'chuan',...n},chuanScripts[n.id]))},
+  {id:'chuan-talk',entry:'opening',entries:[{condition:flag('noon-played'),nodeId:'after'},{condition:flag('chuan-heard'),nodeId:'count'}],nodes:chuanNodes.map(n=>scriptNode({portrait:'chuan',...n,versions:n.id==='after'?[{condition:ateOwnBowl,beats:chuanAfterMeal}]:undefined},chuanScripts[n.id]))},
   {id:'tian-talk',entry:'opening',entries:[{condition:flag('noon-played'),nodeId:'served'},{condition:flag('tian-heard'),nodeId:'break'}],nodes:tianNodes.map(n=>scriptNode({portrait:'tian',...n},tianScripts[n.id]))},
 ];
 export const noonGame: MinigameDefinition = {
@@ -2257,18 +2275,18 @@ export const noonGame: MinigameDefinition = {
       }
     ],
     "copy": {
-      "intro": "琴姐把三张夹到你面前：“你排，我先不下。两口都煮面，一口里前头没捞完，后头就得接着等。田姐那份也别忘了改。”",
+      "intro": "琴姐将三张单夹到你面前：“来，你先排，我看着。两口都煮面，一口里前头没捞完，后头就得接着等。田姐那份单独认一下。”",
       "tickets": {
-        "delivery": "阿川：“这张门口取，盒装。报完尾号再给，别问谁的，头一个应声的你就递。”",
-        "tian": "田姨：“半份，不葱。从下锅起六分钟端来，吃面的工夫另留。别给我一碗热的，又叫我马上走。”",
+        "delivery": "阿川：“这张门口取，盒装。交出去之前报一下尾号，对清了再给，我跟你一块认。”",
+        "tian": "田姨：“半份，不葱。从下锅起六分钟端来，吃饭的工夫另留，照刚才说好的就行。”",
         "inside": "琴姐：“后来这一桌问过了，可以等。不是不用做，给他们也留个排得到的地方。”"
       },
-      "missing": "琴姐往夹子上看：“还剩一张呢，别下面空了，上面就当做完。先把谁等着认全。”",
-      "wrongHalf": "田姨：“半份，你这张还是整的。别想着快点端来，份量也跟着忘。”",
-      "wrongScallion": "琴姐伸手拦了拦：“先看不葱那两个字。这会儿改，总比端出去再挑省事。”",
+      "missing": "琴姐指了指木夹：“还剩一张，咱们先给它也留好位置，再一起往下算。”",
+      "wrongHalf": "田姨：“我这份要半份，纸上还是整的，麻烦你再改一下。”",
+      "wrongScallion": "琴姐：“不葱这两个字也勾上，咱们在下锅前认准，端出去就是对的。”",
       "orderError": "阿川顺着纸上的时间加一遍：“同一口得接着算。你看这里，前一份占着，后一份就晚了，还能换到另一口试。”",
-      "help": "琴姐把田姨那张夹到前头，外送放另一口：“这两个先并着做，能等的跟在后头。你自己再认一遍半份、不葱，别光看我挪纸。”",
-      "ready": "你把三张按人再念一遍，琴姐才点头：“行，就照这个下。你盯田姐那碗，阿川认外送的号码，我捞后头那份，别都挤在一个地方。”"
+      "help": "琴姐将田姨那张夹在前头，外送放另一口：“这两个先并着做，能等的跟后头。你再认认半份、不葱，咱们一块对好。”",
+      "ready": "你将三张按人再念一遍。琴姐点点头：“行，就照这个下。你留意田姐那碗，阿川认外送号码，后头那份我捞，咱们各接一头。”"
     }
   },
   "reward": {

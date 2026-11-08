@@ -91,7 +91,7 @@ export const collection: CollectionEntry[] = [
     "id": "thread-spool"
   },
   "description": "奶奶补锅垫用的白线，跟篮里的蓝线分着放。线轴还好，用完留一截在外头。",
-  "detail": "白线补锅垫，篮里的蓝线留着补围裙。用完留一小截在外头，下一回就不必拿针一点点挑。奶奶抽过一段，确认够这条边用，又将线头压回木轴外沿。"
+  "detail": "白线补锅垫，蓝的留给围裙。线头留在木轴外沿，奶奶抽一小段就能接着用。她说自己有时收得太紧，还要拿针挑，见我替她理开，便将布也放一边，让我坐近些说话。"
 },
     {
   "id": "home-grocery-slip",
@@ -110,12 +110,30 @@ export const collection: CollectionEntry[] = [
     study: { id: 'collection-photo-note', label: '记住背板的小字', effects: [{ kind: 'clue', id: 'photo-margin' }], feedback: "这行写的是奶奶自己刚来长明巷那会儿，没跟六岁那张照片讲在一起。回去将背板翻给她看，就能从这里问起。" } },
   { id: 'old-book', title: '补过书脊的百味录', asset: 'arrival-book', condition: { kind: 'clue', id: 'book' },
     description: "奶奶交过来的旧食谱，书脊补过，前面写满的页和后面空白的页厚薄不太一样。拿近托住再翻，夹的纸就不会一起滑出去。", detail: "书脊棉线有深浅，旧线旁边又穿过新的一道，补完没有将原来的剪掉。靠前的纸油印多，后面夹大小不同的便条，有的从购物单反面写起。奶奶自己找字也得先认方向，读错一张，旁边又会多出一句解释。" },
-  { id: 'home-letter', title: '回家前的那封信', asset: 'arrival-letter', condition: { kind: 'clue', id: 'invitation' },
-    description: "从外地带回来的家信，车票仍夹在里面。原来的折痕跟车上重折的没有对齐，展开时要沿着两道慢慢抚平。", detail: "奶奶说屋子留着，被子晒了，叫我不用先定住几天。她写了要带的外套，没写哪天必须回去，反倒交代车次改了得说一声。我只顾在手机上重订，忘了她也会照着旧时间算。" },
+  {
+  "id": "home-letter",
+  "title": "回家前的那封信",
+  "asset": "arrival-letter",
+  "condition": {
+    "kind": "clue",
+    "id": "invitation"
+  },
+  "description": "从外地带回来的家信，车票仍夹在里面。原来的折痕跟车上重折的没有对齐，展开时要沿着两道慢慢抚平。",
+  "detail": "奶奶在信里说被子晒过，家里东西没挪多少，找不着就叫她。旧书可以等睡足、吃过饭再一起看，住几天都好，不用先定回去的日子。到站的票根仍夹在里面，来的车次改过，我也给她回过电话。"
+},
   { id: 'home-calendar', title: '奶奶的旧日历', asset: 'prop-calendar', condition: { kind: 'clue', id: 'calendar' },
     description: "日历常翻的位置卷了边，后面夹着眼镜店小票。今天那格尤其挤，名字旁边还有改过的一道日期。", detail: "取眼镜和买桂花各有小勾，回家那件只圈着。奶奶说昨晚忙着叫我吃饭，没来得及补，拿笔过来还得在格子外头找个空处。几种笔色叠着，不是一天坐在那里写齐的。" },
-  { id: 'home-tea', title: '挪到手边的茶杯', asset: 'arrival-cup', condition: { kind: 'flag', id: 'tea-offered' },
-    description: "老宅里挪到藤椅边的杯碟，原先离奶奶远一点，她伸过一次手没够着，又接着说了别的。", detail: "缺口一直朝里，杯柄和碟上的小花错开，她手一转就认得该从哪里喝。我想替她换方向，她说这样就好，反倒指旁边的空杯子，问我怎么还不给自己倒。" },
+  {
+  "id": "home-tea",
+  "title": "挪到手边的茶杯",
+  "asset": "arrival-cup",
+  "condition": {
+    "kind": "flag",
+    "id": "tea-offered"
+  },
+  "description": "挪到奶奶手边的杯碟，杯柄朝着她用惯的方向。她喝一口，又叫我拿自己的杯子，坐下来一起喝。",
+  "detail": "这只杯口有一点缺，奶奶认得从哪边喝。给我留的新杯子还收在柜上，她让我拿来，自己将壶往中间让了让。小几腾出一点地方，两个人伸手都够得着。"
+},
   { id: 'my-phone', title: '屏幕里的旧备忘', asset: 'arrival-phone', condition: { kind: 'clue', id: 'job-gap' },
     description: "回来后总想再看一眼的手机，简历只改到半句，没新消息也要点进去看看。往前翻，还能找到上班那几年留下的小便签。", detail: "第一份工资那天写过今晚吃顿好的，下面有小馆的名字和几个人点的菜。我自己那一项只打了一个肉字，后面空着，反倒是那天站门口迟迟没散的样子，比菜单记得清。",
     study: { id: 'collection-first-pay', label: '读读那条旧便签', effects: [{ kind: 'clue', id: 'my-first-pay' }], feedback: "你记起那天结完账，几个人还站在店门口，嘴上各说该走哪边，人却没动。饭店的菜一时记不全，那会儿没急着散的样子先回来了。" } },

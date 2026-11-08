@@ -181,6 +181,19 @@ test('tasting is optional, repeatable without extra reward and cannot replace th
   assert.equal(s.dialogue?.nodeId,'decision');
 });
 
+test('Chuan asks about a pending bowl and acknowledges the eaten bowl after every ending without changing state',()=>{
+  const dialogue=content.dialogues.find(d=>d.id==='chuan-talk')!,after=dialogue.nodes.find(n=>n.id==='after')!;
+  const pending=act(noonDecision(),{type:'close-dialogue'});
+  assert.ok(dialogueReadings(after,pending).some(b=>b.speaker==='小满'&&b.text==='正要去。'));
+  for(const kind of ['limit','counter','overload']as const){
+    const state=finishNoon(finishMorning(),kind),copy=structuredClone(state);
+    const words=dialogueReadings(after,state);
+    assert.ok(words.some(b=>b.speaker==='小满'&&b.text.startsWith('吃过了')));
+    assert.ok(!words.some(b=>b.speaker==='小满'&&b.text==='正要去。'));
+    assert.deepEqual(state,copy);
+  }
+});
+
 test('ten actual preceding v5 saves keep every stored field and the old explained service remains playable',()=>{
   for(const[name,slots]of Object.entries(old)){
     const raw=Object.values(slots)[0]!,decoded=decodeSave(raw,content);

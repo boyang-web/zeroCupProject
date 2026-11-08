@@ -22,10 +22,126 @@ const front: Hotspot[] = [
     interaction: { kind: 'dialogue', dialogueId: 'morning-talk' } },
   { id: 'morning-customer', label: '周叔留的纸条', x: 69.9, y: 56.1, cameraView: 'customer-slip', icon: 'letter', sprite: sprite('morning-sample-sheet', 6.3, 2.5),
     interaction: {"kind":"inspect","text":"纸条上写着老周，青菜两只，七点半。陈伯在分两袋下面画了线，顺便把里头那只的袋口压平。\n\n你问为什么分开，他说老周自己路上先吃，给老伴的留到家，不能叠着压扁。褶子收得齐的那只放里边，拿的时候也好分。\n\n“菜的还没出，你先认这张。”他把纸夹回去，又伸手去接钱。","action":{"id":"read-customer-order","label":"看看留单","effects":[{"kind":"clue","id":"breakfast-order"}]},"versions":[{"condition":{"kind":"flag","id":"morning-zhou-collected"},"text":"老周那两袋已经拿走了，留单上添了一个小勾。你想把纸收进账本，陈伯叫留在这里，明早还照这个数。"},{"condition":{"kind":"flag","id":"morning-played"},"text":"新出的一笼已经分好，老周两只青菜包各装一袋，跟后院的三个碗分开。阿宁来拿时又对了一遍纸条，才将袋口折好。"}]}, completed: clue('breakfast-order') },
-  inspect('front-steamer', '已经卖空的一笼', 'morning-empty-steamer', 79.7, 56.8, 12, 6.5, "你掀开笼盖，里面只剩湿布，包子底留下的圈还看得出来。有一处压得深些，你沿着一圈圈数到十一，想再数一遍，陈伯在旁边说十二只，不用替他盘这个账。\n\n最后一只的印子折进布角里，陈伯提起来给你看，接着把布抖开。你正想伸手托住笼底，他叫你先别摸，说刚空下来的东西，看着没冒气，碰一下也知道热不热。\n\n他将空笼让到能透气的位置，给下一笼腾地方。前头有人问还有没有，你回头想指这只，才反应过来，空出来的只是这一层，后头还有一锅在忙。", undefined, 'empty-basket'),
+  {
+  "id": "front-steamer",
+  "label": "已经卖空的一笼",
+  "x": 79.7,
+  "y": 56.8,
+  "cameraView": "empty-basket",
+  "icon": "look",
+  "sprite": {
+    "asset": "morning-empty-steamer",
+    "width": 12,
+    "height": 6.5,
+    "z": 8
+  },
+  "interaction": {
+    "kind": "inspect",
+    "text": "你掀开笼盖，里面只剩湿布，包子底留下的圈还看得出来。有一处压得深些，你沿着一圈圈数到十一，想再数一遍，陈伯在旁边接了一句，十二只，最后那只印子在折起来的布角里。\n\n最后一只的印子折进布角里，陈伯提起来给你看，接着把布抖开。你正想伸手托住笼底，他叫你先别摸，说刚空下来的东西还烫，先晾在这里。\n\n他将空笼让到能透气的位置，给下一笼腾地方。前头有人问还有没有，你回头想指这只，才反应过来，空出来的只是这一层，后头还有一锅在忙。"
+  }
+},
   { ...inspect('front-buns', '给早班留的包子', 'morning-reserved', 65, 59.6, 7.5, 7.2, "两只青菜包刚装好，各在一只纸袋里。阿宁折袋口时还认了认褶子，把好看些的留在里侧。\n\n陈伯叫你别拿错，老周那份要带走，后院才是你的。他说完伸手又对一遍，怕自己忙着忙着把两袋合成一袋。", undefined, 'pickup'), condition: {"kind":"all","conditions":[{"kind":"flag","id":"morning-played"},{"kind":"not","condition":{"kind":"flag","id":"morning-zhou-collected"}}]} },
-  { id: 'front-stool', label: '小凳子', x: 35, y: 80.5, cameraView: 'waiting-seat', icon: 'look', sprite: sprite('prop-stool', 7, 11, 2), condition: all(atCounter, not(flag('chen-has-seat'))), completed: flag('chen-has-seat'),
-    interaction: {"kind":"inspect","text":"凳面横在长凳底下，你蹲下转了个方向才提出。陈伯先问你拿它做什么，见你往柜边挪，又赶紧叫别挡着门。\n\n“钱匣子旁边？”你指了指，他伸手试了试纸袋的位置，说再往里一点。凳子还稳，坐着也够得着零钱。","options":[{"id":"move-stool","label":"把凳子挪到柜台外侧","feedback":"陈伯坐下试了两秒，伸手摸到纸袋，才点头说还行。你往后院看，他立刻叫你别喊阿宁，等会儿忙过了自己会坐。","effects":[{"kind":"flag","id":"chen-has-seat"},{"kind":"metric","id":"listening","amount":1}]}]} },
+  {
+  "id": "front-stool",
+  "label": "小凳子",
+  "x": 35,
+  "y": 80.5,
+  "cameraView": "waiting-seat",
+  "icon": "look",
+  "sprite": {
+    "asset": "prop-stool",
+    "width": 7,
+    "height": 11,
+    "z": 2
+  },
+  "condition": {
+    "kind": "all",
+    "conditions": [
+      {
+        "kind": "not",
+        "condition": {
+          "kind": "all",
+          "conditions": [
+            {
+              "kind": "flag",
+              "id": "chen-at-table"
+            },
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "flag",
+                "id": "morning-defer"
+              }
+            },
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "flag",
+                "id": "morning-meal-cleared"
+              }
+            },
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "any",
+                "conditions": [
+                  {
+                    "kind": "quest",
+                    "id": "noon",
+                    "status": "active"
+                  },
+                  {
+                    "kind": "quest",
+                    "id": "noon",
+                    "status": "completed"
+                  },
+                  {
+                    "kind": "quest",
+                    "id": "noon",
+                    "status": "failed"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "kind": "not",
+        "condition": {
+          "kind": "flag",
+          "id": "chen-has-seat"
+        }
+      }
+    ]
+  },
+  "completed": {
+    "kind": "flag",
+    "id": "chen-has-seat"
+  },
+  "interaction": {
+    "kind": "inspect",
+    "text": "小凳子收在长凳底下，你蹲下转了个方向才提出。陈伯看见你拿着，往钱匣子那边比了比，说那块正好空着，坐着也能递纸袋。\n\n你先将凳子稳稳放下，陈伯伸手试试纸袋够不够得到，又给门口拿早饭的人让出一点通路。",
+    "options": [
+      {
+        "id": "move-stool",
+        "label": "把凳子挪到柜台外侧",
+        "feedback": "陈伯坐下试了试，伸手正好摸到纸袋：“这地方还真顺手。你帮我留着这点空，我就能坐着等下一笼了。”他把腿往里收一点，朝你摆摆手，让你也去后院坐会儿。",
+        "effects": [
+          {
+            "kind": "flag",
+            "id": "chen-has-seat"
+          },
+          {
+            "kind": "metric",
+            "id": "listening",
+            "amount": 1
+          }
+        ]
+      }
+    ]
+  }
+},
 ];
 const kitchen: Hotspot[] = [
   {"id":"chen-kitchen","label":"陈伯 · 学下一笼","x":59.5,"y":94,"cameraView":"teaching","icon":"look","sprite":{"asset":"chen","width":18.5,"height":58,"z":7},"interaction":{"kind":"dialogue","dialogueId":"morning-talk","entry":"before-food"},"condition":{"kind":"all","conditions":[{"kind":"flag","id":"morning-listened"},{"kind":"not","condition":{"kind":"flag","id":"morning-played"}}]}},
@@ -34,14 +150,122 @@ const kitchen: Hotspot[] = [
     interaction: { kind: 'minigame', gameId: 'morning-game' }, completed: flag('morning-played') },
   { id: 'morning-note', label: '阿宁改过的备料表', x: 35.5, y: 42.7, cameraView: 'plan', icon: 'look', sprite: sprite('morning-prep', 6.5, 15.8), completed: clue('schedule'),
     interaction: {"kind":"inspect","manipulation":"flip","text":"表头原来写着七点开门，旁边后来添了一个问号。再往下才是新改的安排：后天六点半先送一盆样面，第一笼照旧，拿第二笼试；好不好用，陈伯自己验。\n\n三天的试样做完，再谈要不要晚开。背面记了面粉和发面的情况、送面人的电话，底下还有一行别一开口就吵，写完又划掉。\n\n阿宁的字越到后面越挤。你把表翻回来，陈伯说先别拿那个七点问他，后头那几行他还没看全。","exhibit":{"kind":"note","kicker":"阿宁改过几回的备料表","title":"先试样，开门另议","lines":["后天六点半，先送一盆样面。","第一笼照旧，拿第二笼试。","先试三天，先验再收。","七点开门？等样面试过再说。","背面：面粉、发面情况与送面电话。"]},"action":{"id":"morning-read","label":"记下这个安排","effects":[{"kind":"clue","id":"schedule"}]},"versions":[]} , condition: {"kind":"not","condition":{"kind":"flag","id":"chen-at-table"}}},
-  inspect('kneading-board', '擀面板', 'morning-board', 40.2, 70.5, 24, 10.5, "陈伯将面团往旁边一收，案面上几道刀印才露出来。平常上头撒着粉，你只看见白的一片，这会儿凑近，能认出深浅不同的线，有的还绕开了木头原来的小结。\n\n最外面那道横得直，像特意量过。你拿手指在旁边比，陈伯先将你的手拨开，让你洗干净了再碰，接着才说那是从前分剂子用的准线。刚开始总是一头大一头小，怕上笼以后熟得也不一样，就先留一段照着切。\n\n你问现在还照不照着看，他将一截面团搓好，分出来几块，没再低头找线。切完他自己看了一眼，挑出稍大的一块重新揉了揉，说手熟归手熟，也不是闭眼就能做。\n\n新撒的面粉又盖住那道印子。你刚要夸他分得准，他先叫你别照着这大小猜能吃几个，包馅还没算进去，真饿了去拿后面给你留的。", 'board-marks', 'bench'),
-  inspect('work-apron', '洗得发白的围裙', 'prop-apron', 6.3, 55.3, 8, 20, "围裙口袋里露着两颗水果糖，糖纸外沾了一点面粉，你想帮着抖掉，陈伯隔着门先说拿一颗，别一把全掏了，待会儿还有个小的要来。\n\n你问是不是还当自己六岁，他说不是，六岁那回也没让你一把拿。你伸手挑时，他又问要酸的还是甜的，隔着这么远，倒知道口袋里那两颗不一样。\n\n你把另一颗留回去，口袋下面还压着一角叠好的纸，没有跟着抽出来。陈伯叫你拿走的先吃，糖纸别塞围裙，他收摊掏口袋，一手都是你们留下的空壳，明天又得从头找还有没有糖。", undefined, 'hooks'),
+  {
+  "id": "kneading-board",
+  "label": "擀面板",
+  "x": 40.2,
+  "y": 70.5,
+  "cameraView": "bench",
+  "icon": "look",
+  "sprite": {
+    "asset": "morning-board",
+    "width": 24,
+    "height": 10.5,
+    "z": 8
+  },
+  "completed": {
+    "kind": "clue",
+    "id": "board-marks"
+  },
+  "interaction": {
+    "kind": "inspect",
+    "text": "陈伯将面团往旁边一收，案面上几道刀印才露出来。平常上头撒着粉，你只看见白的一片，这会儿凑近，能认出深浅不同的线，有的还绕开了木头原来的小结。\n\n最外面那道横得直，像特意量过。你拿手指在旁边比，陈伯将旁边的干布给你，让你先擦好手，接着指给你看，说那是从前分剂子用的准线。刚开始总是一头大一头小，怕上笼以后熟得也不一样，就先留一段照着切。\n\n你问现在还照不照着看，他将一截面团搓好，分出来几块，没再低头找线。切完他自己看了一眼，挑出稍大的一块重新揉了揉，说手熟归手熟，也不是闭眼就能做。\n\n新撒的面粉又盖住那道印子。你刚要夸他分得准，他笑着让你留一小团练，包好了给自己吃，后头还有热的，不够再拿。",
+    "action": {
+      "id": "read-kneading-board",
+      "label": "记下来",
+      "effects": [
+        {
+          "kind": "clue",
+          "id": "board-marks"
+        }
+      ]
+    }
+  }
+},
+  {
+  "id": "work-apron",
+  "label": "洗得发白的围裙",
+  "x": 6.3,
+  "y": 55.3,
+  "cameraView": "hooks",
+  "icon": "look",
+  "sprite": {
+    "asset": "prop-apron",
+    "width": 8,
+    "height": 20,
+    "z": 8
+  },
+  "interaction": {
+    "kind": "inspect",
+    "text": "围裙口袋露着两颗水果糖，糖纸外沾了一点面粉。你想帮着抖掉，陈伯隔着门笑，说里面还有，想吃就拿一颗。\n\n你问他怎么还跟从前一样，围裙里总放糖。他说有时带孩子来的客人得等下一笼，手里给一颗，就肯安安稳稳坐一下。说完又问你要酸的还是甜的，倒记得两种搁在哪边。\n\n你挑了一颗，把另一颗放回口袋。陈伯叫你也尝尝，说这袋是新买的，阿宁回来见着，自己先拿走了两颗。"
+  }
+},
   inspect('chen-knee', '折起来的护膝', 'prop-brace', 19.5, 89.3, 4, 6.2, "护膝收在柜下的干格里，魔术贴已经扣好，不会一拿出来就勾住旁边的布。盒子摆得整齐，翻开却不是全新的味道，内侧有一处已经起毛，弯腿常压的地方也软一些。\n\n阿宁在盒盖内贴了字，叫父亲走楼梯的时候戴着，旁边那个好写得很小，挤着她最后一个字。你用手挡住别处，只看那个好，才认出跟账本上的字是一种写法，陈伯并没另找纸答她。\n\n盒子外头看着新，东西却用过，今天放在柜里，也不能据此说一直没拿出来。你将扣子照原样合上，免得收回去时把布扯坏，又把盒盖那一面留朝外，让人一开柜就看得见。\n\n盒子往回收的时候卡住了布角，你将护膝托起来，再把盖子合严。那个好还留在盖里，陈伯拿出来用，第一眼也能看见。", 'knee-note', 'storage'),
-  { id: 'cabinet', label: '借一只保温袋', x: 16, y: 71.5, cameraView: 'storage', icon: 'book', sprite: sprite('prop-bag', 8, 13), condition: not(holdingBag), completed: holdingBag,
-    interaction: { kind: 'inspect', text: "保温袋挂在柜门外，提手绕了门把两圈。你起初只往外扯，袋口越扯越紧，停下来将最上面那圈松开，才拿得下来，没必要连门一块儿拉。\n\n陈伯看见你手里的钥匙，先问阿婆真找出来了？他说上回还争过一次，她说没丢，他说没丢就拿出来看看，后来一个去收笼，一个回家做饭，谁也没再提，钥匙就一直在奶奶那里。\n\n袋子里面空着，底下一块旧油印洗不掉，别处都擦得干净。陈伯叫你摸摸内层，说刚换过，不要往里面直接倒热汤，装好盒再放，袋子能保温，也不能替饭盒收汁。\n\n你试着把书放进去，他立刻指了指外层，说阿婆缝书缝了半天，别出去一趟带回一袋肉汤味。要借就先说，用完跑完那几家再还，他这边还找得到别的，不用你为了还个空袋子来回赶。", options: [
-      { id: 'borrow-with-key', onceKey: 'borrow-bag', label: '给陈伯看过钥匙，借走保温袋', condition: { kind: 'item', id: 'small-key' }, unavailable: '问问陈伯，也能借。', effects: [{ kind: 'item', id: 'insulated-bag', amount: 1 }] },
-      { id: 'borrow-by-asking', onceKey: 'borrow-bag', label: '问陈伯借来用一天', condition: flag('morning-listened'), unavailable: '先和陈伯说一声。', effects: [{ kind: 'item', id: 'insulated-bag', amount: 1 }] },
-    ] } },
+  {
+  "id": "cabinet",
+  "label": "借一只保温袋",
+  "x": 16,
+  "y": 71.5,
+  "cameraView": "storage",
+  "icon": "book",
+  "sprite": {
+    "asset": "prop-bag",
+    "width": 8,
+    "height": 13,
+    "z": 8
+  },
+  "condition": {
+    "kind": "not",
+    "condition": {
+      "kind": "item",
+      "id": "insulated-bag"
+    }
+  },
+  "completed": {
+    "kind": "item",
+    "id": "insulated-bag"
+  },
+  "interaction": {
+    "kind": "inspect",
+    "text": "保温袋挂在柜门边，提手绕着门把两圈。你托住袋底，将最上面那圈松开，就能稳稳拿下来。\n\n陈伯看见你手里的钥匙，笑着说阿婆还记着这把。上回托她收着，两个人一忙，都忘了拿回，这回正好让你开这格。\n\n袋子底下有一块旧油印，里层却擦得干净。陈伯把外侧那一层指给你看，说书夹这边，吃的装好盒放里面，带回家也不沾味。\n\n“你阿婆跟我说过了，拿着用，跑完那几家顺路再还就行。”他说这边还有别的袋子，叫你安心带走。",
+    "options": [
+      {
+        "id": "borrow-with-key",
+        "onceKey": "borrow-bag",
+        "label": "给陈伯看过钥匙，借走保温袋",
+        "condition": {
+          "kind": "item",
+          "id": "small-key"
+        },
+        "unavailable": "问问陈伯，也能借。",
+        "effects": [
+          {
+            "kind": "item",
+            "id": "insulated-bag",
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "id": "borrow-by-asking",
+        "onceKey": "borrow-bag",
+        "label": "问陈伯借来用一天",
+        "condition": {
+          "kind": "flag",
+          "id": "morning-listened"
+        },
+        "unavailable": "先和陈伯说一声。",
+        "effects": [
+          {
+            "kind": "item",
+            "id": "insulated-bag",
+            "amount": 1
+          }
+        ]
+      }
+    ]
+  }
+},
 ];
 const yard: Hotspot[] = [
   {"id":"ning-drawing","label":"小朱画的教室","x":60.3,"y":43.9,"cameraView":"school-drawing","icon":"look","sprite":{"asset":"morning-school-drawing","width":6.3,"height":5.8,"z":8},"interaction":{"kind":"inspect","manipulation":"flip","text":"画纸比信封大，阿宁另放在干柜上层，离水池远一些。你看了半天，窗户画得像墙一样大，讲台上那个人穿蓝裙，下面几张桌子都只留了三条腿。\n\n“挡住的那一条不用画，小朱特意跟我交代的。”阿宁指给你看，“你可别替他补上，我答应原样带回来的。”\n\n右下角还留着给陈老师的位置，纸折过一道，背面贴了窄窄的胶带。","exhibit":{"kind":"note","kicker":"实习班的小朱画的","title":"陈老师的教室","lines":["二楼，朝南，窗户画得特别大。","老师穿蓝裙子，桌子画了三条腿。","靠窗：给陈老师留的位置。"]},"action":{"id":"read-ning-drawing","label":"把画放回干的地方","effects":[{"kind":"clue","id":"ning-drawing"}]}},"completed":{"kind":"clue","id":"ning-drawing"},"variants":[{"condition":{"kind":"all","conditions":[{"kind":"flag","id":"morning-papers-shared"},{"kind":"not","condition":{"kind":"flag","id":"morning-meal-cleared"}}]},"x":76.8,"y":66.5,"width":6.2,"height":3.2,"cameraView":"ledger-meal"}]},
@@ -855,32 +1079,32 @@ export const morningGame: MinigameDefinition = {
           }
         ],
         "expected": "bowl",
-        "wrong": "阿宁：“爸的放碗里。装进袋子，他一伸手又递给客人了。”\n陈伯：“你怎么老觉得我一眨眼就能卖光自己那份？”"
+        "wrong": "阿宁：“爸的这只放碗里，咱们端去后院。”\n陈伯：“对，留我一份，忙完我就过来。”"
       }
     ],
     "copy": {
-      "intro": "陈伯：“一共五只先做，老周两只青菜，给阿宁豆沙，给我留只肉的。还有一只……你想吃什么？”\n小满：“肉的。”\n陈伯：“行。先认馅，别包到最后给我整只豆沙。”",
+      "intro": "陈伯：“先留五只，老周两只青菜，阿宁豆沙，我和你各一只肉的。来，你认馅，我在这边看着。”",
       "fillings": {
-        "青菜": "小满：“青菜切这么细啊？”\n陈伯：“太粗不好收口，也别剁成泥。水先弄干爽，别带进面皮。你拿一点看看，别整盆抓。”",
+        "青菜": "陈伯：“切细一点好收口，也不用剁成泥。来，挑一点看看，水先弄干爽，包的时候皮就稳当。”",
         "鲜肉": "陈伯：“这盆拌完，筷子一挑能带起来。你以后自己做两回，就知道差在哪儿。”\n小满：“今天真有点咸？”\n陈伯：“出锅自己尝，咸淡哪能光闻出来。”",
-        "豆沙": "陈伯：“阿宁那只。别塞一大坨，留点地方收口。她嘴上说甜的越多越好，漏了又嫌沾手。”"
+        "豆沙": "陈伯：“这只给阿宁。先放一小球，边上留出收口的地方。她喜欢甜，咱也得先包得住。”"
       },
       "wrongFillings": {
-        "chen": "陈伯：“哎，这怎么给我了？肉的，肉的！阿宁正站那儿笑，待会儿又说我不认得自己的包子。”"
+        "chen": "陈伯：“我这只留肉的，青菜是老周的。咱们换回来，再按人认一遍。”"
       },
       "checkOrders": "陈伯：“再数一遍。老周青菜两只，阿宁豆沙一只，咱俩各留只肉的，一共五只。”",
       "beforeSteam": "陈伯：“收口再捏紧点。包好了醒一会儿，再合盖上火。火我看着，你留意盖沿的白气，别一闻着香就揭。”",
-      "early": "陈伯：“刚合上就掀，怕它们在里头吵架啊？盖回去，我给你看着，等会儿再开。”",
-      "late": "陈伯：“这回火急了，先关。没让你跟它比谁更能等，再来一回。”",
-      "steamed": "笼盖揭开，热气一下涌出来，你往后躲半步。两只包子的边挨在一起。\n陈伯：“别抓，拿夹子，先松开边上。好，就这样。你那个歪的居然没破。”\n小满：“也是你教得好。”\n陈伯：“这句给你阿婆多讲两遍。”",
-      "helped": "陈伯扶住笼盖：“看，跟这个气差不多就行。来，拿夹子，分装你自己认，别连我的那只也送走。”",
-      "packed": "阿宁端着碗过来：“老周那两袋我拿去前头。爸，你这只留碗里。”\n陈伯：“我没往袋里放！上次是上次。”\n阿宁：“行，那你今天记得来吃。”"
+      "early": "陈伯扶住盖沿：“这回还早，气还没上齐。先盖回去，我陪你看着，等它稳一点再揭。”",
+      "late": "陈伯：“这回火急了，先关一下。头一回看还拿不准，咱们再试一回。”",
+      "steamed": "笼盖揭开，热气涌出来，你往后让半步。陈伯将夹子递到你手边。\n陈伯：“先松开粘着的边。哎，你自己包那只也没破，挺好。”\n小满：“那我先给自己留着，等会儿尝尝。”",
+      "helped": "陈伯扶着笼盖让你看：“白气到这样就差不多了。来，拿夹子，分装咱们再一份一份认。”",
+      "packed": "阿宁端着碗过来：“老周两袋我拿去前头。爸，你这只留碗里，我们先摆着。”\n陈伯：“好，我递完这几袋就来。小满，你那只也趁热吃。”"
     }
   },
   "reward": {
     "id": "morning-game-reward",
     "label": "出笼了",
-    "feedback": "五只都出笼了。老周的两袋放在前头，阿宁的豆沙、陈伯的肉包和你自己那只各留在碗里。\n\n阿宁叫你端着，陈伯还惦记那只歪的：“你不是要记方子？吃了再记，别光看热气。”",
+    "feedback": "五只都出笼了。老周两只青菜分两袋，阿宁的豆沙、陈伯的肉包和你自己那只各留在碗里。\n\n阿宁替你把碗端稳，叫你一起去后院。陈伯看了看你包的那只，笑着说：“留着自己尝，吃过一口，就知道这皮下回该怎么擀了。”",
     "effects": [
       {
         "kind": "flag",

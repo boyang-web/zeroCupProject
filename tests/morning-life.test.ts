@@ -84,7 +84,9 @@ test('each family route has its own Ning followup and later visits stop asking w
     const initial=node.versions!.find(v=>matches(s,v.condition))!;
     assert.deepEqual(dialogueReadings(node,s).map(b=>b.text).join(''),initial.beats.map(b=>b.text).join(''));
     const text=dialogueReadings(node,s).map(b=>b.text).join('');
-    assert.ok(text.includes(route==='trial'?'头一笼先照旧':route==='table'?'没把试三天定完':'表我没撕'),route);
+    if(route==='trial'){assert.match(text,/后天六点半送样/);assert.match(text,/头一笼.*照旧/);assert.match(text,/第三天/);}
+    else if(route==='table'){assert.match(text,/看看一盆样面/);assert.match(text,/还没.*试三天/);}
+    else {assert.match(text,/表.*折好.*柜旁/);assert.match(text,/说晚上看/);assert.match(text,/下周一.*报到/);}
     s=act(s,{type:'travel'});
     const laterText=dialogueReadings(node,s).map(b=>b.text).join('');
     assert.ok(!laterText.includes('你待会儿去琴记'));
