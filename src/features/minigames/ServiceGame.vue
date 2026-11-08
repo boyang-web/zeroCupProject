@@ -1,27 +1,46 @@
 <script setup lang="ts">
-import { computed,ref,useId } from 'vue';
+import { computed,nextTick,ref,useId,watch } from 'vue';
 import type { MinigameProps,MinigameResult } from './contracts.ts';
 import { placeTicket,serviceResult,suggestService } from './service.ts';
 import UiButton from '../../shared/UiButton.vue';
 import WoodFrame from '../../presentation/WoodFrame.vue';
 import Icon from '../../shared/Icon.vue';
+import ProgressiveText from '../../shared/ProgressiveText.vue';
+import { useReadingSequence } from '../../presentation/useReadingSequence';
 const props=defineProps<MinigameProps>();const emit=defineEmits<{finish:[result:MinigameResult]}>();
 const plan=computed(()=>props.definition.service!);const selected=ref('');
 const queues=ref<string[][]>(Array.from({length:props.definition.service!.pots},()=>[]));
-const half=ref(false),noScallion=ref(false),assisted=ref(false),feedback=ref('');
+const half=ref(false),noScallion=ref(false),assisted=ref(false),feedback=ref(''),checked=ref(false);
 const result=computed(()=>serviceResult(plan.value,queues.value,half.value,noScallion.value));
 const selectedLabel = computed(() => plan.value.tickets.find(t => t.id === selected.value)?.person);
+const words = computed(() => feedback.value || plan.value.copy?.intro || props.definition.description);
+const voice=ref<HTMLElement>();
+const { visibleCounts, textDone, finishText } = useReadingSequence({texts:()=>[words.value],reduced:()=>props.reducedMotion});
+watch([queues,half,noScallion],()=>{if(checked.value)feedback.value='';checked.value=false;},{deep:true});
 const potId = useId().replace(/:/g,'') + '-pot';
-function drag(event: DragEvent, id: string) { selected.value=id; event.dataTransfer?.setData('text/plain',id); if(event.dataTransfer)event.dataTransfer.effectAllowed='move'; }
-function place(pot:number){if(!selected.value){feedback.value='先选一张单。';return;}queues.value=placeTicket(plan.value,queues.value,selected.value,pot);selected.value='';feedback.value='';}
-function finish(){if(!result.value.complete){feedback.value=result.value.errors.join(' ');return;}emit('finish',{status:'completed',score:assisted.value?80:100,assisted:assisted.value});}
-function help(){queues.value=suggestService(plan.value);half.value=true;noScallion.value=true;assisted.value=true;feedback.value='琴姐把赶时间的夹在前头，外送放另一口锅。';}
+function select(id:string){selected.value=id;feedback.value=plan.value.copy?.tickets[id]??'';}
+function drag(event: DragEvent, id: string) { select(id); event.dataTransfer?.setData('text/plain',id); if(event.dataTransfer)event.dataTransfer.effectAllowed='move'; }
+function place(pot:number){if(!selected.value){feedback.value='先选一张单，再夹到这口锅。';return;}queues.value=placeTicket(plan.value,queues.value,selected.value,pot);selected.value='';}
+function check(){
+  if(!result.value.complete){
+    const copy=plan.value.copy;
+    const missing=plan.value.tickets.some(t=>result.value.finishTimes[t.id]===undefined);
+    const halfMissing=plan.value.tickets.some(t=>t.half)&&!half.value;
+    const scallionMissing=plan.value.tickets.some(t=>t.noScallion)&&!noScallion.value;
+    const response=missing?copy?.missing:halfMissing?copy?.wrongHalf:scallionMissing?copy?.wrongScallion:copy?.orderError;
+    feedback.value=[response,...result.value.errors].filter(Boolean).join('\n');void nextTick(()=>voice.value?.scrollIntoView({block:'nearest'}));return;
+  }
+  checked.value=true;feedback.value=plan.value.copy?.ready??'人和份量都对过了，照这个顺序下锅。';void nextTick(()=>voice.value?.scrollIntoView({block:'nearest'}));
+}
+function finish(){if(checked.value&&result.value.complete)emit('finish',{status:'completed',score:assisted.value?80:100,assisted:assisted.value});}
+function help(){checked.value=false;queues.value=suggestService(plan.value);half.value=true;noScallion.value=true;assisted.value=true;feedback.value=plan.value.copy?.help??'琴姐把赶时间的夹在前头，外送放另一口锅。';}
 </script>
 <template>
   <div class="service-game">
-    <aside class="service-instruction"><WoodFrame kind="ui-toast" /><Icon name="look" /><p>点一张单，再排进一口锅的队列；也可以把单拖过去。同一口锅按顺序累加时间。<small>读字和看物件不会扣时间，排好以后再下锅。</small></p></aside>
+    <aside class="service-instruction"><WoodFrame kind="ui-toast" /><Icon name="look" /><p>点单子，再点一口锅；也可以直接拖过去。<small>同一口锅依次累加时间。读字不扣时间，排好了再下锅。</small></p></aside>
+    <div ref="voice" class="service-voice" role="status"><WoodFrame kind="ui-toast" /><p @click="finishText"><ProgressiveText :text="words" :revealed="visibleCounts[0]" /></p><UiButton v-if="!textDone" tone="quiet" aria-label="显示排单对白全文" @click="finishText">显示全文 ›</UiButton></div>
     <div class="service-tickets" aria-label="等着的三张单">
-      <button v-for="t in plan.tickets" :key="t.id" :data-ticket="t.id" :aria-pressed="selected===t.id" :class="{ selected: selected===t.id, placed: queues.some(q=>q.includes(t.id)) }" draggable="true" @dragstart="drag($event,t.id)" @click="selected=t.id">
+      <button v-for="t in plan.tickets" :key="t.id" :data-ticket="t.id" :aria-pressed="selected===t.id" :class="{ selected: selected===t.id, placed: queues.some(q=>q.includes(t.id)) }" draggable="true" @dragstart="drag($event,t.id)" @click="select(t.id)">
         <WoodFrame kind="ui-paper" /><small class="service-ticket-kind">{{t.id==='tian' ? '窗边 · 堂食' : t.id==='delivery' ? '门口 · 外送' : '后来 · 堂食'}}</small><strong>{{t.person}}</strong><span>{{t.note}}</span><small>下锅 {{t.cook}} 分钟 · {{t.deadline}} 分钟内端出</small><i v-if="queues.some(q=>q.includes(t.id))">已夹进队列</i>
       </button>
     </div>
@@ -35,7 +54,6 @@ function help(){queues.value=suggestService(plan.value);half.value=true;noScalli
       </section>
     </div>
     <div class="service-notes"><span>出锅前再看田姨那份</span><label><input v-model="half" type="checkbox" />半份</label><label><input v-model="noScallion" type="checkbox" />不放葱</label></div>
-    <p class="activity-feedback" role="status">{{feedback}}</p>
-    <div class="button-row"><UiButton tone="jade" @click="finish">照这个顺序下锅</UiButton><UiButton tone="quiet" @click="help">请琴姐指点一下</UiButton></div>
+    <div class="button-row"><UiButton v-if="checked" tone="jade" :disabled="!textDone" @click="finish">照这个顺序下锅，分清再端</UiButton><UiButton v-else tone="jade" @click="check">核对顺序和份量</UiButton><UiButton tone="quiet" @click="help">请琴姐指点一下</UiButton></div>
   </div>
 </template>

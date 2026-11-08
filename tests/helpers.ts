@@ -43,7 +43,7 @@ export function noonDecision(previous=finishMorning(),deep=false){
   s=act(s,{type:'talk',hotspotId:'tian'});s=choices(s,['tian-listen','tian-order-close']);
   s=act(s,{type:'move',sceneId:'noon-corner'});s=act(s,{type:'talk',hotspotId:'chuan'});s=choices(s,['chuan-listen','chuan-ask-limit','chuan-count-close']);
   if(deep){s=act(s,{type:'inspect',hotspotId:'receipt-printer'});s=act(s,{type:'inspect',hotspotId:'order-phone'});}
-  s=act(s,{type:'move',sceneId:'noon-kitchen'});s=act(s,{type:'finish-minigame',gameId:'noon-game',result:{status:'completed',score:90,assisted:false}});
+  s=act(s,{type:'move',sceneId:'noon-kitchen'});s=act(s,{type:'talk',hotspotId:'qin-kitchen'});s=choices(s,['noon-service-start']);s=act(s,{type:'finish-minigame',gameId:'noon-game',result:{status:'completed',score:90,assisted:false}});
   s=act(s,{type:'move',sceneId:'noon-front'});return act(s,{type:'talk',hotspotId:'noon-person'});
 }
 export function finishNoon(previous=finishMorning(),kind:'limit'|'counter'|'overload'='limit'){

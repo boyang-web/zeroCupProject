@@ -93,7 +93,14 @@ export interface MinigameDefinition {
       checkOrders: string; beforeSteam: string; early: string; late: string; steamed: string; helped: string; packed: string;
     };
   };
-  service?: { pots: number; tickets: { id: string; person: string; cook: number; deadline: number; note: string; half?: boolean; noScallion?: boolean }[] };
+  service?: {
+    pots: number;
+    tickets: { id: string; person: string; cook: number; deadline: number; note: string; half?: boolean; noScallion?: boolean }[];
+    copy?: {
+      intro: string; tickets: Record<string, string>; missing: string;
+      wrongHalf: string; wrongScallion: string; orderError: string; help: string; ready: string;
+    };
+  };
   packing?: { orders: { id: string; person: string; hint: string; vessel: 'bowl' | 'box'; sauce: 'rim' | 'cup'; utensils: 'beside' | 'outside' }[] };
 }
 export interface Asset { url: string; label: string; source: string; placeholder: boolean; region?: { x: number; y: number; width: number; height: number; canvasWidth: number; canvasHeight: number }; alphaCutoff?: number; inscription?: { lines: string[]; color?: string } }

@@ -191,6 +191,14 @@ function game(value: MinigameDefinition) {
     if (ticket.half) meta('份量', '半份');
     if (ticket.noScallion) meta('忌口', '不放葱');
   }
+  if(value.service?.copy){
+    heading(5,'排单时的对白与回应');
+    const labels:Record<string,string>={intro:'开始排单',missing:'还有单没排',wrongHalf:'份量不对',wrongScallion:'忘了忌口',orderError:'顺序超时',help:'请琴姐指点',ready:'核对完成'};
+    for(const[key,entry]of Object.entries(value.service.copy)){
+      if(typeof entry==='string')namedText(labels[key]??key,entry);
+      else for(const[id,words]of Object.entries(entry))namedText(value.service.tickets.find(ticket=>ticket.id===id)?.person??id,words);
+    }
+  }
   for (const order of value.packing?.orders ?? []) {
     namedText(`分装要求：${order.person}（${order.id}）`, order.hint);
     meta('容器', order.vessel === 'bowl' ? '浅碗' : '饭盒');

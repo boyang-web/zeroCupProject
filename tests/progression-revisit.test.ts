@@ -142,7 +142,7 @@ test('the packed book leaves the desk and returns with the player on a later hom
 test('new content references for recipes, guides and collection fragments are checked', () => {
   const broken = structuredClone(content);
   broken.recipes![0]!.asset = 'missing-art'; broken.progression!.guides[0]!.target = 'missing-object';
-  broken.collection![0]!.study!.effects = [{ kind: 'clue', id: 'missing-fragment' }];
+  broken.collection!.find(entry=>entry.id==='family-photo')!.study!.effects = [{ kind: 'clue', id: 'missing-fragment' }];
   broken.progression!.guides[1]!.control = 'menu';
   const errors = validateContent(broken).join('\n'); assert.match(errors, /食谱插图/); assert.match(errors, /引导物件/); assert.match(errors, /missing-fragment/);
   assert.match(errors, /教学指向无效/);

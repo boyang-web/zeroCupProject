@@ -168,7 +168,8 @@ export function validateContent(pack: ContentPack): string[] {
       for (const order of Object.keys(game.breakfast.copy?.wrongFillings ?? {})) ref(orderIds,order,game.id);
     }
     if (game.service) {
-      unique(`${game.id} 小票`, game.service.tickets.map(t=>t.id));
+      const ticketIds=unique(`${game.id} 小票`, game.service.tickets.map(t=>t.id));
+      for (const ticket of Object.keys(game.service.copy?.tickets ?? {})) ref(ticketIds,ticket,game.id);
       if(!Number.isSafeInteger(game.service.pots)||game.service.pots<1)errors.push(`${game.id}: 锅数无效`);
       game.service.tickets.forEach(t=>{if(t.cook<1||t.deadline<t.cook)errors.push(`${game.id}: 小票时间不可达`);});
     }

@@ -1,4 +1,8 @@
 .service-game { padding:6px 2px 10px; color:#59472e; }
+.service-voice { position:relative; isolation:isolate; padding:16px 22px; margin:0 0 22px; }
+.service-voice p { margin:0; white-space:pre-line; font:16px/1.9 var(--font-story); }
+.immersive .service-voice .ui-button { display:block; margin:8px 0 0 auto; min-height:28px; padding:2px 7px; font-size:12px; }
+.service-game > .button-row { margin-top:22px; }
 .service-instruction { position:relative; isolation:isolate; display:flex; align-items:flex-start; gap:12px; padding:16px 21px; margin:0 0 22px; }
 .service-instruction > .icon { width:19px; height:19px; color:#6c7852; margin-top:3px; flex-shrink:0; }.service-instruction p { font:15px/1.8 var(--font-story); margin:0; }.service-instruction small { display:block; font-size:12px; color:#8b7553; margin-top:3px; }
 .service-tickets { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:15px; }
