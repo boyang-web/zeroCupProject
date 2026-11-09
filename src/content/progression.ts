@@ -10,8 +10,6 @@ export const progression: NonNullable<ContentPack['progression']> = {
   unlocks: {
     journal: { kind: 'clue', id: 'book' },
     inventory: { kind: 'item', id: 'small-key' },
-    objectHints: { kind: 'any', conditions: ['book', 'family-photo', 'invitation', 'calendar', 'job-gap'].map(id => ({ kind: 'clue', id })) },
-    chapterTrack: { kind: 'flag', id: 'arrival-packed' },
     lifeNotes: lifeUnlocked,
     revisit: revisitUnlocked,
     collection: { kind: 'any', conditions: (['active', 'completed', 'failed'] as const).map(status => ({ kind: 'quest', id: 'noon', status })) },
@@ -21,7 +19,7 @@ export const progression: NonNullable<ContentPack['progression']> = {
     { id: 'arrival-look', chapterId: 'arrival', title: '拿起手机', text: '点一下柜上的手机。', target: 'phone', focus: true, chrome: 'minimal', complete: { kind: 'any', conditions: [{ kind: 'flag', id: 'arrival-greeted' }, { kind: 'flag', id: 'tea-offered' }, ...['book', 'family-photo', 'invitation', 'calendar', 'job-gap'].map(id => ({ kind: 'clue' as const, id }))] } },
     { id: 'arrival-talk', chapterId: 'arrival', title: '和奶奶聊聊', text: '点奶奶，听她说完再接话。', target: 'grandma', focus: true, chrome: 'minimal', complete: { kind: 'all', conditions: [{ kind: 'flag', id: 'entrusted' }, { kind: 'flag', id: 'arrival-instructions' }] } },
     { id: 'arrival-read', chapterId: 'arrival', title: '翻开旧书', text: '点写字台上的书。', target: 'book', focus: true, chrome: 'minimal', complete: { kind: 'clue', id: 'book' } },
-    { id: 'arrival-pack', chapterId: 'arrival', title: '整理书签', text: '打开旧书，点“整理走访书签”。', target: 'book', focus: true, chrome: 'book', complete: { kind: 'flag', id: 'arrival-packed' } },
+    { id: 'arrival-pack', chapterId: 'arrival', title: '整理书签', text: '把三张长书签放回相应的时间。', target: 'book', focus: true, chrome: 'book', complete: { kind: 'flag', id: 'arrival-packed' } },
     { id: 'arrival-leave', chapterId: 'arrival', title: '出门去巷口', text: '准备好了就出门，也能先在屋里逛逛。', control: 'departure', condition: { kind: 'flag', id: 'arrival-packed' }, complete: { kind: 'quest', id: 'morning', status: 'active' } },
     { id: 'morning-return-home', chapterId: 'morning', title: '回奶奶家', text: '点这里回家，回来还接着刚才的事。', control: 'home', condition: revisitUnlocked, complete: { kind: 'flag', id: 'morning-listened' } },
     { id: 'life-and-revisit', chapterId: 'morning', title: '书里添了几行', text: '翻开《百味录》，看看新记下的事。', control: 'journal', condition: lifeUnlocked, complete: { kind: 'quest', id: 'noon', status: 'active' } },

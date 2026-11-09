@@ -38,7 +38,7 @@ function help(){checked.value=false;queues.value=suggestService(plan.value);half
 <template>
   <div class="service-game">
     <aside class="service-instruction"><WoodFrame kind="ui-toast" /><Icon name="look" /><p>点单子，再点一口锅；也可以直接拖过去。<small>同一口锅依次累加时间。读字不扣时间，排好了再下锅。</small></p></aside>
-    <div ref="voice" class="service-voice" role="status"><WoodFrame kind="ui-toast" /><p @click="finishText"><ProgressiveText :text="words" :revealed="visibleCounts[0]" /></p><UiButton v-if="!textDone" tone="quiet" aria-label="显示排单对白全文" @click="finishText">显示全文 ›</UiButton></div>
+    <div ref="voice" class="service-voice" role="status"><WoodFrame kind="ui-toast" /><p class="text-scroll" tabindex="0" @click="finishText" @keydown.space.prevent="finishText" @keydown.enter.prevent="finishText"><ProgressiveText :text="words" :revealed="visibleCounts[0]" /></p></div>
     <div class="service-tickets" aria-label="等着的三张单">
       <button v-for="t in plan.tickets" :key="t.id" :data-ticket="t.id" :aria-pressed="selected===t.id" :class="{ selected: selected===t.id, placed: queues.some(q=>q.includes(t.id)) }" draggable="true" @dragstart="drag($event,t.id)" @click="select(t.id)">
         <WoodFrame kind="ui-paper" /><small class="service-ticket-kind">{{t.id==='tian' ? '窗边 · 堂食' : t.id==='delivery' ? '门口 · 外送' : '后来 · 堂食'}}</small><strong>{{t.person}}</strong><span>{{t.note}}</span><small>下锅 {{t.cook}} 分钟 · {{t.deadline}} 分钟内端出</small><i v-if="queues.some(q=>q.includes(t.id))">已夹进队列</i>

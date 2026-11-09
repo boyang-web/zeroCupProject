@@ -11,7 +11,7 @@ const ready = all(flag('night-listened'), flag('night-luo-heard'), flag('night-t
 const unfinished = not(flag('night-ended'));
 const replyText = '今晚替同事多顶一会儿。十点五十五能到，辣酱另放，带双筷子。留得下回我一声。我下班前没收到准话，就直接上车。';
 export const night: Chapter = {
-  id: 'night', number: 4, title: '夜里有饭', subtitle: '卷帘门留着半人高。', time: '22:40 · 长明巷夜饭小馆',
+  id: 'night', number: 4, title: '夜里有饭', location: '夜饭小馆', subtitle: '卷帘门留着半人高。', time: '22:40 · 长明巷夜饭小馆',
   asset: 'night-front', position: 'center', tint: 'night', questId: 'night', metricIds: ['care'], next: 'epilogue',
   firstScene: 'night-front', hotspots: [], description: "卷帘门没放到底，里面还亮着灶火，许叔说今晚只剩两份饭。靠门的小桌有一圈水渍，罗姐进来先问豆腐还留没留，巷口跟着响过一辆车。你将书放到干的那边，先听他们怎么安排。",
   objective: '擦出一张桌，分清两份饭，再把留餐的事回个准话。',
@@ -42,7 +42,7 @@ export const night: Chapter = {
       hotspots: [
         { ...person('night-xu-kitchen', '灶旁的许叔', 'night-xu', 74, 94, 'night-kitchen-talk', 'xu'), condition: not(flag('night-luo-left')) },
         { id: 'night-phone', label: '许叔让你看的回信', x: 40, y: 57, cameraView: 'reply', icon: 'look', sprite: sprite('night-phone', 7, 4), completed: flag('night-reply-read'),
-          interaction: { kind: 'inspect', manipulation: 'phone', text: "许叔手上有水，用手背将手机转向你，叫你念新来的那条，别替他翻前面一堆已经回过的。\n\n小梁说侧门出来才能往这家走，从正门出去就是上车，得在下班前知道留没留。你把最后那句也念全，许叔这回没有只听见改过的时间就把手机收回去。", exhibit: { kind: 'note', kicker: '22:42 · 小梁的订餐回信', title: '今晚改点', phone: { time: '22:42', heading: '小梁 · 订餐消息', footer: '只查看许叔让你读的这一条' }, lines: [replyText] }, action: { id: 'night-read-reply', label: '把这条回信念给许叔', condition: ready, effects: [{ kind: 'flag', id: 'night-reply-read' }, { kind: 'clue', id: 'night-reply' }] },
+          interaction: { kind: 'inspect', manipulation: 'phone', text: "许叔手上有水，用手背将手机转向你，叫你念新来的那条，别替他翻前面一堆已经回过的。\n\n小梁说侧门出来才能往这家走，从正门出去就是上车，得在下班前知道留没留。你把最后那句也念全，许叔这回没有只听见改过的时间就把手机收回去。", exhibit: { kind: 'note', kicker: '22:42 · 小梁的订餐回信', title: '今晚改点', phone: { time: '22:42', heading: '小梁 · 订餐消息', view: 'messages', footer: '22:42 收到' }, lines: [replyText] }, action: { id: 'night-read-reply', label: '把这条回信念给许叔', condition: ready, effects: [{ kind: 'flag', id: 'night-reply-read' }, { kind: 'clue', id: 'night-reply' }] },
             options: [{ id: 'night-recall-message', label: '想起一条旧消息', condition: flag('night-reply-read'), effects: [{ kind: 'clue', id: 'night-riceball' }], feedback: "你想起有回很晚才往住处走，便利店只剩一个饭团。奶奶问到家没有，你站在门外拆包装，先回一句快了，想着吃完再慢慢走，后来也没将当时还没到的那半句补上。" }] } },
         { id: 'night-object', label: '分装台上的空饭盒', x: 59, y: 57, cameraView: 'packing', icon: 'look', sprite: sprite('night-box', 12, 10), completed: flag('night-played'), condition: all(unfinished, not(flag('night-luo-left'))),
           interaction: { kind: 'minigame', gameId: 'night-game' } },

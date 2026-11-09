@@ -3,30 +3,30 @@ import type { DialogueNode, GameState, ContentPack } from '../../core/contracts.
 import { matches } from '../../core/engine.ts';
 import Icon from '../../shared/Icon.vue';
 import AssetImage from '../../shared/AssetImage.vue';
-import UiButton from '../../shared/UiButton.vue';
 import ProgressiveText from '../../shared/ProgressiveText.vue';
 import { useReadingSequence } from '../../presentation/useReadingSequence';
-import { computed, nextTick, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 import { dialogueReadings } from '../../presentation/dialogue-readings';
 import { sceneOf } from '../../core/scenes';
 const props = defineProps<{ node: DialogueNode; state: GameState; content: ContentPack; developer?: boolean; reducedMotion?: boolean }>();
-const readingPage = ref(0), conversation = ref<HTMLElement>();
+const readingPage = ref(0), conversation = ref<HTMLElement>(),copy=ref<HTMLElement>();
 const pages = computed(() => dialogueReadings(props.node, props.state));
 const current = computed(() => pages.value[readingPage.value] ?? pages.value[0]!);
 const location = computed(() => sceneOf(props.state,props.content).title);
 const lastPage = computed(() => readingPage.value === pages.value.length - 1);
 const direction = computed(() => current.value.direction ?? '');
 const { visibleCounts, visibleActions, textDone, finishText, revealActions } = useReadingSequence({
-  texts: () => [direction.value, current.value.text], actions: () => lastPage.value ? props.node.choices.length : 1,
+  texts: () => [direction.value, current.value.text], actions: () => lastPage.value ? props.node.choices.length : 0,
   reduced: () => props.reducedMotion, identity: () => `${props.node.id}:${readingPage.value}`,
 });
-async function continueReading() { if (!textDone.value||lastPage.value) return; readingPage.value++; await nextTick(); conversation.value?.closest('.modal-body')?.scrollTo({ top: 0 }); }
+async function continueReading() { if (!textDone.value||lastPage.value) return; readingPage.value++; await nextTick(); copy.value?.scrollTo({ top: 0 }); }
 function advanceReading(){
   if(!textDone.value){finishText();return;}
   if(!lastPage.value){void continueReading();return;}
   revealActions();
 }
 defineExpose({advanceReading});
+onMounted(async()=>{await nextTick();conversation.value?.focus({preventScroll:true});});
 const portraitAsset = computed(() => {
   const asset=current.value.kind==='speech' && current.value.portrait ? props.content.assets[current.value.portrait] : undefined;
   if(!asset?.region)return asset;
@@ -40,13 +40,15 @@ function conflict(state: GameState, decision: string | undefined, id: string) {
 </script>
 <template>
   <div v-if="portraitAsset" class="dialogue-portrait"><AssetImage :asset="portraitAsset" :alt="current.speaker" /></div>
-  <div ref="conversation" class="conversation" :class="{ 'with-portrait': portraitAsset, 'conversation--narration': current.kind==='narration' }" :data-reading-kind="current.kind" :data-speaker="current.speaker" :key="node.id">
+  <div ref="conversation" class="conversation" :class="{ 'with-portrait': portraitAsset, 'conversation--narration': current.kind==='narration' }" :data-reading-kind="current.kind" :data-speaker="current.speaker" :key="node.id" tabindex="-1" role="group" aria-label="交谈正文，点击或按空格、回车继续；回答需要明确选择">
   <div v-if="current.kind==='speech'" class="speaker-row"><h3>{{ current.speaker }}</h3><span></span></div><p v-else class="conversation-location">{{ location }}</p>
+  <div ref="copy" class="conversation-copy text-scroll" tabindex="0" aria-label="交谈文字">
   <p v-if="direction" class="stage-direction"><ProgressiveText :text="direction" :revealed="visibleCounts[0]" /></p>
   <div class="dialogue-text"><ProgressiveText :text="current.text" :revealed="visibleCounts[1]" /></div>
-  <div class="reading-controls"><UiButton v-if="!textDone" tone="quiet" aria-label="显示当前文字全文" @click="finishText">显示本段 <span aria-hidden="true">›</span></UiButton><small class="reading-touch-hint">{{ !textDone?'点框内可显示全句':lastPage?'点选下面的回答':'点框内，接着听' }}</small><small v-if="pages.length > 1" class="reading-page-count">{{ readingPage + 1 }} / {{ pages.length }}</small></div>
-  <div v-if="!lastPage" class="reading-action" :class="{ 'is-ready': visibleActions > 0 }" :inert="!visibleActions"><UiButton tone="paper" :disabled="!visibleActions" aria-label="继续这段交谈" @click="continueReading">继续 <Icon name="arrow" /></UiButton></div>
-  <div v-else class="choice-list conversation-choices">
+  </div>
+  <span v-if="textDone&&!lastPage" class="reading-cue" aria-hidden="true">⌄</span>
+  <div v-if="lastPage" class="conversation-actions text-scroll" aria-label="选择回答">
+  <div class="choice-list conversation-choices">
     <div v-for="(choice, i) in node.choices" :key="choice.id" class="reading-action" :class="{ 'is-ready': i < visibleActions }" :inert="i >= visibleActions" :aria-hidden="i >= visibleActions">
       <button class="choice" :data-choice-id="choice.id" :disabled="i >= visibleActions || !developer && (!matches(state, choice.condition) || conflict(state, choice.decision, choice.id))" @click="emit('choose', choice.id)"><Icon name="arrow" /><span>{{ choice.label }}</span><span v-if="choice.decision" class="choice-mark">决定</span></button>
       <small v-if="!developer && conflict(state, choice.decision, choice.id)">这项决定已经发生；可读取之前的存档尝试其他选择。</small>
@@ -54,5 +56,6 @@ function conflict(state: GameState, decision: string | undefined, id: string) {
     </div>
   </div>
   <p v-if="lastPage && decisionAhead && !developer" class="decision-guidance reading-action" :class="{ 'is-ready': visibleActions === node.choices.length }">选定后，这句话会留下记录。选择前的进度会单独保存，可以从菜单里读取。</p>
+  </div>
   </div>
 </template>

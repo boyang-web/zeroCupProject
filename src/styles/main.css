@@ -72,7 +72,7 @@ small { font-size: .73rem; line-height: 1.8; }
 .hotspot-symbol .icon { width: 16px; height: 16px; }
 .hotspot:hover .hotspot-symbol, .hotspot:focus-visible .hotspot-symbol { box-shadow: 0 0 0 8px #f3e8bd2e; background: #f6efdd; color: #3b5140; }
 .hotspot-label { margin-top: .45rem; padding: .27rem .6rem; font-size: .65rem; white-space: nowrap; background: #f9f2dfe8; color: #3c4a35; border: 1px solid #d0c5a4; border-radius: 2px; box-shadow: 0 2px 8px #202e2117; opacity: 0; transform: translateY(3px); transition: opacity .2s, transform .2s; }
-.show-hints .hotspot-label, .hotspot:hover .hotspot-label, .hotspot:focus-visible .hotspot-label { opacity: 1; transform: translateY(0); }
+.hotspot:hover .hotspot-label, .hotspot:focus-visible .hotspot-label { opacity: 1; transform: translateY(0); }
 .discovered .hotspot-symbol { background: #65745bc7; color: #ede9cf; border-color: #dfd4ac; }
 .chapter-sidebar { display: grid; grid-template-columns: 1.25fr .9fr .8fr; gap: 2rem; padding: 1.6rem 2.1rem 1.4rem; align-items: center; }
 .chapter-sidebar.without-beats { grid-template-columns: 1fr minmax(220px, .5fr); }

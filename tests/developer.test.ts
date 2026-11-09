@@ -54,7 +54,7 @@ test('every dialogue node and choice can be reached without its narrative prereq
 
 test('all feature gates open in test mode while normal play still enforces conditions', () => {
   const state = initial();
-  for (const feature of ['journal', 'inventory', 'collection', 'lifeNotes', 'revisit', 'chapterTrack'] as const) {
+  for (const feature of ['journal', 'inventory', 'collection', 'lifeNotes', 'revisit'] as const) {
     assert.equal(featureUnlocked(state, content, feature), false);
     assert.equal(featureUnlocked(state, content, feature, developer), true);
   }

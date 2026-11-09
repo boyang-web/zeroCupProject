@@ -3,7 +3,6 @@
 .developer-bar button { white-space: nowrap; color: inherit; padding: .3rem .45rem; border: 1px solid #a88857; background: transparent; border-radius: .2rem; cursor: pointer; }
 .developer-bar button:hover, .developer-bar button:focus-visible { background: #795736; }
 .immersive.developer-active .topbar { top: 3.5rem; padding-top: 0; }
-.immersive.developer-active .chapter-track { top: 8.4rem; }
 .developer-description { line-height: 1.8; margin-top: 0; }
 .developer-location { display: flex; flex-wrap: wrap; gap: .5rem; font-size: .85rem; overflow-wrap: anywhere; }
 .developer-location span { color: var(--jade); font-weight: 700; }

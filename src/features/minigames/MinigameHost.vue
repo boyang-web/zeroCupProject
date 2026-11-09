@@ -19,9 +19,9 @@ onMounted(async () => {
 onBeforeUnmount(() => { cancelled = true; });
 </script>
 <template>
-  <p>{{ definition.description }}</p>
+  <div class="minigame-host">
   <div v-if="developer" class="developer-game-actions"><UiButton @click="finish({ status: 'completed', score: 100, assisted: false })">测试：直接完成</UiButton><small>可跳过操作，检查奖励与后续对白。</small></div>
-  <component :is="component" v-if="component" :definition="definition" :state="state" :reduced-motion="reducedMotion" :assets="assets" @finish="finish" />
+  <div class="minigame-content text-scroll"><component :is="component" v-if="component" :definition="definition" :state="state" :reduced-motion="reducedMotion" :assets="assets" @finish="finish" />
   <p v-else role="status">{{ error || '正在准备桌面…' }}</p>
-  <button class="quiet" @click="finish({ status: 'cancelled' })">先放下，稍后再来</button>
+  </div></div>
 </template>

@@ -8,7 +8,7 @@ import { placeGuide, type GuideRect } from '../../presentation/guide-layout';
 
 const props = defineProps<{ guide: GuideStep; active: boolean; minimized: boolean; step: number; total: number; reducedMotion?: boolean }>();
 const emit = defineEmits<{ minimize: [value: boolean] }>();
-const card = ref<HTMLElement>(), target = ref<HTMLButtonElement>();
+const card = ref<HTMLElement>();
 const box = ref<GuideRect>(), placement = ref({ x: 24, y: 220, path: '' });
 const id = useId().replace(/:/g, '') + '-guide';
 const expanded = computed(() => props.active && !props.minimized);
@@ -29,16 +29,11 @@ function measure() {
       element = shortcut;
     }
   }
-  target.value = element ?? undefined;
   const rect = element?.getBoundingClientRect();
   box.value = rect && rect.width && rect.height ? { left: rect.left, top: rect.top, width: rect.width, height: rect.height } : undefined;
   if (box.value) placement.value = placeGuide(box.value, { width: card.value.offsetWidth, height: card.value.offsetHeight }, { width: innerWidth, height: innerHeight });
 }
 function requestMeasure() { if (!frame) frame = requestAnimationFrame(measure); }
-function activate() {
-  if (!expanded.value || !target.value || target.value.disabled) return;
-  target.value.focus({ preventScroll: true }); target.value.click();
-}
 watch(expanded, async expanded => {
   if (!expanded) return;
   await nextTick(); requestMeasure();
@@ -69,9 +64,6 @@ onBeforeUnmount(() => { cancelAnimationFrame(frame); resize?.disconnect(); movem
       <header><div v-if="total > 1" class="tutorial-progress" :aria-label="`教学第 ${step} 步，共 ${total} 步`"><span>{{ String(step).padStart(2, '0') }}<small> / {{ String(total).padStart(2, '0') }}</small></span><i v-for="n in total" :key="n" :class="{ passed: n < step, current: n === step }" aria-hidden="true"></i></div><UiButton tone="quiet" aria-label="收起教学" title="收起后可以自由看看" @click="emit('minimize', true)">收起 <span aria-hidden="true">−</span></UiButton></header>
       <h3>{{ guide.title }}</h3>
       <p :id="id + '-text'">{{ guide.text }}</p>
-      <div class="tutorial-actions">
-        <UiButton v-if="target" class="tutorial-try" tone="jade" @click="activate">{{ guide.control === 'departure' ? '出门' : '试一下' }} <Icon name="arrow" /></UiButton>
-      </div>
     </aside>
   </Transition>
   <Transition name="hud-reveal"><UiButton v-if="active && minimized" class="tutorial-restore" tone="paper" @click="emit('minimize', false)"><Icon name="leaf" />继续教学 <Icon name="arrow" /></UiButton></Transition>

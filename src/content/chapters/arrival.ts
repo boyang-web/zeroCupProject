@@ -4,7 +4,7 @@ import { scriptNode, type DialogueSeed } from '../narrative.ts';
 import { arrivalScripts, arrivalHomeAfterBreakfast, arrivalHomeWithReturnedSpool, arrivalHomeAfterBreakfastAndSpool, arrivalRequestAgain, arrivalOsmanthusKnown } from '../scripts/arrival.ts';
 
 export const arrival: Chapter = {
-  id: 'arrival', number: 1, title: '归巷', subtitle: '行李还没拆，茶已经温好了。', time: '清晨 · 奶奶的老宅',
+  id: 'arrival', number: 1, title: '归巷', location: '奶奶家 · 堂屋', subtitle: '行李还没拆，茶已经温好了。', time: '清晨 · 奶奶的老宅',
   description: "上一份工作结束以后，你回到长明巷，返程票还没买。昨晚带回的包仍开着，手机搁在低柜上，屋里许多东西还放在你记得的位置。奶奶靠窗做针线，听见你起床，先抬头笑了，给身旁的椅子让出一点地方。小几上的茶还温着，你想先过去陪她坐坐。",
   asset: 'arrival-home', position: 'center', tint: 'dawn',
   objective: '陪奶奶坐一会儿，看看她搁了许久的旧书。',
@@ -57,6 +57,10 @@ export const arrival: Chapter = {
       {
         "kind": "reward",
         "id": "arrival-notice-book"
+      },
+      {
+        "kind": "flag",
+        "id": "arrival-spool-story"
       }
     ]
   },
@@ -76,6 +80,10 @@ export const arrival: Chapter = {
           {
             "kind": "reward",
             "id": "arrival-notice-book"
+          },
+          {
+            "kind": "flag",
+            "id": "arrival-spool-story"
           }
         ]
       },
@@ -97,7 +105,7 @@ export const arrival: Chapter = {
   },
   "interaction": {
     "kind": "inspect",
-    "text": "白线轴滚到椅脚外，线头拖着一点。你弯下腰拾起来，奶奶就把手边的布挪开，给你腾出一小块地方。\n\n“放这儿就好，我还用着呢。”她伸手替你理开搭在轴上的线。篮里另有一卷蓝的，白的补锅垫，蓝的留给围裙，各有用处。",
+    "text": "你看到椅脚外有一只白线轴，线头拖出来，绕在椅腿底下。奶奶正低头找它，膝上还搁着没缝完的锅垫，手往旁边摸了两下，只摸到了篮沿。\n\n篮里另有一卷蓝线，你想起自己小时候总爱替她挑颜色，越鲜亮越好，她嘴上说补锅垫用不着这么好看，到头来还是由着你选。今天这两卷倒分得清楚，白的补锅垫，蓝的留给围裙。",
     "versions": [
       {
         "condition": {
@@ -114,10 +122,14 @@ export const arrival: Chapter = {
             {
               "kind": "reward",
               "id": "arrival-notice-book"
+            },
+            {
+              "kind": "flag",
+              "id": "arrival-spool-story"
             }
           ]
         },
-        "text": "线轴已经放回小几，线头留在外面，没打结。奶奶用指尖抽出一截，够这一段就压回去，伸手就能接着缝。"
+        "text": "奶奶用指尖勾出一截白线，放到锅垫边比了比，觉得够长，便先压住。篮里那卷蓝的，你问能不能也补这里，她拿两卷并着给你看，说蓝的得留给围裙，补在这块浅布上，一眼就瞧见了。\n\n你说那不也挺好看，她听着就笑：“还是小时候那样，什么都挑花的。等这块真用不得了，咱俩再挑块新的。”"
       }
     ],
     "action": {
@@ -150,6 +162,10 @@ export const arrival: Chapter = {
               {
                 "kind": "reward",
                 "id": "arrival-notice-book"
+              },
+              {
+                "kind": "flag",
+                "id": "arrival-spool-story"
               }
             ]
           }
@@ -195,7 +211,7 @@ export const arrival: Chapter = {
   "interaction": {
     "kind": "inspect",
     "manipulation": "flip",
-    "text": "奶奶从旧书里取出的购物单，先搁在桌边。鸡蛋、青菜、桂花，前头的价钱有的画过线，桂花旁边倒另圈了一下。\n\n翻到背面，米酒的做法挤在原来空着的地方，糖那句旁边有更细的笔迹。你问是不是一张纸用了两回，奶奶笑着说，背面正好能写，当时没带本子就先记在这里了。",
+    "text": "你看到奶奶从书里抽出的购物单，鸡蛋、青菜、桂花写在正面，价钱改过两回，背后却挤着一份米酒方子。你原先以为她是出门前就想好买什么，照着一项项买齐，看到桂花旁边那个圈，才想起她常常走过摊子，又倒回去添一样。\n\n糖那句旁边换了一种细笔迹，原来的量没有划掉。你问是不是别人替她改过，她接过来看，先将纸挪到亮处，自己也认了一会儿。她没急着答，你就替她压住卷起的纸边，等她慢慢想。",
     "exhibit": {
       "kind": "note",
       "kicker": "购物单背面 · 米酒旧方",
@@ -272,7 +288,7 @@ export const arrival: Chapter = {
     "kind": "inspect",
     "manipulation": "book",
     "journalLink": true,
-    "text": "旧书放在窗下，书脊补过一截新线，前面的页夹得鼓，后面却还平着。你拿近，先沿书脊托着，奶奶也伸手帮你扶了一下。\n\n“慢慢翻，我给你托着。”封皮下露出几张长短不同的纸，熟悉的桂花米酒方子就在前头。",
+    "text": "书翻到桂花米酒那页，糖的用量旁边挤着一行细字。你认得奶奶的大字，添在旁边的那笔却更轻些。小时候你只顾找自己画的小碗，没想过这些方子也是她一回回吃过、问过，再带回来记下的。\n\n她把书脊轻轻按住，给你指原来的量：“这个先别擦。你尝过觉得不够，再往旁边补，咱俩的都留着。”你将笔拿稳一点，先把关火后撒桂花那句誊清。",
     "exhibit": {
       "kind": "book",
       "kicker": "奶奶的旧食谱",
@@ -281,8 +297,7 @@ export const arrival: Chapter = {
         "桂花米酒 · 奶奶的旧方",
         "清水煮开，酒酿拨散，最后撒桂花。",
         "“糖先少放，尝了再说。”"
-      ],
-      "caption": "先把这一页誊清。其余的，等走到店里再问。"
+      ]
     },
     "action": {
       "id": "inspect-book",
@@ -301,7 +316,7 @@ export const arrival: Chapter = {
           "kind": "clue",
           "id": "book"
         },
-        "text": "翻到前面，第一张是桂花米酒。清水、酒酿、桂花，奶奶的字写得大，糖那句却另添了一行细字，挤在原来的量旁边。\n\n“这儿还能写，你补在旁边，我正好两样都看得见。”奶奶指给你看，又从里面抽出那张购物单，放到桌边。买菜的和记做法的用了同一张纸，出门要带的却是另外三张长书签。\n\n三张分别写陈家、琴记和夜里那家店。你先把店名和开门时间对好，再照着夹回书里，路上就不用一页页找。"
+        "text": "奶奶的字大，一句占了两行，你后来添的挤在旁边，她倒说这样正好，两种都看得见。写到桂花，你抬头问她厨房里是不是还有，她说新买的那罐留着，等你哪天不急着出门，咱俩煮一点。\n\n三张写着店名的长书签从页间散出来，奶奶替你压住一角，又抽出夹混的旧购物单，放到了桌边。买菜的纸留在家里，那三张才是今天要带走的。"
       }
     ]
   }
@@ -326,7 +341,7 @@ export const arrival: Chapter = {
   "interaction": {
     "kind": "inspect",
     "manipulation": "flip",
-    "text": "照片里你踩着一张小凳，袖子卷得一边高一边低。陈伯扶住凳背，奶奶拿着你的外套，往镜头里只挤进半边肩膀。\n\n你原来总记得自己做了个月亮包子，照片拍下来的这一只却没封好口，馅已经从边上露出来了。陈伯伸着手，像刚想接，你还低头护着它。\n\n相框背板能松动，翻过去有奶奶写的日期，后头还添着几行小字。",
+    "text": "你先认出了那双鞋。鞋面上沾着一小团白面，左脚歪在凳子边，像下一刻就要踩空。再往上看，才看见六岁的自己，两边袖子卷得不一样高，手护着案板上那只没合好口的包子，谁也不肯让碰。\n\n那天的事，你原本只记得自己做了个月亮。看见照片里漏在外头的肉馅，灶间那股热气却一下又回来了：鼻尖发痒，手上都是面，陈伯说别揉眼睛，你偏要拿胳膊蹭，蹭得脸也白了一块。奶奶就在旁边，替你拿着脱下来的外套，叫了好几声，你都舍不得从凳子上下来。\n\n你还记得等开笼时，自己紧张得不许别人先看，生怕陈伯偷偷把那只换掉。后来到底吃成了什么样，反而记不清了。照片里奶奶只挤进半边肩膀，那件外套却抱得很牢。你看了一会儿，忍不住朝窗边望，她还在那里，手里的布换了，坐着等你说话的样子却没怎么变。",
     "exhibit": {
       "kind": "photo",
       "kicker": "照片背面 · 祖母的字",
@@ -334,8 +349,7 @@ export const arrival: Chapter = {
       "lines": [
         "“小满六岁。闹着要帮忙，",
         "最后帮着吃了三个。”"
-      ],
-      "caption": "“三个”被圈过一回，旁边的日期倒没有圈。"
+      ]
     },
     "action": {
       "id": "read-family-photo",
@@ -358,7 +372,7 @@ export const arrival: Chapter = {
           "kind": "clue",
           "id": "family-photo"
         },
-        "text": "小满六岁，闹着要帮忙，最后帮着吃了三个。奶奶的字写到框边，三个又被圈了一遍，日期倒没有圈。\n\n你把照片翻回正面，找到案板上那只没合好的包子。那天谁让你踩凳子、最后包子到底怎样出锅的，光看这张还想不全，奶奶就在旁边，可以拿给她认。"
+        "text": "背后的“吃了三个”又被奶奶圈了一遍。你盯着那个圈，终于想起自己当时怎么不肯认：头一只算尝味道，第二只没包好，不能算，第三只才是正经吃的。奶奶一边给你掸袖上的面，一边答应，行行行，那就只算一只。\n\n你一直记着自己捏了个月亮，连这场耍赖也忘了。照片里那只包子明明裂着口，你却把手挡在它前面，得意得很。小时候你做坏了东西，第一件事是拿给他们看，让他们替你想办法；这趟回来，反而先想好了许多句轻描淡写的话。\n\n你用拇指摸了摸框角，又朝奶奶身旁那张椅子看。那只包子后来怎么出锅的，她多半还记着。"
       }
     ]
   }
@@ -383,18 +397,20 @@ export const arrival: Chapter = {
   "interaction": {
     "kind": "inspect",
     "manipulation": "unfold",
-    "text": "小满：\n\n上次电话你说工作的事，我听见了，还想问问你那边住着方不方便，要搬东西有没有人搭把手。想回来就回来，被子晒过，床单也换好了，到了先睡一觉。\n\n我也挺想你的。家里那几样东西都还在，你回来自己拿，不记得搁哪儿了就叫我。厚一点的外套带着，早晚坐门口说话用得上，别的不用特意买，家里都有。\n\n以前记吃食的那本书，后面还空着几页，我想接着补。你回来有空，咱俩先看看，陈家和琴记如今怎么做，再慢慢去问。觉先睡足，饭也好好吃，这事不赶。\n\n住几天都好，不用先跟我定返程。来的车次记得告诉我，改了也说一声，我好算着你什么时候到家。\n\n——奶奶\n\n信封里夹着到站的票根。你在车上重折过，没有照她原来的折痕，两道印子摊在一起。",
+    "text": "这封信是你从外地带回来的，票根也一直夹在里面。出发前收东西，你本来想把它留在抽屉里，关上抽屉又折回去拿，最后塞到了随身包最外层。车上翻过两次，照着原来的折痕没折齐，现在纸上多了一道浅浅的印。\n\n电话里，奶奶说的多半是“好呀，回来呀”，问车次，问要不要接。信却写了这么长。你在车上读到“住几天都好”那句，原本已经点开了返程的页面，后来一路也没再往下选。\n\n她现在就在窗边坐着，你反而不太好意思叫她知道，自己把这几张纸带来带去。你用掌心慢慢抚平折痕，没有将压在信底的票根抽走。",
     "exhibit": {
       "kind": "letter",
-      "kicker": "回家前寄来 · 已拆封",
+      "kicker": "奶奶寄来的家信",
       "title": "小满：",
+      "addressee": "小满",
+      "sender": "奶奶",
       "lines": [
-        "你说工作的事，我听见了，回来先歇歇。",
-        "被子晒过，屋里那些东西都还在。",
-        "那本旧书，等你回来咱俩一起看看。",
-        "来的车次告诉我，住几天都好。"
-      ],
-      "caption": "最后一行，比前面的字小一点。"
+        "上次电话里听你说工作的事，我后来还想着，没问你那边住得方不方便，要搬的东西多不多，有没有人搭把手。你说先回来住几天，那就回来。被子我晒过了，床单也换好了，到家先好好睡一觉。",
+        "我也想你了。你那间屋子没怎么动，衣架还在门后，厚被子收在柜里。早晚有一点凉，外套记得带上，别的不用特意买，家里都有。吃的你想起什么就提前跟我说，路上买的东西别拎太多。",
+        "以前记吃食的那本书，我前几天又翻出来了，后面还空着好些页。陈家的包子、琴记的汤，我记的还是从前那样，想去问问如今怎么做。等你回来有空，咱俩先看看这本书，你愿意陪我跑两趟就更好了。觉先睡足，饭也好好吃，这事不赶。",
+        "住几天都好，不用先跟我定返程。我知道你心里还有事，回来也不用一件件急着说。想说的时候，咱俩坐着慢慢说。来的车次记得告诉我，改了也说一声，我好算着你什么时候到家。",
+        "奶奶"
+      ]
     },
     "action": {
       "id": "read-invitation",
@@ -452,14 +468,14 @@ export const arrival: Chapter = {
   },
   "interaction": {
     "kind": "inspect",
-    "text": "杯碟留在小几外沿，你一伸手就碰得到，离奶奶却远一点。你托住底碟，往藤椅那边挪，奶奶便将手里的布收拢，给杯子让出位置。\n\n这只杯口有一点缺，你从前就见她转着方向喝。她指指杯柄，让你搁到顺手的那边，又朝柜上看，说那里还收着一只给你留的新杯子。",
+    "text": "你看到杯碟搁在小几外沿，奶奶每次伸手，都得先将膝上的布往里收一点。杯口缺的那一小处还在，她喝茶总让它背着自己，你从前嫌这只杯子旧，买过一只新的，她却把新的留给了你。\n\n这会儿新杯子仍收在柜上，她用惯的这只倒离你更近。你站到小几边，托住底碟，想着替她挪到伸手就能够着的地方。",
     "versions": [
       {
         "condition": {
           "kind": "flag",
           "id": "tea-offered"
         },
-        "text": "杯碟已经在奶奶手边。她捧起来喝了一口，放下时还让缺口朝里。你站在旁边，她就拍了拍椅子，叫你拿自己的杯子过来一起坐。\n\n壶还温着，奶奶给小几中间让了一点地方，两个人伸手都够得着。"
+        "text": "奶奶喝茶时总会先抿一下，觉得温度正好，才肯多喝两口。你小时候等不及，她就另拿一只碗替你晾着，嘴上还数落，说过多少遍了，刚倒的别急着往嘴里送。\n\n你在外面早就学会端着纸杯边走边喝，有时候喝完都说不清是什么味道。这会儿看她捧着杯子慢慢吹，你也想把柜上那只拿下来，坐一会儿再走。"
       }
     ],
     "options": [
@@ -477,12 +493,50 @@ export const arrival: Chapter = {
             "amount": 1
           }
         ],
-        "feedback": "奶奶扶稳杯碟，喝了一小口：“哎，挪这边就好了。给你留的新杯子在柜上，你也拿来，咱俩一起喝。”"
+        "feedback": "奶奶伸手扶住碟沿，抬眼朝你笑：“哎，这边正好。你那只还在柜上，拿来呀，陪我喝两口。”她又把茶壶往中间让了让，给你的杯子留出地方。"
       }
     ]
   }
 },
-    { id: 'calendar', label: '旧日历', cameraView: 'wall', x: 22.6, y: 32, icon: 'look', sprite: { asset: 'prop-calendar', width: 6.1, height: 16.3, z: 3 }, interaction: {"kind":"inspect","manipulation":"flip","text":"取眼镜、买桂花、小满回家，挤在同一个格子。前两件各打了小勾，名字旁边却是圈，外头还改过一次日期。\n\n你问怎么还不打勾，奶奶说昨晚光顾着叫你吃饭，后来收完碗就忘了。她让你先别撕，说取眼镜的小票夹在背面，等下还得看。\n\n你将票放回原处，想起改车次那回，自己在手机上退了重买，只回过一个电话，墙上也跟着涂改了一次。","exhibit":{"kind":"note","kicker":"日历页角","title":"这几天","lines":["取眼镜。","买桂花。","小满回家。"],"caption":"你的名字旁边，她画了一个圈。"},"action":{"id":"read-calendar","label":"看清改过的日期","effects":[{"kind":"clue","id":"calendar"}]}} },
+    {
+  "id": "calendar",
+  "label": "旧日历",
+  "cameraView": "wall",
+  "x": 22.6,
+  "y": 32,
+  "icon": "look",
+  "sprite": {
+    "asset": "prop-calendar",
+    "width": 6.1,
+    "height": 16.3,
+    "z": 3
+  },
+  "interaction": {
+    "kind": "inspect",
+    "manipulation": "flip",
+    "text": "你抬头看到日历上自己的名字，跟取眼镜、买桂花挤在同一格。前两件都勾掉了，“小满回家”却圈了一道，旁边还涂改过日期。你在手机上退票重买，只打过一个电话，说晚两天到，没想过这面墙上也跟着改了一次。\n\n“怎么我这个还不打勾呀？”你问。奶奶抬头看了看，说昨晚一听你敲门，就去看锅里的汤了，收完碗又忙着找枕套，哪还记着日历。她叫你先别撕，取眼镜的小票夹在背面，还得留着。\n\n你把翘起来的页角压好，没去找笔。名字留在那里也挺好，昨晚进门时你只顾说路上不累，还没问她等了多久。",
+    "exhibit": {
+      "kind": "note",
+      "kicker": "日历页角",
+      "title": "这几天",
+      "lines": [
+        "取眼镜。",
+        "买桂花。",
+        "小满回家。"
+      ]
+    },
+    "action": {
+      "id": "read-calendar",
+      "label": "看清改过的日期",
+      "effects": [
+        {
+          "kind": "clue",
+          "id": "calendar"
+        }
+      ]
+    }
+  }
+},
     {
   "id": "phone",
   "label": "手机",
@@ -503,17 +557,19 @@ export const arrival: Chapter = {
   "interaction": {
     "kind": "inspect",
     "manipulation": "phone",
-    "text": "手机搁在低柜上，充电线从包带下面穿过。你先将线松开，再拿起手机，屏幕还暗着。\n\n窗边的奶奶听见你起床，抬头朝你笑了一下。你看完这一眼，就能过去陪她坐坐，手机先轻触屏幕点亮。",
+    "text": "你又摸到了手机。其实刚才醒来已经看过一遍，没有未接电话，也没有非得现在回的消息，手却还是自己伸了过去。回家之前，你总觉得得赶紧把下一步安排好，连在车上坐着，都不肯让屏幕多暗一会儿。\n\n备忘录停在没写完的个人简介上。上一份工作的结束日期还写着“至今”，你知道该改了，可真要删掉那两个字，手指又停住。再往下是半句“能够适应……”，车上改了几次，越改越觉得不像自己。\n\n昨晚你也想接着写，奶奶在门外叫吃饭，你应了一声，就将手机扣在了柜上。那碗汤喝完，人困得连包都没收。现在汤碗已经洗好了，充电线也替你理到了柜边，她倒从头到尾没催过你那份草稿。",
     "exhibit": {
       "kind": "note",
-      "kicker": "草稿 · 尚未发出",
-      "title": "个人简历",
+      "kicker": "备忘录",
+      "title": "个人简介（草稿）",
+      "phone": {
+        "heading": "备忘录",
+        "view": "draft"
+      },
       "lines": [
-        "起止：仍写着“至今”",
-        "简介：能够适应……",
-        "返程：暂未决定"
-      ],
-      "caption": "昨晚回家时，奶奶先让你吃了饭。"
+        "工作经历\n结束时间：至今",
+        "个人简介\n能够适应……"
+      ]
     },
     "action": {
       "id": "arrival-read-phone",
@@ -531,7 +587,7 @@ export const arrival: Chapter = {
           "kind": "clue",
           "id": "job-gap"
         },
-        "text": "个人简介下面停着能够适应，后面还没接上。车上换过几回说法，没改好，昨晚回来又先跟着奶奶去吃饭了。\n\n结束日期仍留着至今。你点进去，光标闪了几下，没有立即落字。朝窗边看时，奶奶正将针别进针包，等着和你说话。\n\n你把屏幕按暗，充电线绕回柜边，没有再握着手机来回转。"
+        "text": "“至今”还留在结束日期里。你认得这份草稿每一次删改的位置，甚至知道光标上回停在哪儿，却还是习惯性地从头又看了一遍，好像多看一遍，下一句话就会自己冒出来。\n\n窗边传来收针线的声音，奶奶把针别好，又摸了摸，怕落在布里。你听着这点响动，忽然想起昨晚自己还举着手机，她将汤碗往桌里推了推，叫你先坐稳，别站着喝。你那时嘴上说不饿，最后连碗底也喝干净了。\n\n草稿先留在这里吧。至少这一会儿，你想过去陪她说几句话，不想一边应着她，一边还盯着没写完的半行字。"
       }
     ]
   }
@@ -541,12 +597,16 @@ export const arrival: Chapter = {
 
 const nodes: DialogueSeed[] = [
   { id: 'welcome', speaker: '奶奶',   choices: [
-    { id: 'arrival-ate', label: "吃了点，还能再吃。", next: 'home', effects: [{ kind: 'flag', id: 'arrival-greeted' }] },
-    { id: 'arrival-hungry', label: "还没，刚起来。", next: 'home', effects: [{ kind: 'flag', id: 'arrival-greeted' }] },
+    { id: 'arrival-ate', label: "吃了点，还能再吃。", next: 'home', effects: [{ kind: 'flag', id: 'arrival-greeted' }, { kind: 'flag', id: 'arrival-spool-story' }] },
+    { id: 'arrival-hungry', label: "还没，刚起来。", next: 'home', effects: [{ kind: 'flag', id: 'arrival-greeted' }, { kind: 'flag', id: 'arrival-spool-story' }] },
   ] },
   { id: 'home', speaker: '奶奶',   choices: [
     { id: 'arrival-remember', label: '小时候你总夹着它去买菜。', next: 'request', effects: [{ kind: 'flag', id: 'arrival-introduced' }] },
     { id: 'arrival-notice-book', label: '信里说的，是这本书？', next: 'request', effects: [{ kind: 'flag', id: 'arrival-introduced' }] },
+  ] },
+  { id: 'home-resume', speaker: '奶奶', choices: [
+    { id: 'arrival-resume-remember', label: '小时候你总夹着它去买菜。', next: 'request', effects: [{ kind: 'flag', id: 'arrival-introduced' }] },
+    { id: 'arrival-resume-notice-book', label: '信里说的，是这本书？', next: 'request', effects: [{ kind: 'flag', id: 'arrival-introduced' }] },
   ] },
   { id: 'request', speaker: '奶奶',   choices: [
     { id: 'arrival-why-book', label: '到店里要问些什么？', next: 'people', effects: [] },
@@ -598,9 +658,10 @@ const nodes: DialogueSeed[] = [
   {"id":"grandma-noon-chat","speaker":"奶奶","choices":[{"id":"grandma-noon-close","label":"我下次去还可以接着问。","effects":[]}]},
 ];
 const rewarded=(id:string):Condition=>({kind:'reward',id});
-const spoolReturned=arrival.hotspots.find(h=>h.id==='thread-spool')!.completed!;
+const spoolReturned:Condition={kind:'any',conditions:[{kind:'flag',id:'arrival-spool-returned'},rewarded('arrival-remember'),rewarded('arrival-notice-book')]};
 function arrivalVersions(id:string):{condition:Condition;beats:DialogueBeat[]}[]|undefined{
   if(id==='request')return [{condition:{kind:'any',conditions:['arrival-understand-book','arrival-admit','arrival-photo-reply'].map(rewarded)},beats:arrivalRequestAgain}];
+  if(id==='home-resume')return [{condition:rewarded('arrival-ate'),beats:arrivalHomeAfterBreakfastAndSpool}];
   if(id==='home')return [
     {condition:{kind:'all',conditions:[rewarded('arrival-ate'),spoolReturned]},beats:arrivalHomeAfterBreakfastAndSpool},
     {condition:spoolReturned,beats:arrivalHomeWithReturnedSpool},
@@ -615,6 +676,7 @@ export const commission: Dialogue = {
     { condition: { kind: 'all', conditions: [{ kind: 'flag', id: 'entrusted' }, { kind: 'not', condition: { kind: 'flag', id: 'arrival-instructions' } }] }, nodeId: 'instructions' },
     { condition: { kind: 'flag', id: 'entrusted' }, nodeId: 'followup' },
     { condition: { kind: 'flag', id: 'arrival-introduced' }, nodeId: 'request' },
+    { condition: { kind: 'all', conditions: [{kind:'flag',id:'arrival-greeted'},{kind:'flag',id:'arrival-spool-story'}] }, nodeId: 'home-resume' },
     { condition: { kind: 'flag', id: 'arrival-greeted' }, nodeId: 'home' },
   ], nodes: nodes.map(n => scriptNode({ portrait: 'grandmother', ...n, speaker: n.speaker === '祖母' ? '奶奶' : n.speaker, versions: arrivalVersions(n.id) }, arrivalScripts[n.id])),
 };
@@ -629,7 +691,7 @@ export const arrivalGame: MinigameDefinition = {
       { id: 'morning-slip', title: '陈家包子铺', detail: '六点开门，第一笼 06:30。错过就等下一笼。', slot: 'morning' },
       { id: 'noon-slip', title: '琴记面馆', detail: '午间 11:30 开灶，老客靠窗坐。', slot: 'noon' },
     ],
-    slots: [{ id: 'morning', label: '清晨', time: '第一笼热气' }, { id: 'noon', label: '午间', time: '一碗热面' }, { id: 'evening', label: '深夜', time: '最后一盏灯' }],
+    slots: [{ id: 'morning', label: '清晨', time: '06:30' }, { id: 'noon', label: '午间', time: '11:30' }, { id: 'evening', label: '深夜', time: '21:00 后' }],
   },
   reward: { id: 'arrival-route-reward', label: '出门', feedback: "书签夹好了，钥匙也收进口袋，奶奶又叫你检查书别压着线头。你往门口走，她在后头想起一句：“陈伯要是问，昨天那碗汤不咸，正好。你别光顾问他的，忘了替我答这句。”", effects: [{ kind: 'flag', id: 'arrival-packed' }, { kind: 'item', id: 'baiwei-book', amount: 1 }, { kind: 'quest', id: 'commission', status: 'completed' }] },
 };

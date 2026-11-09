@@ -6,12 +6,14 @@ import { matches } from '../../core/engine.ts';
 import Icon from '../../shared/Icon.vue';
 import AssetImage from '../../shared/AssetImage.vue';
 import { sceneOf } from '../../core/scenes.ts';
-import UiButton from '../../shared/UiButton.vue';
 import { cameraScrollLeft, frameCamera } from '../../presentation/scene-camera.ts';
 import WoodFrame from '../../presentation/WoodFrame.vue';
-const props = defineProps<{ chapter: Chapter; content: ContentPack; state: GameState; hints: boolean; guideTarget?: string; focusLocked?: boolean; quiet?: boolean; reducedMotion?: boolean; developer?: boolean; blocked?: boolean }>();
+import {directObjectAction} from '../../presentation/object-actions';
+const props = defineProps<{ chapter: Chapter; content: ContentPack; state: GameState; guideTarget?: string; focusLocked?: boolean; quiet?: boolean; reducedMotion?: boolean; developer?: boolean; blocked?: boolean }>();
 const emit = defineEmits<{ interact: [hotspot: Hotspot]; move: [id: string]; option: [hotspot: Hotspot, actionId: string]; framing: [close: boolean] }>();
 const scene = computed(() => sceneOf(props.state, props.content));
+const place = computed(()=>props.chapter.scenes?`${props.chapter.location??''}${props.chapter.location?' · ':''}${scene.value.title}`:props.chapter.location??scene.value.title);
+const moment = computed(()=>(scene.value.time??props.chapter.time).split('·')[0]!.trim());
 const failed = ref(false);
 const viewport = ref<HTMLElement>();
 const canvas = ref<HTMLElement>();
@@ -89,6 +91,7 @@ function endDrag(h: Hotspot) {
 async function select(h: Hotspot) {
   if (suppressClick) { suppressClick = false; return; }
   if (moving.value || locked(h)) return;
+  if(directObjectAction(h,props.state,props.developer)){emit('interact',h);return;}
   const view = scene.value.camera?.views.find(v => v.id === (pose(h)?.cameraView ?? h.cameraView));
   if (view && !failed.value && view.id !== activeView.value?.id) {
     if (!activeView.value) overviewScrollLeft = viewport.value?.scrollLeft ?? 0;
@@ -105,7 +108,7 @@ watch(() => scene.value.id, () => {
 </script>
 <template>
   <div ref="viewport" class="scene-window" aria-label="场景探索区" :aria-busy="moving">
-  <div class="scene" :class="[`tint-${scene.tint ?? chapter.tint}`, { 'show-hints': hints, 'camera-moving': moving, 'staged-scene': !!scene.camera, 'scene-focus': focusLocked }]">
+  <div class="scene" :class="[`tint-${scene.tint ?? chapter.tint}`, { 'camera-moving': moving, 'staged-scene': !!scene.camera, 'scene-focus': focusLocked }]">
   <div ref="canvas" class="scene-world" :style="{ transform: `translate(${camera.x}%, ${camera.y}%) scale(${camera.zoom})` }">
     <img v-if="!failed" class="scene-image" :src="content.assets[scene.asset]?.url" :style="{ objectPosition: scene.position ?? chapter.position }" :alt="scene.title" fetchpriority="high" @error="failed = true" />
     <div v-else class="scene-fallback">{{ chapter.title }}<small>场景图片暂未载入，仍可继续探索</small></div>
@@ -121,12 +124,9 @@ watch(() => scene.value.id, () => {
       </button>
     </template>
     <div v-if="dragging && scene.hotspots.find(h => h.id === dragging?.id)?.drag" class="object-drop-target" :style="{ left: scene.hotspots.find(h => h.id === dragging?.id)!.drag!.target.x + '%', top: scene.hotspots.find(h => h.id === dragging?.id)!.drag!.target.y + '%', width: scene.hotspots.find(h => h.id === dragging?.id)!.drag!.target.width + '%', height: scene.hotspots.find(h => h.id === dragging?.id)!.drag!.target.height + '%' }">{{ scene.hotspots.find(h => h.id === dragging?.id)!.drag!.hint }}</div>
-    <span class="scene-footnote"><span></span> 移到物件上看看</span>
-  </div>
-    <div v-if="!quiet && !activeView && !scene.camera" class="scene-caption"><span class="scene-time"><Icon name="sun" /> {{ scene.time ?? chapter.time }}</span><h2>{{ chapter.title }}<span class="chapter-seal">第{{ ['一','二','三','四','五'][chapter.number - 1] }}章</span></h2><p>{{ chapter.subtitle }}</p></div>
   </div>
   </div>
-  <Transition name="hud-reveal"><div v-if="!quiet && scene.camera && !activeView" class="scene-caption scene-caption--room"><WoodFrame kind="ui-toast" /><span class="scene-time"><Icon name="sun" />{{ scene.time ?? chapter.time }}</span><h2>{{ scene.title }}<span class="chapter-seal">第{{ ['一','二','三','四','五'][chapter.number - 1] }}章</span></h2></div></Transition>
-  <nav v-if="scene.links.length" class="scene-paths" aria-label="场景通路"><span>{{ scene.title }}</span><UiButton v-for="link in scene.links" :key="link.sceneId" tone="wood" :disabled="blocked || moving || focusLocked || !developer && !matches(state, link.condition)" :title="!developer && !matches(state, link.condition) ? link.unavailable : undefined" @click="!blocked && !moving && !focusLocked && emit('move', link.sceneId)">{{ link.label }}<Icon name="arrow" /></UiButton></nav>
+  </div>
+  <Transition name="hud-reveal"><div v-if="!activeView" class="scene-caption scene-caption--room"><WoodFrame kind="ui-toast" /><span class="scene-time"><Icon name="sun" />{{moment}}</span><h2>{{place}}</h2></div></Transition>
   <nav class="mobile-objects" :class="{ 'mobile-objects--lesson': focusLocked }" aria-label="身边的物件" :inert="blocked"><span>{{ focusLocked ? '试着拿近看看' : '轻扫画面，或从这里选' }}</span><button v-for="h in availableObjects" :key="h.id" :data-guide-shortcut="h.id" :disabled="moving || locked(h)" @click="select(h)">{{ h.label }}<Icon v-if="focusLocked" name="arrow" /></button></nav>
 </template>

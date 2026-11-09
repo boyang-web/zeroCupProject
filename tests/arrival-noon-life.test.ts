@@ -47,7 +47,7 @@ test('returning the spool changes its placement and the home scene without a sec
   assert.equal(s.metrics.attention,1);
   assert.deepEqual(transition(s,{type:'interact',hotspotId:'thread-spool',actionId:'return-spool'},content).state,s);
   s=choices(act(s,{type:'talk',hotspotId:'grandma'}),['arrival-ate']);
-  assert.match(speech('home',s),/已经搁在小几/);assert.doesNotMatch(speech('home',s),/滚过去/);
+  assert.doesNotMatch(speech('home',s),/弯下腰|拾了起来|本想自己捡/);
   s=act(s,{type:'choose',choiceId:'arrival-remember'});
   assert.deepEqual(transition(s,{type:'interact',hotspotId:'thread-spool',actionId:'return-spool'},content).state,s);
   const usual=completeArrival();assert.ok(matches(usual,spool.completed));
@@ -82,8 +82,8 @@ test('grandmothers immediate breakfast reply follows both answers even if the sp
     s=choices(act(s,{type:'talk',hotspotId:'grandma'}),[choiceId]);
     const home=speech('home',s);
     assert.equal(home.includes('吃过一点也好'),choiceId==='arrival-ate');
-    assert.equal(home.includes('已经搁在小几'),returned);
-    if(returned)assert.doesNotMatch(home,/滚过去/);
+    assert.equal(home.includes('本想自己捡'),!returned);
+    if(returned)assert.doesNotMatch(home,/弯下腰|拾了起来/);
   }
 });
 

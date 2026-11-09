@@ -23,7 +23,7 @@ export interface DialogueChoice extends Action { next?: string; decision?: strin
 export interface DialogueBeat { kind: 'speech' | 'narration'; text: string; speaker?: string; portrait?: string; direction?: string }
 export interface DialogueNode { id: string; speaker: string; text: string; choices: DialogueChoice[]; portrait?: string; direction?: string; beats?: DialogueBeat[]; versions?: { condition: Condition; beats: DialogueBeat[] }[] }
 export interface Dialogue { id: string; entry: string; entries?: { condition: Condition; nodeId: string }[]; nodes: DialogueNode[] }
-export interface Exhibit { kind: 'book' | 'letter' | 'photo' | 'note'; kicker: string; title: string; lines: string[]; caption?: string; footer?: string; phone?: { time: string; heading: string; footer: string } }
+export interface Exhibit { kind: 'book' | 'letter' | 'photo' | 'note'; kicker: string; title: string; lines: string[]; caption?: string; footer?: string; addressee?:string;sender?:string;phone?: { time?: string; heading: string; footer?: string;view?:'draft'|'orders'|'messages' } }
 export type Interaction =
   | { kind: 'inspect'; text: string; action?: Action; options?: Action[]; exhibit?: Exhibit; activityId?: string; journalLink?: boolean; manipulation?: 'book' | 'flip' | 'unfold' | 'phone'; versions?: { condition: Condition; text: string; exhibit?: Exhibit }[]; }
   | { kind: 'dialogue'; dialogueId: string; entry?: string }
@@ -52,6 +52,7 @@ export interface SceneDefinition {
 }
 export interface Chapter {
   id: string; number: number; title: string; subtitle: string; time: string;
+  location?: string;
   description: string; asset: string; position: string; tint: string;
   objective: string; questId: string; metricIds: string[]; hotspots: Hotspot[];
   next?: string; exit?: Condition; exitHint?: string;

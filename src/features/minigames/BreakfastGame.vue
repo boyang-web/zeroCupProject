@@ -12,13 +12,13 @@ const emit = defineEmits<{ finish: [result: MinigameResult] }>();
 const plan = computed(() => props.definition.breakfast!);
 const selected = ref(''), servings = ref<Record<string, Serving>>({});
 const step = ref<'fill' | 'steam' | 'serve'>('fill');
-const feedback = ref(''), packages = ref<Record<string,string>>({}), checked = ref(false);
+const feedback = ref(''), packages = ref<Record<string,string>>({});
 const voice = ref<HTMLElement>();
 const bunFill = useId().replace(/:/g, '') + '-bun';
 const heat = ref(0), running = ref(false), steamed = ref(false), assisted = ref(false);
 const total = computed(() => plan.value.orders.reduce((count, order) => count + order.count, 0));
 const words = computed(() => feedback.value || plan.value.copy?.intro || props.definition.description);
-const { visibleCounts, textDone, finishText } = useReadingSequence({ texts: () => [words.value], reduced: () => props.reducedMotion });
+const { visibleCounts, finishText } = useReadingSequence({ texts: () => [words.value], reduced: () => props.reducedMotion });
 watch(step, async () => { await nextTick(); voice.value?.closest('.modal-body')?.scrollTo({ top: 0 }); });
 let timer: ReturnType<typeof setInterval> | undefined;
 const steamText = computed(() => heat.value < 35 ? '盖沿只有一点细气。' : heat.value < 60 ? '白气渐渐连成一股。' : heat.value <= 85 ? '盖沿冒着稳稳的白气。' : '蒸汽急了，先关火。');
@@ -56,17 +56,17 @@ function lift() {
   } else feedback.value = heat.value < 60 ? plan.value.copy?.early ?? '还没上气，重新合盖。' : plan.value.copy?.late ?? '火急了，关掉再来。';
 }
 function help() {
-  stop(); assisted.value = true; step.value = 'serve'; heat.value = 75; steamed.value = true; checked.value = false;
+  stop(); assisted.value = true; step.value = 'serve'; heat.value = 75; steamed.value = true;
   servings.value = Object.fromEntries(plan.value.orders.map(order => [order.id, { filling: order.filling, count: order.count }]));
   feedback.value = plan.value.copy?.helped ?? '店主帮你出笼，分装再自己看一眼。';
 }
 function choosePackage(orderId: string, choiceId: string) {
-  packages.value = { ...packages.value, [orderId]: choiceId }; checked.value = false; feedback.value = '';
+  packages.value = { ...packages.value, [orderId]: choiceId }; feedback.value = '';
 }
 function checkPackages() {
   const wrong = plan.value.packaging?.find(task => packages.value[task.orderId] !== task.expected);
   if (wrong) { feedback.value = packages.value[wrong.orderId] ? wrong.wrong : '先把这两份要怎么放选好。'; void nextTick(() => voice.value?.scrollIntoView({ block: 'nearest' })); return; }
-  checked.value = true; feedback.value = plan.value.copy?.packed ?? '分清了，端去吃饭。';
+  finish();
 }
 function finish() {
   if (steamed.value && packagingReady(plan.value, packages.value)) emit('finish', { status: 'completed', score: assisted.value ? 80 : 100 - Math.abs(heat.value - 75), assisted: assisted.value });
@@ -80,7 +80,7 @@ onBeforeUnmount(() => { stop(); document.removeEventListener('visibilitychange',
 <template>
   <div class="breakfast-game">
     <nav class="breakfast-steps" aria-label="下一笼的步骤"><span :aria-current="step === 'fill' ? 'step' : undefined">一 · 认馅</span><span :aria-current="step === 'steam' ? 'step' : undefined">二 · 看火</span><span :aria-current="step === 'serve' ? 'step' : undefined">三 · 分早饭</span><small>这一笼留 {{ total }} 只</small></nav>
-    <div ref="voice" class="breakfast-voice"><WoodFrame kind="ui-toast" /><p @click="finishText"><ProgressiveText :text="words" :revealed="visibleCounts[0]" /></p><UiButton v-if="!textDone" tone="quiet" aria-label="显示带做全文" @click="finishText">显示全文 ›</UiButton></div>
+    <div ref="voice" class="breakfast-voice"><WoodFrame kind="ui-toast" /><p class="text-scroll" tabindex="0" @click="finishText" @keydown.space.prevent="finishText" @keydown.enter.prevent="finishText"><ProgressiveText :text="words" :revealed="visibleCounts[0]" /></p></div>
     <template v-if="step === 'fill'">
       <div class="filling-tray"><UiButton v-for="filling in plan.fillings" :key="filling" :aria-pressed="selected === filling" :tone="selected === filling ? 'jade' : 'paper'" @click="selectFilling(filling)"><AssetImage :asset="assets['prop-buns']!" /><strong>{{ filling }}</strong></UiButton></div>
       <div class="breakfast-orders"><article v-for="order in plan.orders" :key="order.id"><h3>{{ order.person }}</h3><p>{{ order.hint }}</p><button class="order-bowl" :data-breakfast-order="order.id" :aria-label="`给${order.person}放一个${selected || '包子'}`" @click="place(order.id)"><WoodFrame kind="ui-paper" /><AssetImage v-if="servings[order.id]" :asset="assets['prop-buns']!" /><span>{{ servings[order.id] ? `${servings[order.id].filling} × ${servings[order.id].count}` : '把包子放在这里' }}</span></button><UiButton v-if="servings[order.id]" tone="quiet" @click="delete servings[order.id]">重新装</UiButton></article></div>
@@ -94,9 +94,9 @@ onBeforeUnmount(() => { stop(); document.removeEventListener('visibilitychange',
     <template v-else>
       <div class="breakfast-served"><svg class="breakfast-bun-count" :viewBox="`0 0 ${total * 44 + 18} 82`" role="img" :aria-label="`这一笼的 ${total} 只包子`"><defs><radialGradient :id="bunFill" cx=".4" cy=".3" r=".8"><stop stop-color="#fff6d7" /><stop offset=".7" stop-color="#e2c998" /><stop offset="1" stop-color="#b99b6d" /></radialGradient></defs><g v-for="number in total" :key="number" :transform="`translate(${number * 44 - 18}, ${number % 2 ? 36 : 46})`"><ellipse cy="17" rx="20" ry="7" fill="#8f755c" opacity=".15" /><path d="M-20 10C-23-2-13-17 0-18C13-17 23-2 20 10C16 23-17 23-20 10Z" :fill="`url(#${bunFill})`" stroke="#b59d77" stroke-width=".7" /><path d="M0-16Q-11-7-11 6M0-16Q-3-5-3 7M0-16Q5-5 6 7M0-16Q14-5 14 5" fill="none" stroke="#bfa780" stroke-width="1.2" opacity=".65" /></g></svg><p>阿宁和你那份留在碗里。再分清这两份，就能端早饭了。</p></div>
       <div class="breakfast-packages"><section v-for="task in plan.packaging" :key="task.orderId"><WoodFrame kind="ui-paper" /><h3>{{ task.title }}</h3><div class="button-row"><UiButton v-for="choice in task.choices" :key="choice.id" :data-breakfast-package="task.orderId + ':' + choice.id" :tone="packages[task.orderId] === choice.id ? 'jade' : 'paper'" :aria-pressed="packages[task.orderId] === choice.id" @click="choosePackage(task.orderId, choice.id)">{{ choice.label }}</UiButton></div></section></div>
-      <UiButton v-if="!checked" tone="jade" @click="checkPackages">核对两袋和饭碗</UiButton><UiButton v-else tone="jade" @click="finish">端着早饭，去后院</UiButton>
+      <UiButton tone="jade" @click="checkPackages">端着早饭，去后院</UiButton>
     </template>
-    <UiButton v-if="!checked" class="breakfast-help" tone="quiet" @click="help">让陈伯带着出一笼</UiButton>
+    <UiButton v-if="step!=='serve'" class="breakfast-help" tone="quiet" @click="help">让陈伯带着出一笼</UiButton>
   </div>
 </template>
 <style scoped>

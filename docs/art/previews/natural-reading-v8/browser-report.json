@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-09",
+  "browser": "Local Chrome, isolated Playwright contexts, Chromium sandbox enabled",
+  "viewports": [
+    [
+      1600,
+      900
+    ],
+    [
+      390,
+      844
+    ],
+    [
+      390,
+      667
+    ],
+    [
+      320,
+      640
+    ]
+  ],
+  "ordinaryMode": true,
+  "checks": [
+    "Normal animation, focused first chapter: real objects, whole-window/keyboard reading, recipe directly visible, bookmarks auto-finish, dock unfolds, departure works.",
+    "desktop: square dock, letter/photo/book direct surfaces, full addressed letter, fixed frame and object while only text scrolls, exact home return.",
+    "mobile: square dock, letter/photo/book direct surfaces, full addressed letter, fixed frame and object while only text scrolls, exact home return.",
+    "Stool direct click commits once: original target gone, seated Chen remains, no second action confirmation.",
+    "Chen full family scene and trial ending retain original choices and clear the breakfast table.",
+    "desktop: real borrowing, wrong filling, corrected five portions, steaming help, rejected wrong bag and single valid delivery; fixed modal and no completion confirmation.",
+    "mobile: real borrowing, wrong filling, corrected five portions, steaming help, rejected wrong bag and single valid delivery; fixed modal and no completion confirmation.",
+    "Meal route: one sample is acknowledged separately from three trial days; interrupted node closes normally.",
+    "Deferred route: no promised trial is invented, school departure remains, later conversation resumes.",
+    "Rapid journal page changes have no cover or turn lock and fewer than 250 DOM nodes; life pages, collection and settings still work from the simplified menu.",
+    "Mouse drag moves the same original stool to Chen, removes its source and leaves the camera in overview.",
+    "Bookmark auto-completion can be cancelled before its timer without awarding packing; reopening and completing really unlocks departure.",
+    "320×640: collection figure, title and controls stay fixed while the story scrolls.",
+    "390×667: envelope opens on its surface, letter and phone copy stay inside fixed objects, photograph flips both ways after reading.",
+    "Repeated whole-window clicks at the last statement reveal answers without choosing one; default animation and keyboard access remain available."
+  ],
+  "errors": []
+}

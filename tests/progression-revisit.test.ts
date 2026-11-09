@@ -12,7 +12,9 @@ import { act, choices, completeArrival, enterMorning, finishMorning, finishNoon,
 test('the opening exposes observation first, recipes after the book, and no later systems', () => {
   let s = act(createState(content), { type: 'start' });
   assert.equal(currentGuide(s, content)?.target, 'phone');
-  for (const id of ['journal', 'inventory', 'lifeNotes', 'collection', 'revisit', 'chapterTrack'] as const) assert.equal(featureUnlocked(s, content, id), false, id);
+  for (const id of ['journal', 'inventory', 'lifeNotes', 'collection', 'revisit'] as const) assert.equal(featureUnlocked(s, content, id), false, id);
+  assert.equal(content.progression?.unlocks.objectHints, undefined);
+  assert.equal(content.progression?.unlocks.chapterTrack, undefined);
   s = act(s, { type: 'inspect', hotspotId: 'phone' });
   assert.equal(currentGuide(s, content)?.target, 'grandma');
   assert.equal(featureUnlocked(s, content, 'journal'), false);
