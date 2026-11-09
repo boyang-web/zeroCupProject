@@ -142,11 +142,20 @@ export function validateContent(pack: ContentPack): string[] {
       }
     }
     const complete = new Set<string>(), active = new Set<string>();
+    function once(condition: Condition | undefined, key: string): boolean {
+      return !!condition && (condition.kind === 'all' ? condition.conditions.some(c => once(c,key))
+        : condition.kind === 'not' && condition.condition.kind === 'reward' && condition.condition.id === key);
+    }
     function visit(id: string) {
       if (complete.has(id)) return;
       if (active.has(id)) { errors.push(`${dialogue.id}/${id}: 对话接续出现循环`); return; }
       active.add(id);
-      for (const choice of dialogue.nodes.find(n => n.id === id)?.choices ?? []) if (choice.next) visit(choice.next);
+      for (const choice of dialogue.nodes.find(n => n.id === id)?.choices ?? []) if (choice.next) {
+        // A topic can return to a menu only when selecting it consumes its own
+        // prerequisite. It can never traverse that edge again in ordinary play.
+        if (choice.next === id) errors.push(`${dialogue.id}/${id}: 对话接续出现循环`);
+        else if (!once(choice.condition,choice.onceKey??choice.id)) visit(choice.next);
+      }
       active.delete(id); complete.add(id);
     }
     for (const node of dialogue.nodes) visit(node.id);

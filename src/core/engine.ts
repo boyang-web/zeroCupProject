@@ -44,9 +44,9 @@ function enterChapter(state: GameState, id: string, content: ContentPack) {
   addUnique(state.visited, id);
   state.quests[chapter.questId] ??= 'active';
   for (const quest of content.quests.filter(q => q.chapterId === id && q.autoStart)) state.quests[quest.id] ??= 'active';
-  if (!chapter.next) state.quests[chapter.questId] = 'completed';
+  if (!chapter.next && !chapter.exit) state.quests[chapter.questId] = 'completed';
   state.dialogue = null;
-  state.phase = chapter.next ? 'playing' : 'ending';
+  state.phase = chapter.next || chapter.exit ? 'playing' : 'ending';
 }
 export function resolveEnding(state: GameState, content: ContentPack) {
   return content.endings.find(ending => matches(state, ending.condition))!;
@@ -101,7 +101,8 @@ export function transition(previous: GameState, command: Command, content: Conte
     } else if (command.type === 'resume-journey') {
       if (!isRevisiting(state)) return deny('已经在当前行程中了。');
       state.chapterId = state.journey.chapterId; state.sceneId = state.journey.sceneId;
-      state.phase = content.chapters.find(c => c.id === state.chapterId)!.next ? 'playing' : 'ending';
+      const anchor = content.chapters.find(c => c.id === state.chapterId)!;
+      state.phase = anchor.next || (anchor.exit && state.quests[anchor.questId] !== 'completed') ? 'playing' : 'ending';
       state.dialogue = null; feedback = '回到刚才的行程。';
     } else if (command.type === 'study-collection') {
       if (!featureUnlocked(state, content, 'collection', options)) return deny('物件收藏尚未开放。');
@@ -117,9 +118,13 @@ export function transition(previous: GameState, command: Command, content: Conte
       if (!isRevisiting(state)) state.journey.sceneId = command.sceneId;
     } else if (command.type === 'travel') {
       if (isRevisiting(state) && !options.developer) return deny('回访结束后，可以回到原来的行程。');
-      if (!chapter.next || !allowed(chapter.exit)) return deny(chapter.exitHint ?? '还有事情需要处理。');
-      if (options.developer) state.visited = state.visited.filter(id => id !== chapter.next);
-      enterChapter(state, chapter.next, content);
+      if ((!chapter.next && !chapter.exit) || !allowed(chapter.exit)) return deny(chapter.exitHint ?? '还有事情需要处理。');
+      if (!chapter.next) {
+        state.quests[chapter.questId] = 'completed'; state.phase = 'ending';
+      } else {
+        if (options.developer) state.visited = state.visited.filter(id => id !== chapter.next);
+        enterChapter(state, chapter.next, content);
+      }
     } else if (command.type === 'close-dialogue') {
       if (!state.dialogue) return deny('当前没有对话。');
       state.dialogue = null;

@@ -31,12 +31,12 @@ export const night: Chapter = {
           drag: { actionId: 'night-wipe', target: { x: 9, y: 60, width: 16, height: 5 }, hint: '把左侧的抹布拖过桌面，也可点开擦桌。' },
           interaction: { kind: 'inspect', text: "桌左侧放着抹布，右边留了一圈水印。罗姐把布包从凳上拿开，让你有地方转身，嘴上还在跟许叔确认那份豆腐。\n\n你先把挨桌沿的东西往里让，水渍连着擦干，待会儿端来的碗才有一块稳当地方。", versions: [{ condition: flag('night-table-wiped'), text: "水印已经擦干，抹布叠在左后角，右边可以放饭碗。罗姐拉开凳子，说这里就好，抬头能看到巷口，不用吃一口又起来看车来了没有。" }], options: [{ id: 'night-wipe', label: '把这张桌擦干净', effects: [{ kind: 'flag', id: 'night-table-wiped' }], feedback: "你把水渍擦干，将抹布叠到左后角，给碗留出一块空处。罗姐把凳子往里让，说这里就好，吃着也看得到巷口，包就放自己手边，不再占一整张凳。" }] } },
         { id: 'night-note', label: '门边留餐纸条', x: 68, y: 43, cameraView: 'note', icon: 'letter', sprite: sprite('night-clip', 5, 12), completed: clue('late-note'),
-          interaction: { kind: 'inspect', manipulation: 'unfold', text: "纸条只写十点四十和一句谢谢，最后那个谢挤进折痕，展开才读得全。\n\n纸上没有后来改到几点，许叔将它单独朝外夹着，免得收钱时拿混。真要知道今晚来不来，还得看手机的新消息。", exhibit: { kind: 'note', kicker: '门边 · 小梁原来的约定', title: '十点四十，谢谢', lines: ['十点四十，谢谢。', '最后一个“谢”挤进了折痕。'] }, action: { id: 'night-read', label: '记下纸条上的字', effects: [{ kind: 'clue', id: 'late-note' }] } } },
+          interaction: { kind: 'inspect', manipulation: 'unfold', text: "纸条正面写十点四十和一句谢谢，最后那个谢挤进折痕。翻到背面，又有一行“今夜待确认”，笔迹比前面重。\n\n许叔把这张单独朝外夹着，免得收钱时拿混。纸上还没有新的时间，得去看手机里刚来的消息。", exhibit: { kind: 'note', kicker: '门边 · 小梁原来的约定', title: '十点四十，谢谢', lines: ['正面：十点四十，谢谢。', '背面：今夜待确认。', '最后一个“谢”挤进了折痕。'] }, action: { id: 'night-read', label: '记下纸条上的字', effects: [{ kind: 'clue', id: 'late-note' }] } } },
         { id: 'night-served-bowl', label: '罗姐的那碗饭', x: 19.5, y: 64, cameraView: 'table', icon: 'look', sprite: sprite('night-bowl', 9, 6.5), condition: all(flag('night-played'), not(flag('night-luo-left'))),
           interaction: { kind: 'inspect', text: "许叔端来堂食，辣酱留在碗沿，没有拌进饭里。罗姐先拨开，夹一块豆腐尝过，才自己添一点。\n\n她的包已经从凳上拿走，放在手边，吃完就能起身，不用再围着桌子找东西。", versions: [{ condition: flag('night-luo-left'), text: "罗姐把吃完的碗送到柜边，筷子摆在碗沿，包往肩上一提就走了。她赶十点五十那班车，门口没有留下等着再问什么的人，饭这一份也已经收清。" }] } },
       ] },
     { id: 'night-kitchen', title: '灶边', time: '22:40—22:48 · 分装', asset: 'night-kitchen', description: "饭锅还盖着，手机搁在不沾水的干台旁，许叔刚洗过手，叫你替他看新消息。碗和空盒各占一边，两张单也没放到一起，拿之前得先认清是谁的。",
-      variants: [{ condition: flag('night-ended'), time: '回看今晚的灶边', description: '今晚的分装已经做过。柜边保留着交接记录。' }],
+      variants: [{ condition: flag('night-ended'), time: '回看今晚的灶边', description: '灶火关了，锅盖合着，擦过的台面已经干了。柜边还夹着今晚那张新条。' }],
       camera: { views: [{ id: 'reply', label: '干台边的回信', x: 40, y: 52, zoom: 1.8 }, { id: 'packing', label: '分装台', x: 54, y: 54, zoom: 1.65 }, { id: 'xu', label: '灶旁的许叔', x: 74, y: 56, zoom: 1.35 }] },
       links: [{ sceneId: 'night-front', label: '回店门的小方桌' }, { sceneId: 'night-counter', label: '去柜边交接', condition: flag('night-played'), unavailable: '先读小梁的回信，核对两张分装单。' }],
       hotspots: [
@@ -64,7 +64,7 @@ export const night: Chapter = {
         { id: 'night-returned-bowl', label: '罗姐送回的空碗', x: 58, y: 52.5, cameraView: 'box', icon: 'look', sprite: sprite('night-empty-bowl', 5.5, 3.8), condition: flag('night-luo-left'), interaction: { kind: 'inspect', text: "空碗放在柜面左侧，跟饭盒和新条分着，没有压住要回的消息。罗姐提包赶十点五十的车去了，许叔伸手拿碗时，先看一眼里面，才把这份收进已吃完的那边。" } },
         { ...person('night-liang', '小梁', 'night-liang', 85, 95, 'night-liang-talk', 'liang'), condition: all(flag('night-arrived'), not(flag('night-pickup'))) },
         { id: 'night-record', label: '今晚的新条', x: 73.5, y: 51.5, cameraView: 'box', icon: 'letter', sprite: sprite('night-flat-note', 6, 3), condition: flag('night-ended'),
-          interaction: { kind: 'inspect', text: "十一点落锁，今晚的交接已经收尾。你将时间写在新的一行，前面谁说过什么，就照自己真听见的记，没有再给后头添一句猜想。", versions: [
+          interaction: { kind: 'inspect', text: "新条上添了一行“十一点落锁”。许叔看过，把纸夹往干处挪，叫你别压在刚擦过的柜沿。", versions: [
             { condition: flag('night-legacy'), text: "旧纸只留了当时作出的决定，后来有没有取到饭、回过哪条消息，没有记下来。你把没写的地方留着，今晚新听到的另放一页，没有替旧事补上新的细节。" },
             { condition: flag('night-pickup'), text: "十点五十五取到饭，改时间先回信，十一点落锁。你把双方说定的几句记清，小梁不愿公开的顶班那一段另折起来，没有混进店记。\n\n饭盒已经带走，柜边不用再替他占着位置。" },
             { condition: flag('night-called-off'), text: "取消消息提前发出，这份饭没有交出去，十一点照时落锁。手机上还没有新的回信，你没把对方没回的那半句替他写出来。\n\n许叔收的是空盒，饭并没有先装好等到凉。" },
@@ -104,8 +104,21 @@ const handoffNodes: DialogueSeed[] = [
 const nightDialogueSeeds: (Omit<Dialogue, 'nodes'> & { nodes: DialogueSeed[] })[] = [
   { id: 'night-talk', entry: 'opening', entries: [{ condition: flag('night-ended'), nodeId: 'after' }, { condition: flag('night-luo-left'), nodeId: 'counter-progress' }, { condition: flag('night-played'), nodeId: 'after-game' }, { condition: flag('night-listened'), nodeId: 'preparing' }], nodes: [...xuNodes, { id: 'counter-progress', speaker: '许叔',  choices: [{ id: 'night-return-counter', label: '回柜边接着说。', effects: [] }] }].map(n => ({ portrait: 'night-xu', ...n })) },
   { id: 'night-luo-talk', entry: 'opening', entries: [{ condition: flag('night-luo-left'), nodeId: 'departed' }, { condition: flag('night-played'), nodeId: 'eating' }], nodes: [{ id: 'opening', speaker: '罗姐', portrait: 'night-luo',  choices: [{ id: 'night-luo-order', label: '堂食一碗，辣酱碗沿，筷子碗边。', effects: [{ kind: 'flag', id: 'night-luo-heard' }] }] }, { id: 'eating', speaker: '罗姐', portrait: 'night-luo',   choices: [{ id: 'night-luo-eating-close', label: '好，我去柜边。', effects: [] }] }, { id: 'departed', speaker: '柜边',  choices: [{ id: 'night-luo-departed-close', label: '放下碗，回许叔那边。', effects: [] }] }] },
-  { id: 'night-kitchen-talk', entry: 'opening', entries: [{ condition: flag('night-ended'), nodeId: 'after' }, { condition: flag('night-played'), nodeId: 'prepared' }], nodes: [
-    { id: 'opening', speaker: '许叔', portrait: 'night-xu',  choices: [{ id: 'night-kitchen-close', label: '我看看手机，再核对分装。', effects: [] }] },
+  { id: 'night-kitchen-talk', entry: 'opening', entries: [{ condition: flag('night-ended'), nodeId: 'after' }, { condition: flag('night-played'), nodeId: 'prepared' }, { condition: flag('night-tofu-tasted'), nodeId: 'again' }], nodes: [
+    { id: 'opening', speaker: '许叔', portrait: 'night-xu', choices: [
+      { id: 'night-kitchen-close', label: '我看看手机，再核对分装。', effects: [] },
+      { id: 'night-watch-tofu', label: '这面煎到什么样才能翻？', next: 'watch', condition: all(ready, unfinished, not(flag('night-played'))), effects: [] },
+    ] },
+    { id: 'watch', speaker: '许叔', portrait: 'night-xu', choices: [
+      { id: 'night-tofu-early', label: '拿铲子试着翻一翻。', next: 'early', effects: [] },
+      { id: 'night-tofu-wait', label: '先等一等，看许叔翻面。', next: 'turn', effects: [] },
+      { id: 'night-tofu-later', label: '先放下铲子，待会儿再看。', effects: [] },
+    ] },
+    { id: 'early', speaker: '许叔', portrait: 'night-xu', choices: [{ id: 'night-tofu-steady', label: '先停手，等豆腐煎定。', next: 'turn', effects: [] }] },
+    { id: 'turn', speaker: '许叔', portrait: 'night-xu', choices: [{ id: 'night-tofu-sauce', label: '看看什么时候添汁。', next: 'sauce', effects: [] }] },
+    { id: 'sauce', speaker: '许叔', portrait: 'night-xu', choices: [{ id: 'night-tofu-taste', label: '吹凉一点汤汁，尝尝豆腐。', next: 'taste', effects: [] }] },
+    { id: 'taste', speaker: '许叔', portrait: 'night-xu', choices: [{ id: 'night-tofu-finish', label: '记下煎定再翻，添汁后尝着收。', effects: [{ kind: 'flag', id: 'night-tofu-tasted' }] }] },
+    { id: 'again', speaker: '许叔', portrait: 'night-xu', choices: [{ id: 'night-tofu-again-close', label: '记好了，先对分装单。', effects: [] }] },
     { id: 'after', speaker: '许叔', portrait: 'night-xu',  choices: [{ id: 'night-kitchen-after', label: '好。', effects: [] }] },
     { id: 'prepared', speaker: '许叔', portrait: 'night-xu',  choices: [{ id: 'night-kitchen-prepared', label: '去柜边。', effects: [] }] },
   ] },
@@ -136,11 +149,11 @@ export const nightGame: MinigameDefinition = {
 };
 export const nightClues: Entry[] = [
   { id: 'night-reply', title: '小梁改到五十五', text: "小梁说十点五十五到，辣酱另放，筷子留盒外。下班前没等到准话就直接上车，走正门还是侧门，要先看许叔回的这一句。许叔让我读的只有这条新消息，别的没让我翻。", category: 'detail', asset: 'night-phone' },
-  { id: 'night-old-sign', title: '旧牌背面的时间', text: "旧牌正面写晚点来也行，背面又补二十三点收。许叔说有人按前头那句，十一点半才来，到了门口才看见锁。写晚一点的人和听晚一点的人，原来没算同一个点。", category: 'detail', asset: 'night-sign' },
+  { id: 'night-old-sign', title: '旧牌背面的时间', text: "旧牌正面写晚点来也行，背面又补二十三点收。许叔说有人按前头那句，十一点半才来，到了门口才看见锁。后来补的关门时间藏在背面，站在门口的人看不见。", category: 'detail', asset: 'night-sign' },
   { id: 'night-riceball', title: '那句“快了”', text: "有回很晚才回住处，便利店剩一个饭团，我拿到门口才想起来看看手机。奶奶问到家没有，我回快了，觉得总不能让她跟着等。\n\n回完其实还站在店外拆包装，走到楼下又怕她问吃没吃。那次没跟她讲清，今天念小梁最后半句时才重新想起来。", category: 'life', asset: 'night-phone' },
   { id: 'night-record-pickup', title: '夜饭店记 · 取到了饭', text: "十点五十五，小梁从侧门出来，照着门灯找过来，接到刚盛的饭。辣酱另外装，筷子在外面，搭扣也能用手套掰开。\n\n改时间先回一句准话，十一点落锁，店里这几件写在同一张上。", category: 'life', asset: 'night-packed-box' },
   { id: 'night-record-cancelled', title: '夜饭店记 · 提前取消', text: "许叔提前发消息，说今晚这份先撤，下回再留，盒子没有先装饭。十一点收妥，照时关了门。\n\n屏幕没有新的回信，小梁看见没有、那会儿上没上车，我都不知道，就只记到发出去这一句。", category: 'life', asset: 'night-clip' },
   { id: 'night-record-missed', title: '夜饭店记 · 留到关门', text: "五十五没人进门，十一点也没有回信。许叔翻手机才看到，对方那句没收到准话就上车，自己一直没答。\n\n空盒收回去了，十一点落锁。小梁后来往哪头走，今晚有没有吃别的，没有听到，先不往后记。", category: 'life', asset: 'night-clip' },
   { id: 'night-private-liang', title: '折札 · 小梁的私话', text: "小梁取饭时另外说，今晚替同事顶班的事不要写出来，同事也认识这家店。怎么改时间、往哪里回话可以留，自己那句不想给人围着问。\n\n这段另折着收，店记只留双方约好的办法，没有把它抄进去。", category: 'detail', asset: 'night-clip' },
-  { id: 'night-private-xu', title: '折札 · 许叔的私话', text: "许叔说前阵子总拖晚，答应女儿十一点关门，她却还要等他进门才睡。电话里叫先躺着，回来开门，人仍坐在那里。\n\n他让我只记关门时间，这句家里的话听过就好。店记写十一点，别的另折起来。", category: 'detail', asset: 'night-clip' },
+  { id: 'night-private-xu', title: '折札 · 许叔的私话', text: "许叔说女儿从小等他，后来长大了，也要等一句到家。他答应十一点收，就不能又为最后一份饭点起火。\n\n他让我只记关门时间，这句家里的话听过就好。店记写十一点，别的另折起来。", category: 'detail', asset: 'night-clip' },
 ];

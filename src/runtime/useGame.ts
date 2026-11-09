@@ -27,7 +27,7 @@ export function useGame(content: ContentPack, storage: StoragePort) {
   const dialogue = computed(() => content.dialogues.find(d => d.id === state.value.dialogue?.id));
   const node = computed(() => dialogue.value?.nodes.find(n => n.id === state.value.dialogue?.nodeId));
   const ending = computed(() => resolveEnding(state.value, content));
-  const canTravel = computed(() => !!chapter.value.next && (developer.value || matches(state.value, chapter.value.exit)));
+  const canTravel = computed(() => !!(chapter.value.next || chapter.value.exit) && (developer.value || matches(state.value, chapter.value.exit)));
   function setDeveloper(enabled: boolean) {
     if (enabled === developer.value) return;
     if (enabled) {

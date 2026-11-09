@@ -11,7 +11,7 @@ export const progression: NonNullable<ContentPack['progression']> = {
     journal: { kind: 'clue', id: 'book' },
     inventory: { kind: 'item', id: 'small-key' },
     lifeNotes: lifeUnlocked,
-    revisit: revisitUnlocked,
+    revisit: { kind: 'all', conditions: [revisitUnlocked, { kind: 'any', conditions: [{ kind: 'not', condition: { kind: 'flag', id: 'epilogue-night-finished' } }, { kind: 'quest', id: 'epilogue', status: 'completed' }] }] },
     collection: { kind: 'any', conditions: (['active', 'completed', 'failed'] as const).map(status => ({ kind: 'quest', id: 'noon', status })) },
   },
   guides: [
@@ -29,7 +29,7 @@ export const progression: NonNullable<ContentPack['progression']> = {
 export const recipes: Recipe[] = [
   { id: 'xu-tofu-rice', title: '许叔的豆腐烧菜饭', subtitle: '夜饭小馆 · 两份饭分开核对', asset: 'night-bowl', condition: { kind: 'flag', id: 'night-played' },
     note: '许叔让我先认两张单，菜一样，碗和盒子却不能顺手拿一份算一份。罗姐的辣酱放碗边，她自己拨，小梁的另外装杯，筷子也留在外头。搭扣试过了，饭盒还是先空着，等那句确认回来再盛。我原想把这些都记在做法下面，写完才发现，光是分清这一顿给谁，就已经占了好几行。',
-    ingredients: ['米饭', '豆腐烧菜', '辣酱，按吃法另放'], steps: ['豆腐切块，入锅煎到表面微黄。', '添少许水与调味汁，烧到豆腐入味。', '盛米饭，浇上豆腐烧菜。先问辣酱放哪里。', '堂食用浅碗；留餐确认时间后再盛，辣酱另杯，筷子放盒外。'] },
+    ingredients: ['米饭', '豆腐', '水与调味汁，用量待试做核实', '辣酱，按吃法另放'], steps: ['豆腐切块，一面煎定再翻，看到浅金色就好，不必煎出硬壳。', '两面定住后，添少量水与调味汁，小火烧。轻轻晃锅，别反复铲碎。', '尝一点汤汁，再看要收多少。别收得太干，拌饭留一点汁。用量与火候，回家试过再补。', '盛米饭，浇上豆腐烧菜。先问辣酱放哪里；带走的别盛太满的汤。', '堂食用浅碗；留餐确认时间后再盛，辣酱另杯，筷子放盒外。'] },
   {
   "id": "osmanthus-rice",
   "title": "桂花米酒",

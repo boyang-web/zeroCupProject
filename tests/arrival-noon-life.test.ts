@@ -198,7 +198,7 @@ test('ten actual preceding v5 saves keep every stored field and the old explaine
   for(const[name,slots]of Object.entries(old)){
     const raw=Object.values(slots)[0]!,decoded=decodeSave(raw,content);
     assert.ok(decoded.ok&&decoded.value,name);if(!decoded.ok||!decoded.value)continue;
-    const state=decoded.value.state;assert.deepEqual(state,JSON.parse(raw).state,name);
+    const state=decoded.value.state;assert.deepEqual(state,{...JSON.parse(raw).state,contentVersion:content.version},name);
     if(name==='explained'){assert.ok(!state.flags.includes('noon-life-lesson'));assert.ok(matches(state,game.condition));assert.ok(transition(state,{type:'finish-minigame',gameId:game.id,result:{status:'completed',score:100,assisted:false}},content).state.flags.includes('noon-played'));}
   }
 });

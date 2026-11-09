@@ -17,9 +17,9 @@ test('all twenty-seven shop outcome combinations can leave chapter four',()=>{
     let s=finishNight(result,finishNoon(finishMorning(a),b));
     assert.equal(s.quests.morning,a==='defer'?'failed':'completed');assert.equal(s.quests.noon,b==='overload'?'failed':'completed');
     s=act(s,{type:'travel'});
-    assert.equal(s.phase,'ending');assert.equal(s.chapterId,'epilogue');assert.deepEqual(s.visited,['arrival','morning','noon','night','epilogue']);endings.add(resolveEnding(s,content).id);
+    assert.equal(s.phase,'playing');assert.equal(s.chapterId,'epilogue');assert.deepEqual(s.visited,['arrival','morning','noon','night','epilogue']);endings.add(resolveEnding(s,content).id);
   }
-  assert.equal(endings.size,3);
+  assert.equal(endings.size,1); // No final promise is inferred from shop results.
 });
 test('repeat inspection and minigames cannot farm rewards or alternative bag paths',()=>{
   let s=enterMorning();s=act(s,{type:'talk',hotspotId:'morning-person'});s=choices(s,['morning-listen','morning-thanks']);s=act(s,{type:'move',sceneId:'morning-kitchen'});

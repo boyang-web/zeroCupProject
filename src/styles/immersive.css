@@ -22,6 +22,7 @@ html,body,#app { min-height:100%; }
 @media (max-width:720px) { .immersive .scene-caption--room { left:14px; top:82px; width:171px; padding:12px 17px; }.immersive .scene-caption--room h2 { font-size:23px; } }
 .world-object.hotspot { transform:translate(-50%,-100%); padding:0; border:0; border-radius:0; background:transparent; min-width:0; min-height:0; isolation:isolate; transition:left .55s ease,top .55s ease; touch-action:pan-y; }
 .world-object > .asset-image { width:100%; height:100%; transform:translateY(0); transform-origin:50% 90%; filter:drop-shadow(0 3px 3px #2b201530); transition:transform .22s,filter .22s; }
+.world-object[data-guide-object^="epilogue-page-"] > .asset-image { rotate:-72deg; scale:1 .7; transform-origin:50% 80%; }
 .world-object.hotspot:hover,.world-object.hotspot:active { transform:translate(-50%,-100%); background:transparent; }.world-object.hotspot:hover > .asset-image,.world-object.hotspot:focus-visible > .asset-image { transform:translateY(-5px); filter:brightness(1.05) drop-shadow(0 8px 6px #2d281f50); }
 .world-person.hotspot:hover > .asset-image,.world-person.hotspot:focus-visible > .asset-image { transform:none; filter:brightness(1.04) drop-shadow(0 3px 3px #2b201530); }
 .world-object .hotspot-label { position:absolute; bottom:calc(100% + 4px); left:50%; margin:0; transform:translate(-50%,3px); opacity:0 !important; pointer-events:none; font:13px var(--font-story); background:#fff2dce8; border:1px solid #b39463; border-radius:2px; padding:5px 10px; box-shadow:0 3px 10px #32251520; }.world-object:hover .hotspot-label,.world-object:focus-visible .hotspot-label { opacity:1 !important; transform:translate(-50%,-2px); }
@@ -63,3 +64,6 @@ html,body,#app { min-height:100%; }
 }
 @media (max-height:620px) and (min-width:721px) { .home-content { top:48%; }.home-name { font-size:88px; }.home-place { margin-bottom:10px; }.home-divider { margin:12px 0; }.home-menu { gap:8px; }.home-menu > .ui-button { min-height:42px; }.home-secondary { padding-top:0; }.immersive .scene-caption { top:24%; } }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
+
+/* The dawn side table has a shallow viewing angle; flatten only its book. */
+.world-object[data-guide-object="epilogue-morning"][data-sprite-asset="epilogue-book"] > .asset-image { scale:1 .55; transform-origin:50% 100%; }

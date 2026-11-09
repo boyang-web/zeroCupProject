@@ -6,8 +6,10 @@ import {matches} from '../src/core/conditions.ts';
 import {validateContent} from '../src/core/validate-content.ts';
 import {journalActivity} from '../src/presentation/journal-activity.ts';
 import type {GameState} from '../src/core/contracts.ts';
-import {act,choices,completeArrival,reachArrivalApproach,finishMorning,noonDecision} from './helpers.ts';
+import {act,choices,completeArrival,reachArrivalApproach,finishMorning,noonDecision,finishNight} from './helpers.ts';
 import {dialogueChoices} from '../src/presentation/dialogue-choices.ts';
+import {sceneOf} from '../src/core/scenes.ts';
+import {decodeSave} from '../src/infrastructure/saves.ts';
 
 const commission=content.dialogues.find(d=>d.id==='commission')!;
 function available(state:GameState){return commission.nodes.find(n=>n.id===state.dialogue?.nodeId)!.choices.filter(c=>matches(state,c.condition)&&(!c.decision||!state.decisions[c.decision]||state.decisions[c.decision]===c.id));}
@@ -61,6 +63,8 @@ test('the unfinished book task is available from either book entry and disappear
 
 test('validation rejects a self-loop and a multi-node loop even when there is an exit choice',()=>{
   const self=structuredClone(content);self.dialogues[0]!.nodes[0]!.choices[0]!.next=self.dialogues[0]!.nodes[0]!.id;assert.ok(validateContent(self).some(e=>e.includes('对话接续出现循环')));
+  self.dialogues[0]!.nodes[0]!.choices[0]!.condition={kind:'not',condition:{kind:'reward',id:self.dialogues[0]!.nodes[0]!.choices[0]!.id}};
+  assert.ok(validateContent(self).some(e=>e.includes('对话接续出现循环')));
   const cycle=structuredClone(content);const d=cycle.dialogues.find(d=>d.id==='commission')!;d.nodes.find(n=>n.id==='people')!.choices[0]!.next='request';assert.ok(validateContent(cycle).some(e=>e.includes('对话接续出现循环')));
   assert.deepEqual(validateContent(content),[]);
 });
@@ -100,4 +104,23 @@ test('questions skipped during the one-way opening can be learned on an early ho
   state=choices(act(state,{type:'talk',hotspotId:'grandma'}),['grandma-early-return-arrival-followup-why','arrival-more-why-close']);
   assert.equal(state.dialogue,null);assert.ok(state.flags.includes('phone-away'));
   assert.deepEqual(state.inventory,inventory);assert.deepEqual(state.metrics,metrics);
+});
+
+test('epilogue topic menus consume each question once and resume an interrupted answer before returning to their menu',()=>{
+  let state=act(finishNight(),{type:'travel'});state=choices(act(state,{type:'talk',hotspotId:'epilogue-grandmother'}),['epilogue-sit']);state=act(state,{type:'move',sceneId:'epilogue-table'});
+  const person=sceneOf(state,content).hotspots.find(h=>h.interaction.kind==='dialogue'&&h.interaction.dialogueId==='epilogue-table-talk')!;
+  state=choices(act(state,{type:'talk',hotspotId:person.id}),['epilogue-open-stories','epilogue-tell-chen']);
+  state=act(act(state,{type:'close-dialogue'}),{type:'talk',hotspotId:person.id});assert.equal(state.dialogue?.nodeId,'chen');
+  state=act(state,{type:'choose',choiceId:'epilogue-story-back-chen'});assert.equal(state.dialogue?.nodeId,'stories');
+  const node=content.dialogues.find(d=>d.id==='epilogue-table-talk')!.nodes.find(n=>n.id==='stories')!;
+  assert.ok(!dialogueChoices(node,state).some(c=>c.id==='epilogue-tell-chen'));
+  assert.equal(transition(state,{type:'choose',choiceId:'epilogue-tell-chen'},content).changed,false);
+  state=choices(state,['epilogue-tell-qin','epilogue-story-back-qin','epilogue-stories-close']);assert.equal(state.dialogue,null);
+});
+
+test('v5 saves from the refined first chapter keep their new dialogue cursor when upgraded to the remote v6 content',()=>{
+  let state=choices(act(completeArrival(),{type:'talk',hotspotId:'grandma'}),['arrival-followup-people']);
+  const old={...state,contentVersion:5};const raw=JSON.stringify({format:'baiwei-save',version:1,savedAt:'2026-11-10T00:00:00Z',state:old});const loaded=decodeSave(raw,content);
+  assert.ok(loaded.ok,loaded.ok?'':loaded.error);assert.deepEqual(loaded.value.state.dialogue,old.dialogue);
+  assert.equal(loaded.value.state.inventory['small-key'],1);assert.equal(loaded.value.state.contentVersion,content.version);
 });

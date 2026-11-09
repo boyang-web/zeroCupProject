@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-10",
+  "checks": [
+    "Merged epilogue: interrupted Chen story resumes; after reading it leaves the menu, Qin remains available, and closing returns to the preserved long-table scene.",
+    "Merged breakfast: original choice, dawn auto-opening and explicit reading completion reach the correct ending.",
+    "Merged call: original choice, dawn auto-opening and explicit reading completion reach the correct ending at 390px.",
+    "Merged book: original choice, dawn auto-opening and explicit reading completion reach the correct ending."
+  ],
+  "errors": []
+}

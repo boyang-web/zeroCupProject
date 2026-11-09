@@ -8,7 +8,7 @@ import PhysicalObject from './PhysicalObject.vue';
 import UiButton from '../../shared/UiButton.vue';
 import ProgressiveText from '../../shared/ProgressiveText.vue';
 import { useReadingSequence } from '../../presentation/useReadingSequence';
-const props=defineProps<{ inspection: Extract<Interaction, { kind: 'inspect' }>; state: GameState; activity?: MinigameDefinition; propAsset?: Asset; journalAvailable?: boolean; developer?: boolean; reducedMotion?: boolean }>();
+const props=defineProps<{ inspection: Extract<Interaction, { kind: 'inspect' }>; state: GameState; activity?: MinigameDefinition; propAsset?: Asset; journalAvailable?: boolean; completeLabel?: string; developer?: boolean; reducedMotion?: boolean }>();
 // A reveal may award a clue. Keep this reading stable as the object opens.
 const initialVersion=props.inspection.versions?.find(v=>matches(props.state,v.condition));
 const shownText=initialVersion?.text??props.inspection.text;
@@ -19,8 +19,8 @@ const options=computed(()=>props.inspection.options??[]);
 const done=(id:string,onceKey?:string)=>props.state.rewards.includes(onceKey??id);
 const directAction=computed(()=>!props.inspection.manipulation&&props.propAsset&&!props.activity&&!props.inspection.journalLink&&options.value.length===1?options.value[0]:undefined);
 const hasJournal=computed(()=>props.inspection.journalLink&&props.journalAvailable);
-const { visibleCounts,visibleActions,textDone,finishText,revealActions }=useReadingSequence({texts:()=>[shownText,...extraLines.value],actions:()=>options.value.length+Number(!!props.activity)+Number(!!hasJournal.value),reduced:()=>props.reducedMotion});
-const emit=defineEmits<{option:[id:string];activity:[];examined:[];journal:[]}>();
+const { visibleCounts,visibleActions,textDone,finishText,revealActions }=useReadingSequence({texts:()=>[shownText,...extraLines.value],actions:()=>options.value.length+Number(!!props.activity)+Number(!!hasJournal.value)+Number(!!props.completeLabel),reduced:()=>props.reducedMotion});
+const emit=defineEmits<{option:[id:string];activity:[];examined:[];journal:[];complete:[]}>();
 function advanceReading(){if(!textDone.value)finishText();else revealActions();}
 defineExpose({advanceReading});
 onMounted(async()=>{await nextTick();copy.value?.focus({preventScroll:true});});
@@ -44,6 +44,7 @@ onMounted(async()=>{await nextTick();copy.value?.focus({preventScroll:true});});
         </div></div>
         <div v-if="activity" class="inspection-activity reading-action" :class="{ 'is-ready':visibleActions>options.length }" :inert="visibleActions<=options.length"><UiButton tone="jade" :disabled="visibleActions<=options.length||!developer&&!matches(state,activity.condition)" @click="emit('activity')">{{done(activity.reward.id,activity.reward.onceKey)?'再看看走访书签':'整理走访书签'}}</UiButton><small v-if="!developer&&!matches(state,activity.condition)">{{activity.unavailable}}</small></div>
         <div v-if="hasJournal" class="reading-action" :class="{ 'is-ready':visibleActions>options.length+Number(!!activity) }" :inert="visibleActions<=options.length+Number(!!activity)"><UiButton tone="quiet" @click="emit('journal')">食谱</UiButton></div>
+      <div v-if="completeLabel" class="reading-action" :class="{'is-ready':visibleActions>options.length+Number(!!activity)+Number(!!hasJournal)}" :inert="visibleActions<=options.length+Number(!!activity)+Number(!!hasJournal)"><UiButton tone="jade" :disabled="visibleActions<=options.length+Number(!!activity)+Number(!!hasJournal)" @click="emit('complete')">{{completeLabel}}<Icon name="arrow"/></UiButton></div>
       </div>
     </div>
   </div>

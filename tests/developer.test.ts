@@ -28,7 +28,7 @@ test('developer commands are refused outside test mode, while all real scene tar
       assert.equal(transition(initial(), command, content).changed, false);
       state = debug(state, command);
       assert.equal(state.chapterId, chapter.id); assert.equal(state.sceneId, scene.id);
-      assert.equal(state.phase, chapter.next ? 'playing' : 'ending'); assertSaveable(state);
+      assert.equal(state.phase, chapter.next || chapter.exit ? 'playing' : 'ending'); assertSaveable(state);
     }
   }
   for (const command of [
