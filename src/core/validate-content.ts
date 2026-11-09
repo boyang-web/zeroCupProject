@@ -141,6 +141,15 @@ export function validateContent(pack: ContentPack): string[] {
         if (!pack.chapters.some(c=>c.id===owner && hotspotsOf(c).some(h=>h.interaction.kind==='dialogue' && h.interaction.dialogueId===dialogue.id))) errors.push(`${choice.id}: 白话接续玩法的章节不匹配`);
       }
     }
+    const complete = new Set<string>(), active = new Set<string>();
+    function visit(id: string) {
+      if (complete.has(id)) return;
+      if (active.has(id)) { errors.push(`${dialogue.id}/${id}: 对话接续出现循环`); return; }
+      active.add(id);
+      for (const choice of dialogue.nodes.find(n => n.id === id)?.choices ?? []) if (choice.next) visit(choice.next);
+      active.delete(id); complete.add(id);
+    }
+    for (const node of dialogue.nodes) visit(node.id);
   }
   for (const game of pack.minigames) {
     condition(game.condition, game.id);

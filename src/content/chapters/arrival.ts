@@ -1,7 +1,7 @@
 import type { Chapter, Condition, Dialogue, DialogueBeat, MinigameDefinition } from '../../core/contracts.ts';
 import { lifeUnlocked, revisitUnlocked } from '../progression.ts';
 import { scriptNode, type DialogueSeed } from '../narrative.ts';
-import { arrivalScripts, arrivalHomeAfterBreakfast, arrivalHomeWithReturnedSpool, arrivalHomeAfterBreakfastAndSpool, arrivalRequestAgain, arrivalOsmanthusKnown } from '../scripts/arrival.ts';
+import { arrivalScripts, arrivalHomeAfterBreakfast, arrivalHomeWithReturnedSpool, arrivalHomeAfterBreakfastAndSpool, arrivalOsmanthusKnown } from '../scripts/arrival.ts';
 
 export const arrival: Chapter = {
   id: 'arrival', number: 1, title: '归巷', location: '奶奶家 · 堂屋', subtitle: '行李还没拆，茶已经温好了。', time: '清晨 · 奶奶的老宅',
@@ -614,15 +614,18 @@ const nodes: DialogueSeed[] = [
     { id: 'arrival-photo-question', label: "合照里那只包子，到底是谁做的？", condition: { kind: 'clue', id: 'family-photo' }, unavailable: '看过斗柜上的旧合照，才想得起这件事。', next: 'photo-memory', effects: [] },
     { id: 'arrival-ready', label: '好。我该怎么开始？', next: 'approach', effects: [] },
   ] },
-  { id: 'people', speaker: '祖母',   choices: [{ id: 'arrival-understand-book', label: "我先吃，等他们不忙了再问。", next: 'request', effects: [{ kind: 'clue', id: 'book-purpose' }] }] },
-  { id: 'why-you', speaker: '奶奶',   choices: [{ id: 'arrival-admit', label: "那我先去坐坐，回来接着陪你。", next: 'request', effects: [{ kind: 'flag', id: 'phone-away' }] }] },
-  { id: 'photo-memory', speaker: '祖母',   choices: [{ id: 'arrival-photo-reply', label: "我到了先跟他打个招呼。", next: 'request', effects: [{ kind: 'clue', id: 'chen-memory' }] }] },
+  { id: 'people', speaker: '祖母',   choices: [{ id: 'arrival-understand-book', label: "我先吃，等他们不忙了再问。", next: 'approach', effects: [{ kind: 'clue', id: 'book-purpose' }] }] },
+  { id: 'why-you', speaker: '奶奶',   choices: [{ id: 'arrival-admit', label: "那我先去坐坐，回来接着陪你。", next: 'approach', effects: [{ kind: 'flag', id: 'phone-away' }] }] },
+  { id: 'photo-memory', speaker: '祖母',   choices: [{ id: 'arrival-photo-reply', label: "我到了先跟他打个招呼。", next: 'approach', effects: [{ kind: 'clue', id: 'chen-memory' }] }] },
   { id: 'approach', speaker: '祖母',   choices: [
     { id: 'accept-commission', onceKey: 'arrival-commission', label: '好，我多坐一会儿，回来慢慢讲。', decision: 'arrival-approach', next: 'instructions', effects: [{ kind: 'flag', id: 'entrusted' }, { kind: 'flag', id: 'arrival-slow' }, { kind: 'item', id: 'small-key', amount: 1 }] },
     { id: 'accept-brief', onceKey: 'arrival-commission', label: '我先照书上这几样去找。', decision: 'arrival-approach', next: 'instructions', effects: [{ kind: 'flag', id: 'entrusted' }, { kind: 'flag', id: 'arrival-recording' }, { kind: 'item', id: 'small-key', amount: 1 }] },
   ] },
   { id: 'instructions', speaker: '祖母',   choices: [{ id: 'arrival-set-off', label: "我先把书和三张书签理好。", effects: [{ kind: 'flag', id: 'arrival-instructions' }] }] },
   { id: 'followup', speaker: '祖母',   choices: [
+    { id:'arrival-followup-people',label:'到店里问做法，还有什么得记着？',condition:{kind:'not',condition:{kind:'clue',id:'book-purpose'}},unavailable:'做法已经聊过了。',next:'more-people',effects:[] },
+    { id:'arrival-followup-why',label:'你叫我出门，自己在家会不会闷？',condition:{kind:'not',condition:{kind:'flag',id:'phone-away'}},unavailable:'已经跟奶奶说好了，回来再陪她。',next:'more-why-you',effects:[] },
+    { id:'arrival-followup-photo-memory',label:'合照里那只包子，真是我自己包的？',condition:{kind:'all',conditions:[{kind:'clue',id:'family-photo'},{kind:'not',condition:{kind:'clue',id:'chen-memory'}}]},unavailable:'先看看合照；听过的故事不必重新追问。',next:'more-photo-memory',effects:[] },
     {"id":"arrival-thread-question","label":"这卷白线和篮里的蓝线，都是补什么的？","condition":{"kind":"clue","id":"thread-spool"},"unavailable":"先看看椅边的线轴。","next":"thread","effects":[]},
     {"id":"arrival-osmanthus-question","label":"这张便条上的桂花，也是今天买的？","condition":{"kind":"clue","id":"osmanthus-note"},"unavailable":"翻看旧书取出的购物便条。","next":"osmanthus","effects":[]},
     {"id":"arrival-draft-question","label":"我手机上那段，还没改完。","condition":{"kind":"clue","id":"job-gap"},"unavailable":"先点亮手机看看自己的草稿。","next":"phone-draft","effects":[]},
@@ -630,6 +633,9 @@ const nodes: DialogueSeed[] = [
     { id: 'arrival-followup-tea', label: '茶放你手边了。', condition: { kind: 'flag', id: 'tea-offered' }, unavailable: '小茶几上的茶还温着。', next: 'tea-reply', effects: [] },
     { id: 'arrival-followup-bye', label: "我出去转转，回来再陪你坐。", effects: [] },
   ] },
+  { id:'more-people',speaker:'奶奶',choices:[{id:'arrival-more-people-close',label:'那我先尝，再跟着问。',effects:[{kind:'clue',id:'book-purpose'}]}] },
+  { id:'more-why-you',speaker:'奶奶',choices:[{id:'arrival-more-why-close',label:'好，回来咱俩接着聊。',effects:[{kind:'flag',id:'phone-away'}]}] },
+  { id:'more-photo-memory',speaker:'奶奶',choices:[{id:'arrival-more-photo-close',label:'这回我去让陈伯也讲讲。',effects:[{kind:'clue',id:'chen-memory'}]}] },
   { id: 'remember-again', speaker: '祖母',   choices: [{ id: 'arrival-remember-bye', label: "我去找陈伯，也听听他怎么讲。", effects: [{ kind: 'clue', id: 'chen-memory' }] }] },
   { id: 'tea-reply', speaker: '祖母',   choices: [{ id: 'arrival-tea-reply', label: "那我再陪你喝两口。", effects: [] }] },
   { id: 'grandma-early-return', speaker: '奶奶',   choices: [
@@ -657,10 +663,15 @@ const nodes: DialogueSeed[] = [
   {"id":"phone-draft","speaker":"奶奶","choices":[{"id":"arrival-draft-close","label":"好，我陪你慢慢试。","effects":[]}]},
   {"id":"grandma-noon-chat","speaker":"奶奶","choices":[{"id":"grandma-noon-close","label":"我下次去还可以接着问。","effects":[]}]},
 ];
+// Optional questions remain available on a later visit, without leading back
+// through the commission or granting another key.
+for (const id of ['grandma-early-return','grandma-later']) {
+  const topics=nodes.find(n=>n.id==='followup')!.choices.slice(0,3);
+  nodes.find(n=>n.id===id)!.choices.unshift(...topics.map(choice=>({...choice,id:`${id}-${choice.id}`})));
+}
 const rewarded=(id:string):Condition=>({kind:'reward',id});
 const spoolReturned:Condition={kind:'any',conditions:[{kind:'flag',id:'arrival-spool-returned'},rewarded('arrival-remember'),rewarded('arrival-notice-book')]};
 function arrivalVersions(id:string):{condition:Condition;beats:DialogueBeat[]}[]|undefined{
-  if(id==='request')return [{condition:{kind:'any',conditions:['arrival-understand-book','arrival-admit','arrival-photo-reply'].map(rewarded)},beats:arrivalRequestAgain}];
   if(id==='home-resume')return [{condition:rewarded('arrival-ate'),beats:arrivalHomeAfterBreakfastAndSpool}];
   if(id==='home')return [
     {condition:{kind:'all',conditions:[rewarded('arrival-ate'),spoolReturned]},beats:arrivalHomeAfterBreakfastAndSpool},
@@ -675,6 +686,8 @@ export const commission: Dialogue = {
     { condition: revisitUnlocked, nodeId: 'grandma-early-return' },
     { condition: { kind: 'all', conditions: [{ kind: 'flag', id: 'entrusted' }, { kind: 'not', condition: { kind: 'flag', id: 'arrival-instructions' } }] }, nodeId: 'instructions' },
     { condition: { kind: 'flag', id: 'entrusted' }, nodeId: 'followup' },
+    ...[{asked:'arrival-why-book',answered:'arrival-understand-book',nodeId:'people'}, {asked:'arrival-why-me',answered:'arrival-admit',nodeId:'why-you'}, {asked:'arrival-photo-question',answered:'arrival-photo-reply',nodeId:'photo-memory'}].map(({asked,answered,nodeId})=>({condition:{kind:'all' as const,conditions:[rewarded(asked),{kind:'not' as const,condition:rewarded(answered)}]},nodeId})),
+    { condition:{kind:'any',conditions:['arrival-ready','arrival-understand-book','arrival-admit','arrival-photo-reply'].map(rewarded)},nodeId:'approach' },
     { condition: { kind: 'flag', id: 'arrival-introduced' }, nodeId: 'request' },
     { condition: { kind: 'all', conditions: [{kind:'flag',id:'arrival-greeted'},{kind:'flag',id:'arrival-spool-story'}] }, nodeId: 'home-resume' },
     { condition: { kind: 'flag', id: 'arrival-greeted' }, nodeId: 'home' },

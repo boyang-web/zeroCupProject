@@ -31,6 +31,7 @@ import SceneNavigation from './features/exploration/SceneNavigation.vue';
 import SceneResponse from './presentation/SceneResponse.vue';
 import {sceneRoutes,type SceneRoute} from './presentation/scene-routes';
 import {directObjectAction} from './presentation/object-actions';
+import {journalActivity as pendingJournalActivity} from './presentation/journal-activity';
 
 const storage = {
   getItem: (key: string) => window.localStorage.getItem(key),
@@ -67,12 +68,7 @@ const dockTools=computed(()=>{
   if(!guideChrome.value&&unlocked('revisit'))tools.push({id:'revisit',label:'走访',icon:'pin'});
   tools.push({id:'menu',label:'菜单',icon:'menu',control:'menu'});return tools;
 });
-const journalActivity=computed(()=>{
- const source=journalSource.value;if(!source||source.interaction.kind!=='inspect'||!source.interaction.activityId)return;
- const activityId=source.interaction.activityId;
- const activity=content.minigames.find(g=>g.id===activityId);
- if(activity?.chapterId===state.value.chapterId&&allowed(activity.condition))return activity;
-});
+const journalActivity=computed(()=>pendingJournalActivity(state.value,content,developer.value));
 const journalContext=computed(()=>{const i=journalSource.value?.interaction;if(i?.kind!=='inspect')return;return i.versions?.find(v=>matches(state.value,v.condition))?.text??i.text;});
 function activateDock(id:string){response.value=undefined;if(id==='objectives'){objectivesOpen.value=!objectivesOpen.value;return;}if(['journal','inventory','revisit','menu'].includes(id))openPanel(id as 'journal'|'inventory'|'revisit'|'menu');}
 function followRoute(route:SceneRoute){if(panel.value||node.value||guideFocused.value||closeView.value||route.disabled)return;response.value=undefined;objectivesOpen.value=false;if(route.kind==='move')moveScene(route.sceneId!);else if(route.kind==='home')revisit('arrival');else travel();}
@@ -105,7 +101,7 @@ function openPanel(kind: 'journal' | 'inventory' | 'collection' | 'revisit' | 'm
   const required: Partial<Record<typeof kind, FeatureId>> = { journal: 'journal', inventory: 'inventory', collection: 'collection', revisit: 'revisit' };
   if (required[kind] && !unlocked(required[kind]!)) return;
   response.value=undefined;objectivesOpen.value=false;
-  if(kind==='journal'){journalSource.value=undefined;journalBookmarks.value=false;}
+  if(kind==='journal'){journalSource.value=undefined;journalBookmarks.value=!!journalActivity.value;}
   panel.value = { kind };
 }
 let homeBeforeTesting = false;

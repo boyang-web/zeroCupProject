@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-10",
+  "checks": [
+    "start: optional topic -> commitment, interruption resumes each pending step, dock-book task survives closing, cancellation and reopening, then reaches chapter two.",
+    "earlyBook: optional topic -> commitment, interruption resumes each pending step, dock-book task survives closing, cancellation and reopening, then reaches chapter two.",
+    "Ordinary noon: Qin welcome and protagonist thoughts, Tians later curtain topic, Chuans later return story, copying the original calculation and proper phone/ledger screens without topic cycles.",
+    "desktop: kitchen lesson, rejected incomplete schedule, help, one valid cook/serve action; closing the final meal does not unlock travel until its actual completion.",
+    "mobile: kitchen lesson, rejected incomplete schedule, help, one valid cook/serve action; closing the final meal does not unlock travel until its actual completion.",
+    "limit: interrupted closing resumes, finishes the meal, keeps the route-specific followup and can leave for chapter four.",
+    "overload: interrupted closing resumes, finishes the meal, keeps the route-specific followup and can leave for chapter four.",
+    "desktop: used chopsticks leave the rack, long inner narrative keeps the object and frame fixed, phone shows the actual two-order agreement.",
+    "mobile: used chopsticks leave the rack, long inner narrative keeps the object and frame fixed, phone shows the actual two-order agreement."
+  ],
+  "errors": []
+}

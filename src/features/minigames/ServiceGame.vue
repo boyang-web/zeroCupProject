@@ -10,13 +10,13 @@ import { useReadingSequence } from '../../presentation/useReadingSequence';
 const props=defineProps<MinigameProps>();const emit=defineEmits<{finish:[result:MinigameResult]}>();
 const plan=computed(()=>props.definition.service!);const selected=ref('');
 const queues=ref<string[][]>(Array.from({length:props.definition.service!.pots},()=>[]));
-const half=ref(false),noScallion=ref(false),assisted=ref(false),feedback=ref(''),checked=ref(false);
+const half=ref(false),noScallion=ref(false),assisted=ref(false),feedback=ref('');
 const result=computed(()=>serviceResult(plan.value,queues.value,half.value,noScallion.value));
 const selectedLabel = computed(() => plan.value.tickets.find(t => t.id === selected.value)?.person);
 const words = computed(() => feedback.value || plan.value.copy?.intro || props.definition.description);
 const voice=ref<HTMLElement>();
-const { visibleCounts, textDone, finishText } = useReadingSequence({texts:()=>[words.value],reduced:()=>props.reducedMotion});
-watch([queues,half,noScallion],()=>{if(checked.value)feedback.value='';checked.value=false;},{deep:true});
+const { visibleCounts, finishText } = useReadingSequence({texts:()=>[words.value],reduced:()=>props.reducedMotion});
+watch([queues,half,noScallion],()=>{feedback.value='';},{deep:true});
 const potId = useId().replace(/:/g,'') + '-pot';
 function select(id:string){selected.value=id;feedback.value=plan.value.copy?.tickets[id]??'';}
 function drag(event: DragEvent, id: string) { select(id); event.dataTransfer?.setData('text/plain',id); if(event.dataTransfer)event.dataTransfer.effectAllowed='move'; }
@@ -30,10 +30,9 @@ function check(){
     const response=missing?copy?.missing:halfMissing?copy?.wrongHalf:scallionMissing?copy?.wrongScallion:copy?.orderError;
     feedback.value=[response,...result.value.errors].filter(Boolean).join('\n');void nextTick(()=>voice.value?.scrollIntoView({block:'nearest'}));return;
   }
-  checked.value=true;feedback.value=plan.value.copy?.ready??'人和份量都对过了，照这个顺序下锅。';void nextTick(()=>voice.value?.scrollIntoView({block:'nearest'}));
+  emit('finish',{status:'completed',score:assisted.value?80:100,assisted:assisted.value});
 }
-function finish(){if(checked.value&&result.value.complete)emit('finish',{status:'completed',score:assisted.value?80:100,assisted:assisted.value});}
-function help(){checked.value=false;queues.value=suggestService(plan.value);half.value=true;noScallion.value=true;assisted.value=true;feedback.value=plan.value.copy?.help??'琴姐把赶时间的夹在前头，外送放另一口锅。';}
+function help(){queues.value=suggestService(plan.value);half.value=true;noScallion.value=true;assisted.value=true;void nextTick(()=>{feedback.value=plan.value.copy?.help??'琴姐把赶时间的夹在前头，外送放另一口锅。';});}
 </script>
 <template>
   <div class="service-game">
@@ -54,6 +53,6 @@ function help(){checked.value=false;queues.value=suggestService(plan.value);half
       </section>
     </div>
     <div class="service-notes"><span>出锅前再看田姨那份</span><label><input v-model="half" type="checkbox" />半份</label><label><input v-model="noScallion" type="checkbox" />不放葱</label></div>
-    <div class="button-row"><UiButton v-if="checked" tone="jade" :disabled="!textDone" @click="finish">照这个顺序下锅，分清再端</UiButton><UiButton v-else tone="jade" @click="check">核对顺序和份量</UiButton><UiButton tone="quiet" @click="help">请琴姐指点一下</UiButton></div>
+    <div class="button-row"><UiButton tone="jade" @click="check">照这个顺序下锅，分清再端</UiButton><UiButton tone="quiet" @click="help">请琴姐指点一下</UiButton></div>
   </div>
 </template>

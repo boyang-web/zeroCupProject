@@ -243,11 +243,14 @@ home:[...homeOpening,threadPicked,threadPlaced,...homeMemory],
 ],
 'home-resume':[...homeOpening,threadReturned,threadAlreadyPlaced,...homeMemory],
 };
+// These optional conversations end in the room; they cannot reopen the commission.
+arrivalScripts['more-people']=arrivalScripts.people!;
+arrivalScripts['more-why-you']=[s('奶奶','我等会儿把这点针线收了，也出去坐坐。你放心去，回来再陪我讲，咱俩有的是工夫。你要是哪天不想出门，咱就在家待着，也好呀。'),...arrivalScripts['why-you']!.slice(1)];
+arrivalScripts['more-photo-memory']=arrivalScripts['photo-memory']!;
 const breakfastReply=s('奶奶','吃过一点也好，等会儿到陈家，想吃什么再尝一只。不够了咱们回来再弄，锅里还留着水呢。');
 export const arrivalHomeAfterBreakfast:DialogueBeat[]=[breakfastReply,...arrivalScripts.home!.slice(1)];
 export const arrivalHomeWithReturnedSpool:DialogueBeat[]=[...homeOpening,threadReturned,threadAlreadyPlaced,...homeMemory];
 export const arrivalHomeAfterBreakfastAndSpool:DialogueBeat[]=[breakfastReply,...arrivalHomeWithReturnedSpool.slice(1)];
-export const arrivalRequestAgain:DialogueBeat[]=[s('奶奶','还有话你就问，我听着呢。先坐一会儿，等想起来再说也行，不差这一下。')];
 export const arrivalOsmanthusKnown:DialogueBeat[]=[
   {
     "kind": "speech",

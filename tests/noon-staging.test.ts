@@ -47,7 +47,7 @@ test('the curtain conversation shares the original hearing reward and cannot gra
   state=act(state,{type:'talk',hotspotId:'tian'});
   state=choices(state,['tian-ask-curtain','tian-curtain-story-close','tian-order-close']);
   assert.ok(state.flags.includes('tian-heard'));assert.equal(state.metrics.research,before+1);
-  state=act(state,{type:'talk',hotspotId:'tian'});state=choices(state,['tian-order-close']);
+  state=act(state,{type:'talk',hotspotId:'tian'});state=choices(state,['tian-details-close']);
   assert.equal(state.metrics.research,before+1);assert.equal(state.rewards.filter(r=>r==='tian-listen').length,1);
 });
 
@@ -69,7 +69,7 @@ test('Tian can still discuss the curtain when the player discovered it after hea
   const research=state.metrics.research;
   state=act(state,{type:'inspect',hotspotId:'patched-curtain'});
   state=act(state,{type:'talk',hotspotId:'tian'});
-  assert.equal(state.dialogue?.nodeId,'break');
+  assert.equal(state.dialogue?.nodeId,'details');
   state=choices(state,['tian-break-curtain','tian-curtain-story-close','tian-order-close']);
   assert.equal(state.metrics.research,research);assert.equal(state.rewards.filter(r=>r==='tian-listen').length,1);
 });
