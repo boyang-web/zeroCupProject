@@ -1,3 +1,5 @@
+import { epilogue as legacyEpilogue } from '../content/chapters/epilogue-v5.ts';
+import { legacyEndings } from '../content/legacy-endings-v5.ts';
 import type { ContentPack, GameState } from '../core/contracts.ts';
 import { firstSceneOf, hotspotsOf, scenesOf } from '../core/scenes.ts';
 import { createState, transition } from '../core/engine.ts';
@@ -39,6 +41,26 @@ export function decodeSave(raw: string, content: ContentPack): SaveResult<SaveEn
     const data: unknown = JSON.parse(raw);
     if (!object(data) || data.format !== 'baiwei-save' || data.version !== 1 || typeof data.savedAt !== 'string' || !Number.isFinite(Date.parse(data.savedAt))) throw new Error('存档格式不受支持。');
     let s = data.state;
+    if (content.version === 6 && object(s) && s.contentId === content.id && [2, 3, 4, 5].includes(Number(s.contentVersion))) {
+      const legacy: ContentPack = { ...content, version: 5,
+        chapters: content.chapters.map(c => c.id === 'epilogue' ? legacyEpilogue : c),
+        dialogues: content.dialogues.filter(d => !d.id.startsWith('epilogue-')),
+        minigames: content.minigames.filter(g => g.chapterId !== 'epilogue'), endings: legacyEndings,
+      };
+      const checked = decodeSave(raw, legacy);
+      if (!checked.ok) throw new Error(checked.error);
+      const updated = structuredClone(checked.value.state);
+      updated.contentVersion = 6;
+      updated.seenScenes = updated.seenScenes.map(id => id === 'epilogue-main' ? 'epilogue-yard' : id);
+      if (updated.sceneId === 'epilogue-main') updated.sceneId = 'epilogue-yard';
+      if (updated.journey.sceneId === 'epilogue-main') updated.journey.sceneId = 'epilogue-yard';
+      if (updated.visited.includes('epilogue')) {
+        updated.quests.epilogue = 'active';
+        if (updated.chapterId === 'epilogue') { updated.phase = 'playing'; updated.dialogue = null; }
+      }
+      data.state = s = updated;
+      data.notice = updated.visited.includes('epilogue') ? '前三店的结果保留。旧自动结局从第五章归院重新展开，由你确认车次与下一步；原文件没有改动。' : checked.value.notice;
+    }
     if (content.version === 5 && object(s) && s.contentId === content.id && [2, 3, 4].includes(Number(s.contentVersion))) {
       // Validate against the actual short chapter before changing any records.
       const legacy: ContentPack = { ...content, version: 4,
@@ -120,7 +142,7 @@ export function decodeSave(raw: string, content: ContentPack): SaveResult<SaveEn
     const chapter = content.chapters.find(c => c.id === state.chapterId)!;
     if (!scenesOf(chapter).some(s => s.id === state.sceneId) || !known(state.seenScenes, content.chapters.flatMap(c => scenesOf(c).map(s => s.id)))) throw new Error('场景位置无效。');
     if (state.phase !== 'title' && !state.seenScenes.includes(state.sceneId)) throw new Error('场景记录不完整。');
-    if (state.phase === 'playing' && !chapter.next || state.phase === 'ending' && chapter.next) throw new Error('章节与阶段不匹配。');
+    if (state.phase === 'playing' && !chapter.next && !chapter.exit || state.phase === 'ending' && (chapter.next || chapter.exit && state.quests[chapter.questId] !== 'completed')) throw new Error('章节与阶段不匹配。');
     if (state.phase !== 'title' && (!state.visited.includes(state.chapterId) || !state.quests[chapter.questId])) throw new Error('当前章节记录不完整。');
     if (state.phase !== 'playing' && state.dialogue) throw new Error('当前阶段不应有未完成对话。');
     return { ok: true, value: data as unknown as SaveEnvelope };

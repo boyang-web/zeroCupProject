@@ -2,13 +2,13 @@ import type { ContentPack } from '../core/contracts.ts';
 import { assets } from './assets.ts';
 import { arrival, commission, arrivalGame } from './chapters/arrival.ts';
 import { night, nightDialogues, nightGame, nightClues } from './chapters/night.ts';
-import { epilogue } from './chapters/epilogue.ts';
+import { epilogue, epilogueDialogues, epilogueGame, epilogueEndings } from './chapters/epilogue.ts';
 import { morning, morningDialogues, morningGame } from './chapters/morning.ts';
 import { noon, noonDialogues, noonGame } from './chapters/noon.ts';
 import { progression, recipes, collection } from './progression.ts';
 export const content: ContentPack = {
-  id: 'baiwei-homecoming', version: 5, firstChapter: 'arrival', assets, progression, recipes, collection,
-  chapters: [arrival, morning, noon, night, epilogue], dialogues: [commission, ...morningDialogues, ...noonDialogues, ...nightDialogues], minigames: [arrivalGame, morningGame, noonGame, nightGame],
+  id: 'baiwei-homecoming', version: 6, firstChapter: 'arrival', assets, progression, recipes, collection,
+  chapters: [arrival, morning, noon, night, epilogue], dialogues: [commission, ...morningDialogues, ...noonDialogues, ...nightDialogues, ...epilogueDialogues], minigames: [arrivalGame, morningGame, noonGame, nightGame, epilogueGame],
   quests: [arrival, morning, noon, night, epilogue].map(c => ({ id: c.questId, chapterId: c.id, title: c.title, text: c.objective })),
   clues: [
     {"id":"thread-spool","title":"白线和蓝线","text":"椅脚外那卷白线是补锅垫的，篮里的蓝线补别的。奶奶叫我留一截线头在外面，别绕成死结，收好放到小几就能接着用。","category":"detail","asset":"arrival-thread-spool"},
@@ -190,9 +190,5 @@ export const content: ContentPack = {
     {"id":"home-clothes","title":"外套和围裙","text":"奶奶叫我先洗手吃饭，琴姐给回来帮忙的阿川留过一碗面。我俩后来坐在柜边，才将原先没跟家里说全的那几句接上。","annotation":"阿川说那天下午没事，其实打算回家改简历。陈伯问我这回能待多久，我说还没定，他刚要问工作，阿宁就在后院喊豆沙包。后来我也没接着往下说。","condition":{"kind":"all","conditions":[{"kind":"clue","id":"calendar"},{"kind":"clue","id":"chuan-return"}]}},
     { id: 'all-pages', title: '末尾的小字', text: "末尾多了几行，字比前面写得大一点。回家念的时候，奶奶让我别只挑听起来顺的讲，哪句没问清也照说，她还能再问我。", condition: { kind: 'all', conditions: ['schedule', 'orders', 'late-note'].map(id => ({ kind: 'clue', id })) } },
   ],
-  endings: [
-    { id: 'connected', title: '灯还亮着', text: "奶奶翻到新添的那页，问是不是陈伯写的。我说我的，她将书举近一点，又放下来，我以为嫌乱，手已经去找空纸，她却指着页角问，这一笔究竟是盐还是糖。\n\n我说盐，她叫我先写清，别将一锅馅弄成甜的，还说问了人家半天，回来只有自己认得，明早做的时候又得拿着本子去敲门。我坐下来描那一笔，她看我写完，拿过笔在旁边添了个尝，叫我别光记放多少。\n\n书里夹的新纸比出门时多，边角伸出来，合也合不平。奶奶要找那张米酒方子，我替她翻到前面，她念过我补的字，说这回那个再没漏，才肯接着往后听。\n\n我从陈伯问能待多久讲起，讲到阿宁在后院喊豆沙包，自己也笑，说那时刚好不用接工作那一句。奶奶没替我想一套下回该怎么说，先将那只差点压住字的杯子移开，叫我接着讲。外套还挂在门后，包也没全收好，我知道这些今晚都还能慢慢弄。", condition: { kind: 'all', conditions: ['morning', 'noon', 'night'].map(id => ({ kind: 'quest', id, status: 'completed' })) } },
-    { id: 'remembered', title: '留在书里', text: "奶奶听到一半，问那个人后来怎么回的。我想了一会儿，说没有接着问，当时只顾往灶边看，怕把下一份弄错，等忙完，话题已经过去了。\n\n她哦了一声，将翻起的纸放平，没有替我把后头编上。我本来还想解释自己不是故意漏的，见她在看那行字，倒先说起当时答错的那句话。原来以为讲出来会很不好听，真讲到一半，自己先笑了。\n\n奶奶等我笑完才问，那你后来怎么回？我把前后重讲一遍，想起还少了一句，赶紧叫她别翻。她手停在页边，书仍向着我，等我将顺序理过来，没有催着赶紧讲结尾。\n\n桌上那壶水有点凉，我起身添，回来看见奶奶还留着原来那页。她指给我看一处自己没认出的字，我坐回去，从那里继续念，刚才没讲全的也一并带上。", condition: { kind: 'any', conditions: ['morning', 'noon', 'night'].map(id => ({ kind: 'quest', id, status: 'completed' })) } },
-    { id: 'unfinished', title: '空着的几行', text: "我把书摊开，先念今天问到的做法，哪步放水、哪步起锅，都比出门前多写了几行。奶奶听到糖那个地方叫我慢点，伸手摸摸后头的空纸，问这几页呢。\n\n我说还没问完，有的只说到一半，有的当时觉得明白，真要记，又发现不知道该从哪一句写。她看我一会儿，叫我先把快滚到桌边的笔拿回来，别正说着没写完，连笔也跟着丢。\n\n笔捡回来，我在空白处写下店名，想列明天再问的几件事。写到一处停了，不确定那句话是不是对方说过的，奶奶叫我先放着，记得没问清也行。她把书挪离茶壶，免得我胳膊一碰，刚写的又全洇了。\n\n我问今晚就搁这里？她说搁着吧，明早还得从这儿走，拿衣服的时候记得别顺手将它压进包底。我把笔留在书旁，出门的三张签没收走，翻到哪里没念清，下回还能找回来。" },
-  ],
+  endings: epilogueEndings,
 };

@@ -1,4 +1,5 @@
 import type { Asset } from '../core/contracts.ts';
+import { epilogueRegions } from './epilogue-regions.ts';
 import { spriteRegions } from './sprite-regions.ts';
 import { uiRegions } from './ui-regions.ts';
 import { arrivalHomeRegions } from './arrival-home-regions.ts';
@@ -14,6 +15,11 @@ const homeSprite = (id: keyof typeof arrivalHomeRegions, label: string): Asset =
   source: '内置 imagegen；老宅生活布局独立素材，见 docs/art/第一章老宅环境-v4.md', placeholder: false,
 });
 export const assets: Record<string, Asset> = {
+  'epilogue-grandma-table': { url: `${base}assets/epilogue/grandmother-table-v3.png`, label: '奶奶 · 长桌旁侧身坐姿', source: '内置 imagegen；参考原奶奶与长桌底图调整俯视角和朝向，见 docs/art/epilogue/table-layout-v3.md', placeholder: false, alphaCutoff: .08, region: { x: 0, y: 0, width: 1024, height: 1536, canvasWidth: 1024, canvasHeight: 1536 } },
+  ...Object.fromEntries([['epilogue-table-night', 'table-night-v4'], ['epilogue-gate-dawn', 'gate-dawn-v2']].map(([id, file]) => [id!, { url: `${base}assets/epilogue/${file}.png`, label: id!, source: '内置 imagegen；第五章独立桌边与次晨院门取景；桌边v4见 docs/art/epilogue/table-layout-v4.md，院门见 scene-revision-v2.md', placeholder: false }])),
+  'epilogue-grandma': { url: `${base}assets/epilogue/grandmother-seated-v2.png`, label: '奶奶 · 灯下高清坐姿', source: '内置 imagegen；独立高清透明人物，见 docs/art/epilogue/grandmother-v2.md', placeholder: false, alphaCutoff: .08, region: { x: 16, y: 12, width: 982, height: 1524, canvasWidth: 1024, canvasHeight: 1536 } },
+  ...Object.fromEntries(['night', 'dawn'].map(id => [`epilogue-${id}`, { url: `${base}assets/epilogue/${id}-v1.png`, label: `灯下 · ${id}`, source: '内置 imagegen；第五章效果图后资产化，见 docs/art/epilogue/prompts.md', placeholder: false }])),
+  ...Object.fromEntries(Object.entries(epilogueRegions).map(([id, [x, y, width, height]]) => [id, { url: `${base}assets/epilogue/sprites-v1.png`, label: id, source: '内置 imagegen；第五章透明独立精灵，见 docs/art/epilogue/prompts.md', placeholder: false, alphaCutoff: .22, region: { x, y, width, height, canvasWidth: 2172, canvasHeight: 724 } }])),
   'journal-paper': { url: `${base}assets/journal/paper-fibers-v1.png`, label: '百味录 · 细纤维书写纸', source: '内置 imagegen；独立纸面材质，见 docs/art/百味录纸张材质-v1.md', placeholder: false },
   ...Object.fromEntries(Object.entries(nightRegions).map(([id, s]) => [id, { url: `${base}assets/${s.file}`, label: id, region: s.region, source: '内置 imagegen；第四章暖木夜饭素材，见 docs/art/night/prompts.md', placeholder: false, alphaCutoff: .15 }])),
   ...Object.fromEntries(['front', 'kitchen', 'counter'].map(id => [`night-${id}`, { url: `${base}assets/night/${id}-v1.png`, label: `夜饭小馆 · ${id}`, source: '内置 imagegen；由第四章三场景效果图资产化，见 docs/art/night/prompts.md', placeholder: false }])),

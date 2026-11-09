@@ -1,6 +1,7 @@
 import type { MinigameLoader } from './contracts.ts';
 // Lazy-loaded modules return a result; only the domain layer can issue rewards.
 const registry: Record<string, MinigameLoader> = {
+  filing: async () => ({ component: (await import('./FilingGame.vue')).default }),
   breakfast: async () => ({ component: (await import('./BreakfastGame.vue')).default }),
   'service-queue': async () => ({ component: (await import('./ServiceGame.vue')).default }),
   itinerary: async () => ({ component: (await import('./ItineraryGame.vue')).default }),

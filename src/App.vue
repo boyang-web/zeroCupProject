@@ -2,6 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { gsap } from 'gsap';
 import { content } from './content';
+import { epilogueRecords } from './content/epilogue-records';
 import type { FeatureId, Hotspot, MinigameResult } from './core/contracts';
 import { matches } from './core/conditions';
 import { currentGuide, featureUnlocked, isRevisiting } from './core/progression';
@@ -46,7 +47,7 @@ const audioMessage = ref(''), objectivesOpen = ref(false), fullscreen = ref(fals
 const showingHome = computed(() => state.value.phase === 'title' || viewHome.value);
 const returning = computed(() => isRevisiting(state.value));
 const unlocked = (id: FeatureId) => featureUnlocked(state.value, content, id, { developer: developer.value });
-const homeAvailable = computed(() => unlocked('revisit') && state.value.phase === 'playing' && state.value.journey.chapterId !== 'arrival');
+const homeAvailable = computed(() => unlocked('revisit') && state.value.phase === 'playing' && state.value.journey.chapterId !== 'arrival' && state.value.chapterId !== 'epilogue');
 const allowed = (condition?: import('./core/contracts').Condition) => developer.value || matches(state.value, condition);
 const guide = computed(() => developer.value ? undefined : currentGuide(state.value, content));
 const pendingEntry = ref<string>();
@@ -160,7 +161,7 @@ function interact(hotspot: Hotspot) {
       panel.value={kind:'journal'};game.dispatch({type:'inspect',hotspotId:hotspot.id});return;
     }
     panel.value = { kind: 'inspect', hotspot };
-    if (!action.manipulation && action.action && allowed(action.action.condition)) game.dispatch({ type: 'inspect', hotspotId: hotspot.id });
+    if (hotspot.id !== 'epilogue-morning' && !action.manipulation && action.action && allowed(action.action.condition)) game.dispatch({ type: 'inspect', hotspotId: hotspot.id });
   }
   if (action.kind === 'minigame') {
     const definition = content.minigames.find(g => g.id === action.gameId)!;
@@ -175,6 +176,11 @@ function sceneOption(hotspot: Hotspot, actionId: string) {
 }
 function moveScene(sceneId: string) { if (!guideFocused.value && !panel.value && !node.value) game.dispatch({ type: 'move', sceneId }); }
 function examined() { if (panel.value?.kind === 'inspect') game.dispatch({ type: 'inspect', hotspotId: panel.value.hotspot.id }); }
+function completeInspection() {
+  if (panel.value?.kind !== 'inspect' || panel.value.hotspot.id !== 'epilogue-morning') return;
+  game.dispatch({ type: 'inspect', hotspotId: panel.value.hotspot.id });
+  if (canTravel.value) travel();
+}
 function useOption(actionId:string){
  if(panel.value?.kind!=='inspect')return;const h=panel.value.hotspot;if(h.interaction.kind!=='inspect')return;const i=h.interaction,action=i.options?.find(a=>a.id===actionId);
  if(!game.dispatch({type:'interact',hotspotId:h.id,actionId}))return;
@@ -231,6 +237,10 @@ watch([showDiscovery, discovery], () => { clearTimeout(discoveryTimer); if (show
 watch([showingHome, () => state.value.chapterId, () => state.value.sceneId], async () => {
   await nextTick(); tween?.kill();
   if (region.value && !showingHome.value) tween = gsap.fromTo(region.value, { opacity: reducedMotion.value ? 1 : 0 }, { opacity: 1, duration: reducedMotion.value ? 0 : .45 });
+  if (!showingHome.value && state.value.phase === 'playing' && scene.value.id === 'epilogue-gate' && !state.value.flags.includes('epilogue-morning-seen') && !panel.value && !node.value) {
+    const morning = scene.value.hotspots.find(h => h.id === 'epilogue-morning');
+    if (morning) interact(morning);
+  }
 });
 onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); ambience.dispose(); document.removeEventListener('fullscreenchange', syncFullscreen); document.removeEventListener('keydown', developerShortcut); });
 </script>
@@ -244,11 +254,11 @@ onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); ambience.di
         <div v-if="state.phase === 'playing'" class="play-layout">
           <SceneView :developer="developer" :chapter="chapter" :content="content" :state="state" :guide-target="!guideMinimized ? presentedGuide?.target : undefined" :focus-locked="guideFocused" :blocked="!!panel || !!node" :reduced-motion="reducedMotion" @framing="closeView = $event" @interact="interact" @option="sceneOption" />
           <GuideHint v-if="presentedGuide" :key="presentedGuide.id" :guide="presentedGuide" :active="guideVisible" :minimized="guideMinimized" :step="guideIndex + 1" :total="guideSteps.length" :reduced-motion="reducedMotion" @minimize="guideMinimized = $event" />
-          <SceneNavigation :routes="routes" :blocked="!!panel||!!node||closeView||guideFocused" @go="followRoute"/>
+          <SceneNavigation :scene-id="scene.id" :routes="routes" :blocked="!!panel||!!node||closeView||guideFocused" @go="followRoute"/>
           <Transition name="hud-reveal"><aside v-if="objectivesOpen&&!guideChrome" class="objectives-panel"><WoodFrame kind="ui-toast"/><h2>{{returning?'这次回访':'手头的事'}}</h2><div class="text-scroll"><p>{{returning?scene.description:chapter.objective}}</p><ol v-if="chapter.beats&&!returning" class="objective-list"><li v-for="beat in chapter.beats" :key="beat.label" :class="{done:matches(state,beat.condition)}"><Icon :name="matches(state,beat.condition)?'check':'leaf'"/>{{beat.label}}</li></ol></div></aside></Transition>
 
         </div>
-        <section v-else class="ending-screen" :style="{ backgroundImage: `linear-gradient(90deg, #152a29ed, #152a29cc), url('${content.assets['title-homecoming']!.url}')` }"><p class="eyebrow">第五章 · {{ chapter.title }}</p><h1>{{ ending.title }}</h1><p class="ending-copy">{{ ending.text }}</p><div class="outcomes"><article v-for="c in content.chapters.filter(c => c.number > 1 && c.number < 5)" :key="c.id"><small>{{ c.title }}</small><p>{{ state.quests[c.questId] === 'completed' ? '这一页写下了。' : '还有几行空着。' }}</p></article></div></section>
+        <section v-else class="ending-screen" :style="{ backgroundImage: `linear-gradient(90deg, #24170fe8, #24170fb0), url('${content.assets[ending.asset ?? 'title-homecoming']!.url}')` }"><p class="eyebrow">第五章 · {{ chapter.title }}</p><h1>{{ ending.title }}</h1><div class="outcomes"><article v-for="record in epilogueRecords(state)" :key="record.id"><small>{{ record.title }}</small><p>{{ record.text }}</p></article></div><p class="ending-copy">{{ ending.text }}</p><div class="button-row"><UiButton tone="jade" @click="openPanel('journal')">翻翻百味录</UiButton><UiButton v-if="unlocked('revisit')" @click="openPanel('revisit')">回访老街</UiButton><UiButton @click="openPanel('saves')">读档</UiButton><UiButton @click="viewHome = true">回到首页</UiButton></div></section>
       </template>
     </main>
     <GameDock v-if="!showingHome" :tools="dockTools" :blocked="!!panel||!!node" @activate="activateDock"/>
@@ -260,7 +270,7 @@ onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); ambience.di
       <template #actions><UiButton v-if="developer && panel?.kind !== 'developer'" tone="quiet" @click="developerTools">测试工具</UiButton></template>
       <DeveloperTools v-if="panel?.kind === 'developer'" :content="content" :state="state" @jump="debugJump" @dialogue="debugDialogue" @game="debugGame" @hotspot="debugObject" @panel="openPanel" @reset="resetTest" @exit="exitDeveloper" />
       <DialogueView ref="dialogueReader" :developer="developer" v-else-if="node" :key="state.dialogue!.id + ':' + node.id" :node="node" :state="state" :content="content" :reduced-motion="reducedMotion" @choose="choose" />
-      <InspectionView ref="inspectionReader" :developer="developer" v-else-if="panel?.kind === 'inspect' && inspect" :key="panel.hotspot.id" :inspection="inspect" :state="state" :activity="inspectActivity" :prop-asset="inspectAsset" :journal-available="unlocked('journal')" :reduced-motion="reducedMotion" @examined="examined" @option="useOption" @journal="openPanel('journal')" @activity="panel = { kind: 'minigame', gameId: inspectActivity!.id }" />
+      <InspectionView ref="inspectionReader" :developer="developer" v-else-if="panel?.kind === 'inspect' && inspect" :key="panel.hotspot.id" :inspection="inspect" :state="state" :activity="inspectActivity" :prop-asset="inspectAsset" :journal-available="unlocked('journal')" :complete-label="panel.hotspot.id === 'epilogue-morning' && allowed(inspect.action?.condition) ? '收好今天这一页' : undefined" :reduced-motion="reducedMotion" @complete="completeInspection" @examined="examined" @option="useOption" @journal="openPanel('journal')" @activity="panel = { kind: 'minigame', gameId: inspectActivity!.id }" />
       <MinigameHost :developer="developer" v-else-if="panel?.kind === 'minigame' && minigame" :definition="minigame" :state="state" :reduced-motion="reducedMotion" :assets="content.assets" @finish="finish" />
       <JournalView :developer="developer" v-else-if="panel?.kind === 'journal'" :content="content" :state="state" :reduced-motion="reducedMotion" :new-entry-id="pendingEntry" :activity="journalActivity" :context-text="journalContext" :initial-bookmarks="journalBookmarks" @finish="finishJournal" @read="pendingEntry = undefined" />
       <CollectionView :developer="developer" v-else-if="panel?.kind === 'collection'" :content="content" :state="state" @study="entryId => game.dispatch({ type: 'study-collection', entryId })" />

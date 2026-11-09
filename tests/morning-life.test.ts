@@ -115,7 +115,7 @@ test('the lunchbox message is optional, learned from Ning and usable when talkin
 test('six genuine earlier v5 saves preserve all progress and their original dialogue cursor',()=>{
   for(const envelope of Object.values(old)){
     const result=decodeSave(JSON.stringify(envelope),content);assert.ok(result.ok);
-    if(result.ok)assert.deepEqual(result.value.state,(envelope as {state:unknown}).state);
+    if(result.ok)assert.deepEqual(result.value.state,{...(envelope as {state:Record<string,unknown>}).state,contentVersion:content.version});
   }
   const lesson=decodeSave(JSON.stringify(old.lesson),content);assert.ok(lesson.ok);
   if(!lesson.ok)return;

@@ -22,3 +22,7 @@
 @media(max-width:720px){.collection-detail{grid-template-columns:1fr;grid-template-rows:minmax(0,.4fr) minmax(0,.6fr);gap:18px}.collection-copy h2{font-size:22px;margin-bottom:8px}.collection-detail p,.collection-detail blockquote{font-size:16px;line-height:1.95}.collection-shelf{margin-bottom:11px}}
 
 @media(max-width:720px){.immersive .inspection-layout--phone.has-artifact{grid-template-rows:minmax(0,.6fr) minmax(0,.4fr)}.inspection-layout--phone .physical-phone{aspect-ratio:11/19}.inspection-layout--phone .phone-app__header h3{font-size:16px}}
+
+/* Keep the dawn-route sign clear of the seated figure in the table view. */
+.scene-navigation[data-scene-id="epilogue-table"] .scene-navigation__side--right{top:23%;transform:none;width:160px}
+@media(max-width:720px){.scene-navigation[data-scene-id="epilogue-table"] .scene-navigation__side--right{top:36%;width:148px}}

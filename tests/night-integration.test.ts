@@ -17,7 +17,7 @@ function load(fixture:Fixture){
 
 test('actual local v4 noon evidence survives migration with every choice, recipe and reward intact',()=>{
  const fixture=local.noonEvidence!,expected=structuredClone(fixture.state);
- expected.contentVersion=5;
+ expected.contentVersion=content.version;
  const state=load(fixture);
  assert.deepEqual(state,expected);
  assert.ok(state.clues.includes('tian-curtain') && state.clues.includes('qin-recipe-tip'));
@@ -67,7 +67,7 @@ test('a completed local v4 night preserves its outcome without inventing the new
 });
 
 test('remote v5 pickup progress and all three finished routes remain byte-for-byte equivalent as game states',()=>{
- for(const [id,fixture] of Object.entries(remote)) assert.deepEqual(load(fixture),fixture.state,id);
+ for(const [id,fixture] of Object.entries(remote)) assert.deepEqual(load(fixture),{...fixture.state,contentVersion:content.version},id);
  let state=load(remote.pendingPickup!);
  state=choices(state,['night-pickup-record','night-lock-up','night-farewell']);
  assert.ok(state.flags.includes('night-ended') && state.flags.includes('night-pickup'));
