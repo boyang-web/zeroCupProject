@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Asset, GameState, Interaction, MinigameDefinition } from '../../core/contracts.ts';
+import type { Asset, GameState, Hotspot, Interaction, MinigameDefinition } from '../../core/contracts.ts';
 import { matches } from '../../core/engine.ts';
 import Icon from '../../shared/Icon.vue';
 import AssetImage from '../../shared/AssetImage.vue';
@@ -8,7 +8,7 @@ import PhysicalObject from './PhysicalObject.vue';
 import UiButton from '../../shared/UiButton.vue';
 import ProgressiveText from '../../shared/ProgressiveText.vue';
 import { useReadingSequence } from '../../presentation/useReadingSequence';
-const props=defineProps<{ inspection: Extract<Interaction, { kind: 'inspect' }>; state: GameState; activity?: MinigameDefinition; propAsset?: Asset; journalAvailable?: boolean; completeLabel?: string; developer?: boolean; reducedMotion?: boolean }>();
+const props=defineProps<{ contents?: Hotspot[]; inspection: Extract<Interaction, { kind: 'inspect' }>; state: GameState; activity?: MinigameDefinition; propAsset?: Asset; journalAvailable?: boolean; completeLabel?: string; developer?: boolean; reducedMotion?: boolean }>();
 // A reveal may award a clue. Keep this reading stable as the object opens.
 const initialVersion=props.inspection.versions?.find(v=>matches(props.state,v.condition));
 const shownText=initialVersion?.text??props.inspection.text;
@@ -21,8 +21,8 @@ const completedAtOpen=new Set(props.state.rewards);
 const newResponse=(id:string,onceKey?:string)=>done(id,onceKey)&&!completedAtOpen.has(onceKey??id);
 const directAction=computed(()=>!props.inspection.manipulation&&props.propAsset&&!props.activity&&!props.inspection.journalLink&&options.value.length===1?options.value[0]:undefined);
 const hasJournal=computed(()=>props.inspection.journalLink&&props.journalAvailable);
-const { visibleCounts,visibleActions,textDone,finishText,revealActions }=useReadingSequence({texts:()=>[shownText,...extraLines.value],actions:()=>options.value.length+Number(!!props.activity)+Number(!!hasJournal.value)+Number(!!props.completeLabel),reduced:()=>props.reducedMotion});
-const emit=defineEmits<{option:[id:string];activity:[];examined:[];journal:[];complete:[]}>();
+const { visibleCounts,visibleActions,textDone,finishText,revealActions }=useReadingSequence({texts:()=>[shownText,...extraLines.value],actions:()=>options.value.length+Number(!!props.activity)+Number(!!hasJournal.value)+Number(!!props.completeLabel)+(props.contents?.length??0),reduced:()=>props.reducedMotion});
+const emit=defineEmits<{option:[id:string];activity:[];examined:[];journal:[];complete:[];object:[id:string]}>();
 function advanceReading(){if(!textDone.value)finishText();else revealActions();}
 defineExpose({advanceReading});
 onMounted(async()=>{await nextTick();copy.value?.focus({preventScroll:true});});
@@ -39,6 +39,9 @@ onMounted(async()=>{await nextTick();copy.value?.focus({preventScroll:true});});
         <blockquote v-if="extraLines.length" class="exhibit-quotation"><p v-for="(line,i) in extraLines" :key="line"><ProgressiveText :text="line" :revealed="visibleCounts[i+1]" /></p></blockquote>
       </div>
       <div class="inspection-actions text-scroll">
+        <div v-if="contents?.length" class="choice-list" aria-label="书里的三张店签">
+          <UiButton v-for="(object,i) in contents" :key="object.id" :disabled="i>=visibleActions||!developer&&!matches(state,object.condition)" @click="emit('object',object.id)">{{object.label}}{{object.completed&&matches(state,object.completed)?' · 已读':''}}</UiButton>
+        </div>
         <div v-if="options.length&&!directAction" class="choice-list"><template v-for="(option,i) in options" :key="option.id"><div v-if="!done(option.id,option.onceKey)||option.feedback&&newResponse(option.id,option.onceKey)" class="reading-action" :class="{ 'is-ready':i<visibleActions }" :inert="i>=visibleActions" :aria-hidden="i>=visibleActions">
           <button v-if="!done(option.id,option.onceKey)" class="choice" :data-action-id="option.id" :disabled="i>=visibleActions||!developer&&!matches(state,option.condition)" @click="emit('option',option.id)"><Icon name="arrow"/><span>{{option.label}}</span></button>
           <small v-if="!done(option.id,option.onceKey)&&!developer&&!matches(state,option.condition)">{{option.unavailable}}</small>

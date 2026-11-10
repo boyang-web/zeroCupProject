@@ -1,0 +1,41 @@
+{
+  "desktop": {
+    "viewport": [
+      1410,
+      805
+    ],
+    "panelWidth": 984,
+    "failures": [],
+    "scroll": [
+      635,
+      635
+    ],
+    "stageHeight": 270
+  },
+  "mobile": {
+    "viewport": [
+      504,
+      749
+    ],
+    "panelWidth": 314,
+    "failures": [],
+    "scroll": [
+      625,
+      625
+    ],
+    "stageHeight": 170
+  },
+  "short": {
+    "viewport": [
+      814,
+      385
+    ],
+    "panelWidth": 700,
+    "failures": [],
+    "scroll": [
+      230,
+      230
+    ],
+    "stageHeight": 83.515625
+  }
+}

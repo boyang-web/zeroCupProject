@@ -98,6 +98,10 @@ export function validateContent(pack: ContentPack): string[] {
         if (pack.minigames.find(g => g.id === gameId)?.chapterId !== chapter.id) errors.push(`${h.id}: 小游戏章节不匹配`);
       }
       if (h.interaction.kind === 'inspect') {
+        for (const id of h.interaction.contents ?? []) {
+          const child = scenesOf(chapter).find(s => s.hotspots.includes(h))?.hotspots.find(child => child.id === id);
+          if (!child || child === h || child.interaction.kind !== 'inspect' || child.interaction.contents?.length) errors.push(`${h.id}: 书内物件引用无效 ${id}`);
+        }
         if (h.drag && !h.interaction.options?.some(a => a.id === h.drag!.actionId)) errors.push(`${h.id}: 拖动物件动作不存在`);
         h.interaction.versions?.forEach(v=>condition(v.condition,h.id));
         if (h.interaction.activityId) {
@@ -114,6 +118,7 @@ export function validateContent(pack: ContentPack): string[] {
     const nodes = unique(`${dialogue.id} 节点`, dialogue.nodes.map(n => n.id)); ref(nodes, dialogue.entry, dialogue.id);
     for (const entry of dialogue.entries ?? []) { condition(entry.condition, dialogue.id); ref(nodes, entry.nodeId, dialogue.id); }
     for (const node of dialogue.nodes) {
+      condition(node.choicesOnlyWhen, `${dialogue.id}/${node.id}`);
       if (node.portrait && !pack.assets[node.portrait]) errors.push(`${node.id}: 人物立绘不存在`);
       if (typeof node.text !== 'string' || !node.text.trim()) errors.push(`${dialogue.id}/${node.id}: 对白正文为空`);
       if (node.beats) {

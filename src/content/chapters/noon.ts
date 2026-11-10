@@ -523,14 +523,14 @@ const kitchen: Hotspot[] = [
   {
   "id": "noon-seasoning",
   "label": "调味罐",
-  "x": 53.3,
-  "y": 53.6,
+  "x": 51.2,
+  "y": 53.2,
   "cameraView": "seasoning",
   "icon": "look",
   "sprite": {
     "asset": "seasoning",
-    "width": 8,
-    "height": 12,
+    "width": 4.5,
+    "height": 7,
     "z": 6
   },
   "interaction": {
@@ -593,14 +593,14 @@ const kitchen: Hotspot[] = [
   {
     "id": "noon-tasting",
     "label": "尝清汤的小碟",
-    "x": 74.5,
-    "y": 51.1,
-    "cameraView": "serving",
+    "x": 55.1,
+    "y": 53.2,
+    "cameraView": "tasting",
     "icon": "look",
     "sprite": {
       "asset": "night-empty-bowl",
-      "width": 4,
-      "height": 2.9,
+      "width": 2.8,
+      "height": 2.2,
       "z": 8
     },
     "condition": {
@@ -1130,10 +1130,10 @@ export const noon: Chapter = {
         {
           "id": "player-noodles-ready",
           "asset": "plain-noodle",
-          "x": 80.2,
-          "y": 50.8,
-          "width": 5.3,
-          "height": 4.7,
+          "x": 81.4,
+          "y": 49.6,
+          "width": 4.3,
+          "height": 3.8,
           "z": 6,
           "condition": {
             "kind": "all",
@@ -1164,10 +1164,10 @@ export const noon: Chapter = {
         {
           "id": "player-noodles-finished",
           "asset": "noon-bowl-empty",
-          "x": 80.2,
-          "y": 50.8,
-          "width": 5.3,
-          "height": 4.7,
+          "x": 81.4,
+          "y": 49.6,
+          "width": 4.3,
+          "height": 3.8,
           "z": 6,
           "condition": {
             "kind": "any",
@@ -1210,9 +1210,16 @@ export const noon: Chapter = {
           {
             "id": "seasoning",
             "label": "灶边调味位",
-            "x": 53.3,
-            "y": 48,
+            "x": 51.2,
+            "y": 49,
             "zoom": 1.75
+          },
+          {
+            "id": "tasting",
+            "label": "灶旁干净台面的小碟",
+            "x": 55.1,
+            "y": 52,
+            "zoom": 1.8
           },
           {
             "id": "serving",

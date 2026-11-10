@@ -476,14 +476,14 @@ const yard: Hotspot[] = [
   {
   "id": "ning-drawing",
   "label": "小朱画的教室",
-  "x": 60.3,
-  "y": 43.9,
+  "x": 56.7,
+  "y": 43.8,
   "cameraView": "school-drawing",
   "icon": "look",
   "sprite": {
     "asset": "morning-school-drawing",
-    "width": 6.3,
-    "height": 5.8,
+    "width": 4.8,
+    "height": 5.2,
     "z": 8
   },
   "interaction": {
@@ -533,10 +533,10 @@ const yard: Hotspot[] = [
           }
         ]
       },
-      "x": 76.8,
-      "y": 66.5,
-      "width": 6.2,
-      "height": 3.2,
+      "x": 78.2,
+      "y": 60.7,
+      "width": 3.6,
+      "height": 2,
       "cameraView": "ledger-meal"
     }
   ]
@@ -586,14 +586,14 @@ const yard: Hotspot[] = [
   {
   "id": "morning-table-plan",
   "label": "饭桌旁的备料表",
-  "x": 60,
-  "y": 68,
-  "cameraView": "ledger-meal",
+  "x": 62.5,
+  "y": 58.8,
+  "cameraView": "table-plan",
   "icon": "look",
   "sprite": {
     "asset": "morning-sample-sheet",
-    "width": 7,
-    "height": 3.2,
+    "width": 3.8,
+    "height": 1.5,
     "z": 8
   },
   "interaction": {
@@ -628,13 +628,13 @@ const yard: Hotspot[] = [
           "kind": "flag",
           "id": "morning-defer"
         },
-        "text": "备料表折了两折，放在柜旁。阿宁没拿走，陈伯说晚上吃饭之前看。三个试样的格子还没画，七点开门那句也没定。",
+        "text": "备料表折了两折，放在饭桌靠里的空处。阿宁没拿走，陈伯说晚上吃饭之前看。三个试样的格子还没画，七点开门那句也没定。",
         "exhibit": {
           "kind": "note",
           "kicker": "阿宁留下的提议稿",
           "title": "晚上再看",
           "lines": [
-            "表折好放柜旁，今天没有约定试样。",
+            "表折好放在饭桌里侧，今天没有约定试样。",
             "三天的格子还没画。",
             "七点开门仍是问号。"
           ]
@@ -709,11 +709,11 @@ const yard: Hotspot[] = [
         "kind": "flag",
         "id": "morning-defer"
       },
-      "x": 54.9,
-      "y": 43.9,
-      "width": 3.4,
-      "height": 2.7,
-      "cameraView": "family"
+      "x": 62.5,
+      "y": 58.8,
+      "width": 3.8,
+      "height": 1.5,
+      "cameraView": "table-plan"
     },
     {
       "condition": {
@@ -739,11 +739,11 @@ const yard: Hotspot[] = [
           }
         ]
       },
-      "x": 59.5,
-      "y": 68.3,
-      "width": 6.3,
-      "height": 3.2,
-      "cameraView": "ledger-meal"
+      "x": 62.5,
+      "y": 58.8,
+      "width": 3.8,
+      "height": 1.5,
+      "cameraView": "table-plan"
     }
   ]
 },
@@ -929,14 +929,14 @@ const yard: Hotspot[] = [
   {
   "id": "yard-cup",
   "label": "给两个人倒杯茶",
-  "x": 75.3,
-  "y": 62,
+  "x": 72.5,
+  "y": 58.8,
   "cameraView": "tea",
   "icon": "tea",
   "sprite": {
     "asset": "morning-tea-empty",
-    "width": 11,
-    "height": 7,
+    "width": 5.6,
+    "height": 3.5,
     "z": 8
   },
   "variants": [
@@ -1014,17 +1014,18 @@ export const morning: Chapter = {
       decorations: [
         { id: 'chen-empty-seat', asset: 'prop-stool', x: 49.3, y: 91.5, width: 8, height: 12, z: 2, condition: not(atMeal) },
         { id: 'ning-empty-seat', asset: 'prop-stool', x: 84, y: 89.5, width: 8, height: 12, z: 2, condition: not(atMeal) },
-        { id: 'family-breakfast', asset: 'morning-breakfast', x: 67, y: 64.5, width: 9, height: 5.5, z: 9, condition: all(flag('morning-played'), not(flag('morning-meal-cleared'))) },
+        { id: 'family-breakfast', asset: 'morning-breakfast-bowl', x: 66.8, y: 59.2, width: 4, height: 6, z: 9, condition: all(flag('morning-played'), not(flag('morning-meal-cleared'))) },
       ],
       camera: { views: [
         { id: 'sink', label: '水池旁', x: 38.5, y: 52, zoom: 1.45 },
         { id: 'bag', label: '干凳与帆布包', x: 15.2, y: 72, zoom: 1.7 },
         { id: 'family', label: '家用柜', x: 54.5, y: 47, zoom: 1.8 },
-        { id: 'school-drawing', label: '上层的教室画', x: 60.3, y: 40.8, zoom: 1.8 },
+        { id: 'school-drawing', label: '上层的教室画', x: 56.7, y: 41.2, zoom: 1.8 },
         { id: 'chen-meal', label: '陈伯的坐处', x: 49.3, y: 60, zoom: 1.5 },
         { id: 'ning-meal', label: '阿宁的坐处', x: 84, y: 58, zoom: 1.45 },
         { id: 'ledger-meal', label: '饭桌边的账簿', x: 61.5, y: 64.5, zoom: 1.75 },
-        { id: 'tea', label: '桌角的茶具', x: 75.3, y: 59.5, zoom: 1.6 },
+        { id: 'table-plan', label: '桌面里侧的备料表', x: 62.5, y: 58, zoom: 1.8 },
+        { id: 'tea', label: '桌内侧的茶具', x: 72.5, y: 57.2, zoom: 1.6 },
         { id: 'departure', label: '门边的干凳', x: 27, y: 60, zoom: 1.5 },
       ] }, links: [{ sceneId: 'morning-kitchen', label: '回灶间' }] },
   ],

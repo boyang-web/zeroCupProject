@@ -145,6 +145,24 @@ export function decodeSave(raw: string, content: ContentPack): SaveResult<SaveEn
     if (state.phase === 'playing' && !chapter.next && !chapter.exit || state.phase === 'ending' && (chapter.next || chapter.exit && state.quests[chapter.questId] !== 'completed')) throw new Error('章节与阶段不匹配。');
     if (state.phase !== 'title' && (!state.visited.includes(state.chapterId) || !state.quests[chapter.questId])) throw new Error('当前章节记录不完整。');
     if (state.phase !== 'playing' && state.dialogue) throw new Error('当前阶段不应有未完成对话。');
+    // Earlier drafts recorded these action keys before their tutorial flags
+    // existed. Reward deduplication cannot grant a missing flag on a second
+    // click, so restore only the opening's monotonic progress facts on load.
+    const openingProgress: Record<string, string[]> = {
+      'arrival-ate': ['arrival-greeted'],
+      'arrival-hungry': ['arrival-greeted'],
+      'arrival-remember': ['arrival-introduced'],
+      'arrival-notice-book': ['arrival-introduced'],
+      'arrival-resume-remember': ['arrival-introduced'],
+      'arrival-resume-notice-book': ['arrival-introduced'],
+      'arrival-commission': ['entrusted'],
+      'arrival-set-off': ['arrival-instructions'],
+    };
+    for (const reward of state.journey.chapterId === 'arrival' ? state.rewards : []) {
+      for (const flag of openingProgress[reward] ?? []) {
+        if (!state.flags.includes(flag)) state.flags.push(flag);
+      }
+    }
     return { ok: true, value: data as unknown as SaveEnvelope };
   } catch (e) { return { ok: false, error: e instanceof Error ? e.message : '无法读取存档。' }; }
 }

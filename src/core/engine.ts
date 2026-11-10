@@ -2,6 +2,7 @@ import type { Action, Command, Condition, ContentPack, Effect, GameState, RuleOp
 import { firstSceneOf, sceneOf, scenesOf } from './scenes.ts';
 import { canAccess, matches } from './conditions.ts';
 import { featureUnlocked, isRevisiting } from './progression.ts';
+import { clearChapterProgress } from './chapter-replay.ts';
 export { matches } from './conditions.ts';
 
 export function createState(content: ContentPack): GameState {
@@ -59,7 +60,17 @@ export function transition(previous: GameState, command: Command, content: Conte
   const chapter = content.chapters.find(c => c.id === state.chapterId)!;
   const scene = sceneOf(state, content);
   const allowed = (condition?: Condition) => canAccess(state, condition, options);
-  if (command.type === 'dev-jump' || command.type === 'dev-dialogue') {
+  if (command.type === 'replay-chapter') {
+    if (state.phase === 'title') return deny('请先进入章节。');
+    if (chapter.id === content.firstChapter) {
+      const fresh = createState(content);
+      enterChapter(fresh, chapter.id, content);
+      return { state: fresh, changed: true, message: '已回到本章开头。' };
+    }
+    clearChapterProgress(state, content);
+    enterChapter(state, chapter.id, content);
+    return { state, changed: true, message: '已回到本章开头，本章及后续进度已清空。' };
+  } else if (command.type === 'dev-jump' || command.type === 'dev-dialogue') {
     if (!options.developer) return deny('请先开启开发者测试模式。');
     let target = command.type === 'dev-jump' ? content.chapters.find(c => c.id === command.chapterId) : undefined;
     let targetScene = target && scenesOf(target).find(s => s.id === (command.type === 'dev-jump' ? command.sceneId ?? firstSceneOf(target!) : ''));
