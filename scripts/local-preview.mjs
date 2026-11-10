@@ -23,6 +23,7 @@ async function isGameRunning() {
 function browserExecutable() {
   if (process.env.BAIWEI_BROWSER_PATH && existsSync(process.env.BAIWEI_BROWSER_PATH)) return process.env.BAIWEI_BROWSER_PATH;
   const candidates = [
+    ...(process.platform === 'darwin' ? ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge', join(process.env.HOME ?? '', 'Applications/Google Chrome.app/Contents/MacOS/Google Chrome'), join(process.env.HOME ?? '', 'Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge')] : []),
     join(process.env.ProgramFiles ?? 'C:/Program Files', 'Google/Chrome/Application/chrome.exe'),
     join(process.env.LOCALAPPDATA ?? '', 'Google/Chrome/Application/chrome.exe'),
     join(process.env['ProgramFiles(x86)'] ?? 'C:/Program Files (x86)', 'Microsoft/Edge/Application/msedge.exe'),
@@ -46,13 +47,13 @@ async function main() {
   console.log(`本地预览：${address}`);
   if (!noOpen) {
     const executable = browserExecutable();
-    if (!executable) throw new Error('未找到 Chrome 或 Edge。可直接用本机浏览器打开上面的地址，或通过 BAIWEI_BROWSER_PATH 指定浏览器。');
+    if (!executable && process.platform !== 'darwin') throw new Error('未找到 Chrome 或 Edge。可直接用本机浏览器打开上面的地址，或通过 BAIWEI_BROWSER_PATH 指定浏览器。');
     const profile = join(root, '.tmp/local-browser-profile');
     mkdirSync(profile, { recursive: true });
-    const browser = spawn(executable, [`--user-data-dir=${profile}`, '--new-window', '--no-first-run', '--no-default-browser-check', '--window-size=1440,900', address], { detached: true, stdio: 'ignore', windowsHide: false });
+    const browser = spawn(executable ?? '/usr/bin/open', executable ? [`--user-data-dir=${profile}`, '--new-window', '--no-first-run', '--no-default-browser-check', '--window-size=1440,900', address] : [address], { detached: true, stdio: 'ignore', windowsHide: false });
     await new Promise((resolve, reject) => { browser.once('spawn', resolve); browser.once('error', reject); });
     browser.unref();
-    console.log('已打开本机浏览器；预览使用工程内独立的浏览器目录。');
+    console.log(executable ? '已打开本机浏览器；预览使用工程内独立的浏览器目录。' : '已打开 macOS 默认浏览器；存档保存在该浏览器中。');
   }
   if (server) {
     console.log('关闭预览服务：Ctrl+C。');

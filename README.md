@@ -69,7 +69,9 @@ npm run dev
 
 打开终端打印的地址，通常为 `http://127.0.0.1:5173`。端口占用时以实际输出为准。停止服务按 `Ctrl+C`。
 
-Windows 下也可运行 `npm run preview:local`，自动启动或复用本工程的预览服务，并用本机 Chrome／Edge 打开。预览浏览器使用 `.tmp/local-browser-profile`，测试进度与日常浏览器分开。可加 `-- --port 5174` 换端口，或加 `-- --no-open` 只启动服务。这条入口可用于内置浏览器连接失败时的实际交互和截图验证。
+macOS 可双击根目录 `START.command`：自动进入项目目录，优先使用本项目 `.tools/` 内已安装的 Node，缺少依赖时先运行 `npm ci`，再启动服务并打开浏览器。游玩时保留终端窗口，按 `Ctrl+C` 停止服务；也可在终端运行 `./START.command --port 5174` 更换端口。首次遇到系统安全提示时，请确认文件来源后在 Finder 中右键选择“打开”。
+
+Windows 和 macOS 都可运行 `npm run preview:local`，自动启动或复用本工程的预览服务，并用本机 Chrome／Edge 打开。macOS 未安装这两种浏览器时使用系统默认浏览器，此时存档保存在默认浏览器中。预览浏览器使用 `.tmp/local-browser-profile`，测试进度与日常浏览器分开。可加 `-- --port 5174` 换端口，或加 `-- --no-open` 只启动服务。这条入口可用于内置浏览器连接失败时的实际交互和截图验证。
 
 首次克隆不包含 `node_modules/` 和 `dist/`。安装依赖后即可使用开发服务器，无需先构建。
 
