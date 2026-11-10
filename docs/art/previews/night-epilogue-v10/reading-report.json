@@ -1,0 +1,11 @@
+{
+  "checks": [
+    "desktop: all seven discovered fragments appear exactly once; each written face is a complete story and only copy scrolls.",
+    "mobile: all seven discovered fragments appear exactly once; each written face is a complete story and only copy scrolls.",
+    "First chapter: holding a real object produces no white label or drop-target instruction.",
+    "Night pickup: the complete rewritten conversation keeps its original result and closes in the scene.",
+    "Night cancelled: the complete rewritten conversation keeps its original result and closes in the scene.",
+    "Night missed: the complete rewritten conversation keeps its original result and closes in the scene."
+  ],
+  "errors": []
+}

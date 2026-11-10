@@ -8,7 +8,7 @@ import { matches } from './core/conditions';
 import { currentGuide, featureUnlocked, isRevisiting } from './core/progression';
 import { useGame } from './runtime/useGame';
 import { useSettings } from './features/settings/useSettings';
-import { createAmbience } from './infrastructure/audio';
+import { createSoundscape, type SoundEffect } from './infrastructure/soundscape';
 import Modal from './shared/Modal.vue';
 import UiButton from './shared/UiButton.vue';
 import Icon from './shared/Icon.vue';
@@ -33,6 +33,7 @@ import SceneResponse from './presentation/SceneResponse.vue';
 import {sceneRoutes,type SceneRoute} from './presentation/scene-routes';
 import {directObjectAction} from './presentation/object-actions';
 import {journalActivity as pendingJournalActivity} from './presentation/journal-activity';
+import {sceneMusic,objectSound} from './presentation/sound-cues';
 
 const storage = {
   getItem: (key: string) => window.localStorage.getItem(key),
@@ -41,8 +42,11 @@ const storage = {
 };
 const game = useGame(content, storage);
 const { state, chapter, scene, node, ending, canTravel, message, developer } = game;
-const { reducedMotion, volume } = useSettings(storage);
-const ambience = createAmbience(content.assets.ambience!.url);
+const { reducedMotion, musicVolume,effectsVolume,muted } = useSettings(storage);
+const soundscape=createSoundscape({
+  music:{home:content.assets['music-home']!.url,day:content.assets['music-day']!.url,night:content.assets['music-night']!.url},
+  effects:{wood:content.assets['sfx-wood']!.url,paper:content.assets['sfx-paper']!.url,cup:content.assets['sfx-cup']!.url,door:content.assets['sfx-door']!.url},
+});
 const themeStyle = { ...woodVariables(content.assets), '--journal-paper': `url("${content.assets['journal-paper']!.url}")` };
 const audioMessage = ref(''), objectivesOpen = ref(false), fullscreen = ref(false), viewHome = ref(false), closeView = ref(false);
 const showingHome = computed(() => state.value.phase === 'title' || viewHome.value);
@@ -167,7 +171,7 @@ function interact(hotspot: Hotspot) {
 function sceneOption(hotspot: Hotspot, actionId: string) {
   if(!allowsObject(hotspot.id)||panel.value||node.value)return;
   if(game.dispatch({type:'interact',hotspotId:hotspot.id,actionId})&&hotspot.interaction.kind==='inspect'){
-    const action=hotspot.interaction.options?.find(a=>a.id===actionId);if(action?.feedback)response.value={title:hotspot.label,text:action.feedback,key:Date.now()};
+    void soundscape.play(objectSound(hotspot));const action=hotspot.interaction.options?.find(a=>a.id===actionId);if(action?.feedback)response.value={title:hotspot.label,text:action.feedback,key:Date.now()};
   }
 }
 function moveScene(sceneId: string) { if (!guideFocused.value && !panel.value && !node.value) game.dispatch({ type: 'move', sceneId }); }
@@ -207,9 +211,23 @@ async function toggleFullscreen() {
 onMounted(() => {
   syncFullscreen(); document.addEventListener('fullscreenchange', syncFullscreen);
   document.addEventListener('keydown', developerShortcut);
+  document.addEventListener('pointerdown',unlockSound,true);document.addEventListener('keydown',unlockSound,true);document.addEventListener('visibilitychange',soundVisibility);
   if (new URLSearchParams(window.location.search).get('dev') === '1') developerTools();
 });
-watch(volume, async value => { audioMessage.value = await ambience.setVolume(value) ? '' : '请再次调整音量，浏览器需要一次操作来启用声音。'; });
+function unlockSound(event:Event){
+  if(event instanceof KeyboardEvent&&!['Enter',' '].includes(event.key))return;
+  void soundscape.unlock().then(ok=>{audioMessage.value=ok?'':'声音暂时没打开，再点一下音量试试。';});
+}
+function uiSound(event:MouseEvent){
+  const button=event.target instanceof Element?event.target.closest<HTMLButtonElement>('button'):null;
+  if(!button||button.disabled||button.closest('[inert]'))return;
+  const cue=button.dataset.sound??'wood';if(['wood','paper','cup','door'].includes(cue))void soundscape.play(cue as SoundEffect);
+}
+function soundVisibility(){soundscape.setActive(!document.hidden&&!showingHome.value);}
+watch([musicVolume,effectsVolume,muted,showingHome,()=>state.value.chapterId],()=>{
+  soundscape.setLevels({music:musicVolume.value,effects:effectsVolume.value,muted:muted.value});
+  soundscape.setTheme(sceneMusic(state.value.chapterId));soundVisibility();
+},{immediate:true});
 const region = ref<HTMLElement>(); let tween: gsap.core.Tween | undefined;
 const discovery = ref<{ title: string; text: string;  }>(); let discoveryTimer: ReturnType<typeof setTimeout> | undefined;
 watch([state, developer], ([next, testing], [previous, wasTesting]) => {
@@ -238,11 +256,11 @@ watch([showingHome, () => state.value.chapterId, () => state.value.sceneId], asy
     if (morning) interact(morning);
   }
 });
-onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); ambience.dispose(); document.removeEventListener('fullscreenchange', syncFullscreen); document.removeEventListener('keydown', developerShortcut); });
+onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); soundscape.dispose(); document.removeEventListener('fullscreenchange', syncFullscreen); document.removeEventListener('keydown', developerShortcut);document.removeEventListener('pointerdown',unlockSound,true);document.removeEventListener('keydown',unlockSound,true);document.removeEventListener('visibilitychange',soundVisibility); });
 </script>
 
 <template>
-  <div class="game-shell immersive" :class="{ 'reduced-motion': reducedMotion, 'at-home': showingHome, 'developer-active': developer, 'tutorial-focused': guideFocused, 'tutorial-minimal': guideChrome === 'minimal' }" :data-tutorial-step="presentedGuide?.id" :style="themeStyle">
+  <div class="game-shell immersive" :class="{ 'reduced-motion': reducedMotion, 'at-home': showingHome, 'developer-active': developer, 'tutorial-focused': guideFocused, 'tutorial-minimal': guideChrome === 'minimal' }" :data-tutorial-step="presentedGuide?.id" :style="themeStyle" @click.capture="uiSound">
     <aside v-if="developer" class="developer-bar" aria-label="测试模式"><strong>开发者测试</strong><span>前置限制已放开</span><button @click="developerTools">测试工具 · F8</button><button @click="exitDeveloper">退出测试</button></aside>
     <main ref="region">
       <TitleScreen v-if="showingHome" :content="content" :has-save="hasProgress" :reduced-motion="reducedMotion" @start="requestStart" @continue="continueStory" @saves="openPanel('saves')" @settings="openPanel('settings')" />
@@ -275,7 +293,7 @@ onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); ambience.di
       <div v-else-if="panel?.kind==='menu'" class="pause-menu"><UiButton v-if="unlocked('collection')" @click="openPanel('collection')"><Icon name="collection"/>图鉴</UiButton><UiButton v-if="unlocked('lifeNotes')" @click="panel={kind:'achievements'}"><Icon name="leaf"/>拾零</UiButton><UiButton @click="openPanel('saves')"><Icon name="save"/>存读档</UiButton><UiButton @click="openPanel('settings')"><Icon name="settings"/>设置</UiButton><UiButton tone="quiet" @click="panel=null;viewHome=true">回到首页</UiButton></div>
       <section v-else-if="panel?.kind === 'achievements'" class="entry-list"><article v-for="entry in content.achievements.filter(a => developer || state.achievements.includes(a.id))" :key="entry.id"><h3>{{ entry.title }}</h3><p>{{ entry.text }}</p><aside v-if="entry.annotation" class="annotation">{{ entry.annotation }}</aside></article></section>
       <div v-else-if="panel?.kind === 'inventory'" class="inventory-grid"><article v-for="item in content.items.filter(i => developer || (state.inventory[i.id] ?? 0) > 0)" :key="item.id"><span class="inventory-symbol">{{ item.icon }}</span><h3>{{ item.title }}</h3><p>{{ item.text }}</p></article></div>
-      <template v-else-if="panel?.kind === 'settings'"><div class="settings-list"><UiButton @click="developerTools">{{ developer ? '打开开发者测试工具' : '开启开发者测试模式' }}</UiButton><label><span>减少动画</span><input v-model="reducedMotion" type="checkbox" /></label><label for="volume">环境声 <span>{{ Math.round(volume * 100) }}%</span></label><input id="volume" v-model.number="volume" type="range" min="0" max="1" step="0.05" /><p v-if="audioMessage" role="status">{{ audioMessage }}</p><UiButton @click="toggleFullscreen">{{ fullscreen ? '退出全屏' : '全屏游玩' }}<Icon name="fullscreen" /></UiButton><p class="muted">点选、翻看场景里的物件。可以用 Tab 选择目标，Enter 确认，Esc 放下物件或结束交谈。对白窗口内点任意留白可补全当前句或接下一句，空格与回车也可以。茶具、凳子等可以拖动，也能直接点选。</p><UiButton v-if="!showingHome" tone="quiet" @click="panel = { kind: 'restart' }">重新开始旅程</UiButton></div></template>
+      <template v-else-if="panel?.kind === 'settings'"><div class="settings-list"><UiButton @click="developerTools">{{ developer ? '打开开发者测试工具' : '开启开发者测试模式' }}</UiButton><label><span>减少动画</span><input v-model="reducedMotion" type="checkbox" /></label><label><span>静音</span><input v-model="muted" type="checkbox" /></label><label for="music-volume">音乐 <span>{{ Math.round(musicVolume * 100) }}%</span></label><input id="music-volume" v-model.number="musicVolume" type="range" min="0" max="1" step="0.01" /><label for="effects-volume">交互音效 <span>{{ Math.round(effectsVolume * 100) }}%</span></label><input id="effects-volume" v-model.number="effectsVolume" type="range" min="0" max="1" step="0.01" /><p v-if="audioMessage" role="status">{{ audioMessage }}</p><UiButton @click="toggleFullscreen">{{ fullscreen ? '退出全屏' : '全屏游玩' }}<Icon name="fullscreen" /></UiButton><p class="muted">点选、翻看场景里的物件。可以用 Tab 选择目标，Enter 确认，Esc 放下物件或结束交谈。对白窗口内点任意留白可补全当前句或接下一句，空格与回车也可以。茶具、凳子等可以拖动，也能直接点选。</p><UiButton v-if="!showingHome" tone="quiet" @click="panel = { kind: 'restart' }">重新开始旅程</UiButton></div></template>
       <template v-else-if="panel?.kind === 'restart'"><p>新的归途会替换自动存档。手动档位和导出的文件会保留。</p><div class="button-row"><UiButton tone="jade" @click="restart">开始新的故事</UiButton><UiButton @click="panel = null">先不重来</UiButton></div></template>
       <template v-else-if="panel?.kind === 'notice'"><p>{{ panel.text }}</p></template>
     </Modal>

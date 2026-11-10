@@ -9,6 +9,7 @@ import { validateContent } from '../src/core/validate-content.ts';
 import { decodeSave } from '../src/infrastructure/saves.ts';
 import { dialogueReadings } from '../src/presentation/dialogue-readings.ts';
 import { entryText } from '../src/presentation/entry-text.ts';
+import { epilogueRecords } from '../src/content/epilogue-records.ts';
 import { act, choices, completeArrival, finishMorning, finishNoon, noonDecision } from './helpers.ts';
 const arrival=content.chapters.find(c=>c.id==='arrival')!;
 const noon=content.chapters.find(c=>c.id==='noon')!;
@@ -100,9 +101,9 @@ test('hearing only the wrong-door story does not invent the separate rice-wine c
   s=act(s,{type:'inspect',hotspotId:'photo'});s=act(s,{type:'study-collection',entryId:'family-photo'});
   s=choices(act(s,{type:'talk',hotspotId:'grandma'}),['grandma-ask-photo-margin','grandma-photo-story-close']);
   const record=content.clues.find(c=>c.id==='grandma-first-page')!;
-  const onlyNeighbor=entryText(record,s);assert.match(onlyNeighbor,/走错过门/);assert.doesNotMatch(onlyNeighbor,/米酒|煮糊/);
+  const onlyNeighbor=entryText(record,s);assert.match(onlyNeighbor,/走错过门|认错过门/);assert.doesNotMatch(onlyNeighbor,/米酒|煮糊|糊锅/);
   s=choices(act(s,{type:'talk',hotspotId:'grandma'}),['grandma-ask-first-page','grandma-record-first-story']);
-  const both=entryText(record,s);assert.match(both,/煮糊/);assert.match(both,/走错过门/);
+  const both=entryText(record,s);assert.match(both,/煮糊|糊锅/);assert.match(both,/走错过门|认错过门/);
 });
 
 test('new players must take the kitchen lesson even after hearing everyone or closing the old front explanation',()=>{
@@ -163,10 +164,12 @@ test('every interrupted noon ending resumes its final scene and its journal reco
     assert.equal(s.dialogue?.nodeId,kind==='limit'?'limited-end':kind+'-end');
     const record=kind==='limit'?'noon-limit-record':kind==='counter'?'noon-counter-record':'noon-overload-record';
     s=act(s,{type:'choose',choiceId:record});
-    const text=entryText(content.clues.find(c=>c.id===(kind==='overload'?'noon-unfinished':'noon-record'))!,s);
-    if(kind==='limit')assert.match(text,/试一周再对账/);
-    if(kind==='counter'){assert.match(text,/接多少单留到晚上算/);assert.doesNotMatch(text,/手机改成两单/);}
-    if(kind==='overload')assert.match(text,/后头没法说/);
+    // Agreements live on the factual shop pages; personal pages may tell the
+    // emotional scene without repeating a fixed line of bookkeeping.
+    const text=epilogueRecords(s).find(r=>r.id==='noon')!.text!;
+    if(kind==='limit')assert.match(text,/先试一周/);
+    if(kind==='counter'){assert.match(text,/接几单留到晚上另算/);assert.doesNotMatch(text,/最多留两单/);}
+    if(kind==='overload')assert.match(text,/暂时仍留着十五分钟/);
     s=act(s,{type:'talk',hotspotId:'noon-person'});assert.equal(s.dialogue?.nodeId,'after-'+kind);
   }
 });

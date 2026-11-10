@@ -1,0 +1,72 @@
+[
+  {
+    "id": "music-home",
+    "seconds": 40.0,
+    "bytes": 1764044,
+    "peak": 0.23,
+    "rms": 0.0489,
+    "clippedSamples": 0,
+    "firstAndLastSample": 0,
+    "sha256": "658ca5656fbcdda3f28d31865631a4fedc852226ee487289bf752e909b4a8136"
+  },
+  {
+    "id": "music-day",
+    "seconds": 40.0,
+    "bytes": 1764044,
+    "peak": 0.23,
+    "rms": 0.0506,
+    "clippedSamples": 0,
+    "firstAndLastSample": 0,
+    "sha256": "d6fbc25620dabd5ffc961b0cdb5f2f8e71389cfb6b01a3523b30376388e3373d"
+  },
+  {
+    "id": "music-night",
+    "seconds": 40.0,
+    "bytes": 1764044,
+    "peak": 0.23,
+    "rms": 0.0471,
+    "clippedSamples": 0,
+    "firstAndLastSample": 0,
+    "sha256": "1adf76def4ee3c2dcc97db0cb10c2717550321f1fd7689cab4955052f951199d"
+  },
+  {
+    "id": "sfx-wood",
+    "seconds": 0.12,
+    "bytes": 5336,
+    "peak": 0.2049,
+    "rms": 0.0419,
+    "clippedSamples": 0,
+    "firstAndLastSample": 0,
+    "sha256": "cb3927f04cec639a0262842a63e79b6a9a448464270f2e47ff7bd222e5cf6f1c"
+  },
+  {
+    "id": "sfx-paper",
+    "seconds": 0.28,
+    "bytes": 12392,
+    "peak": 0.26,
+    "rms": 0.0395,
+    "clippedSamples": 0,
+    "firstAndLastSample": 0,
+    "sha256": "18dee3cf02e90a559820c1a35edfc90903d847e9783fe43f2aa56fe83d379936"
+  },
+  {
+    "id": "sfx-cup",
+    "seconds": 0.48,
+    "bytes": 21212,
+    "peak": 0.26,
+    "rms": 0.046,
+    "clippedSamples": 0,
+    "firstAndLastSample": 0,
+    "sha256": "c47e1956b3aa6534e06ff7b85850ecb23e06767781ef64031560ea845fcd6b65"
+  },
+  {
+    "id": "sfx-door",
+    "seconds": 0.36,
+    "bytes": 15920,
+    "peak": 0.2527,
+    "rms": 0.0739,
+    "clippedSamples": 0,
+    "firstAndLastSample": 0,
+    "sha256": "2bf942fd83cb5bb5a44f393a1c71ea24110f3d32b0adb35a22abf64a6a644e80"
+  }
+]

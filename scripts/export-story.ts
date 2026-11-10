@@ -96,7 +96,8 @@ function object(value: Hotspot, chapterId: string) {
   } else {
     meta('关联玩法', `\`${interaction.gameId}\``);
   }
-  namedText('拖动提示', value.drag?.hint);
+  // Legacy drag.hint is retained in content for compatibility but is no longer
+  // rendered. Do not reintroduce those removed instructions into the reading copy.
 }
 function orderedNodes(dialogue: Dialogue) {
   const visited = new Set<string>();
@@ -350,7 +351,7 @@ for (const [label, entries] of [
   ['线索与细节', content.clues.filter(entry => entry.category !== 'life')],
 ] as const) {
   heading(3, label);
-  for (const entry of entries) { heading(4, `${entry.title}（${entry.id}）`); text(entry.text);for(const[index,version]of (entry.versions??[]).entries()){line(`**阶段记录 ${index+1}**`);line();meta('出现条件',condition(version.condition));text(version.text);} }
+  for (const entry of entries) { heading(4, `${entry.title}（${entry.id}）`); text(entry.text);for(const[index,version]of (entry.versions??[]).entries()){line(`**阶段记录 ${index+1}**`);line();meta('出现条件',condition(version.condition));namedText('这一页的标题',version.title);text(version.text);} }
 }
 heading(2, '收藏物件的补充介绍', 'collection');
 for (const entry of content.collection ?? []) {
@@ -391,7 +392,7 @@ function verifyProse(value: unknown, path = 'content', parentKey = '') {
   if (value && typeof value === 'object') {
     const record = value as Record<string, unknown>;
     for (const [key, entry] of Object.entries(record)) {
-      if (['assets','camera','character','sprite','decorations'].includes(key)) continue;
+      if (['assets','camera','character','sprite','decorations','drag'].includes(key)) continue;
       if (key === 'text' && Array.isArray(record.beats) && record.beats.length) continue;
       if (typeof entry === 'string' && proseFields.has(key)) assert.ok(markdown.includes(entry), `Omitted prose at ${path}.${key}: ${entry.slice(0,60)}`);
       verifyProse(entry, `${path}.${key}`, key);
@@ -405,5 +406,24 @@ assert.equal(exportedObjects.size, expectedObjects, 'Some inspection objects wer
 mkdirSync(new URL('../docs/', import.meta.url), { recursive: true });
 writeFileSync(output, markdown, 'utf8');
 assert.equal(readFileSync(output, 'utf8'), markdown);
+// Focused reading copies come from the same export, so branch versions and
+// source wording cannot drift away from the game when the full text is updated.
+function section(start:string,end?:string){
+  const from=markdown.indexOf(start),to=end?markdown.indexOf(end,from+start.length):markdown.length;
+  assert.ok(from>=0&&to>from,`Missing reading section: ${start}`);
+  return markdown.slice(from,to).trim();
+}
+const lifeOrder=['job-gap','grandma-first-page','my-first-pay','morning-record','morning-unfinished','noon-record','noon-unfinished','night-riceball','night-record-pickup','night-record-cancelled','night-record-missed'];
+const lifeBlocks=section('### 人间百味\n','### 线索与细节\n').split(/(?=^#### )/m).filter(block=>block.startsWith('#### '));
+assert.equal(lifeBlocks.length,lifeOrder.length);
+lifeBlocks.sort((a,b)=>lifeOrder.findIndex(id=>a.startsWith('#### '+content.clues.find(c=>c.id===id)!.title+'（'+id+'）'))-lifeOrder.findIndex(id=>b.startsWith('#### '+content.clues.find(c=>c.id===id)!.title+'（'+id+'）')));
+for(const[filename,title,body]of [
+  ['百味录_第四章_夜里有饭_精修阅读稿.md','第四章 · 夜里有饭',section('<a id="chapter-night"></a>','<a id="chapter-epilogue"></a>')],
+  ['百味录_第五章_灯下_精修阅读稿.md','第五章 · 灯下',section('<a id="chapter-epilogue"></a>','<a id="recipes"></a>')+'\n\n'+section('<a id="endings"></a>')],
+  ['百味录_人间百味_片段精修阅读稿.md','人间百味 · 片段',lifeBlocks.join('\n').trim()],
+]){
+  const copy=`# 百味录 · ${title}\n\n2026-11-10 精修。从当前内容自动提取；原有用户母稿保留。互斥分支和阶段版本分别列出，实际游玩只显示符合经历的一版。阅读稿随 \`npm run export:story\` 更新。\n\n${body}\n`;
+  const target=new URL('../docs/'+filename,import.meta.url);writeFileSync(target,copy,'utf8');assert.equal(readFileSync(target,'utf8'),copy);
+}
 console.log(`已导出：${fileURLToPath(output)}`);
 console.log(`5 章，${exportedDialogues.size} 组对白，${exportedNodes.size} 个节点，${exportedObjects.size} 处物件观察，${versionCount} 个阶段版本，${Array.from(markdown).length.toLocaleString()} 字符。`);
