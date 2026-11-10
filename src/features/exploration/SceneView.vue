@@ -8,6 +8,7 @@ import AssetImage from '../../shared/AssetImage.vue';
 import { sceneOf } from '../../core/scenes.ts';
 import { cameraScrollLeft, frameCamera } from '../../presentation/scene-camera.ts';
 import WoodFrame from '../../presentation/WoodFrame.vue';
+import {objectSound} from '../../presentation/sound-cues';
 import {directObjectAction} from '../../presentation/object-actions';
 const props = defineProps<{ chapter: Chapter; content: ContentPack; state: GameState; guideTarget?: string; focusLocked?: boolean; quiet?: boolean; reducedMotion?: boolean; developer?: boolean; blocked?: boolean }>();
 const emit = defineEmits<{ interact: [hotspot: Hotspot]; move: [id: string]; option: [hotspot: Hotspot, actionId: string]; framing: [close: boolean] }>();
@@ -118,12 +119,11 @@ watch(() => scene.value.id, () => {
     <div v-for="d in (scene.decorations ?? []).filter(d => matches(state, d.condition))" :key="d.id" :data-scenery="d.id" class="world-scenery" :style="{ left: d.x+'%', top: d.y+'%', width: d.width+'%', height: d.height+'%', zIndex: d.z ?? 2 }" aria-hidden="true"><AssetImage :asset="content.assets[d.asset]!" anchor="bottom" /></div>
     <div v-if="chapter.character && !failed" class="scene-character" :style="{ left: chapter.character.x + '%', top: chapter.character.y + '%', width: chapter.character.width + '%', height: chapter.character.height + '%' }" aria-hidden="true"><img :src="content.assets[chapter.character.asset]?.url" alt="" /></div>
     <template v-for="h in scene.hotspots" :key="h.id">
-      <button v-if="developer || matches(state, h.condition)" class="hotspot" :disabled="moving || locked(h)" :class="{ 'world-object': h.sprite, 'world-person': h.interaction.kind === 'dialogue', discovered: h.completed && matches(state, h.completed), 'guide-object': guideTarget === h.id, 'object-dragging': dragging?.id === h.id }" :style="{ left: position(h).x + '%', top: position(h).y + '%', width: h.sprite ? (pose(h)?.width ?? h.sprite.width) + '%' : undefined, height: h.sprite ? (pose(h)?.height ?? h.sprite.height) + '%' : undefined, zIndex: dragging?.id === h.id ? 30 : h.sprite?.z }" :aria-label="h.label" :data-guide-object="h.id" :data-sprite-asset="pose(h)?.asset ?? h.sprite?.asset" @click="select(h)" @pointerdown="beginDrag($event, h)" @pointermove="moveDrag" @pointerup="endDrag(h)" @pointercancel="dragging = undefined">
+      <button v-if="developer || matches(state, h.condition)" class="hotspot" :disabled="moving || locked(h)" :class="{ 'world-object': h.sprite, 'world-person': h.interaction.kind === 'dialogue', discovered: h.completed && matches(state, h.completed), 'guide-object': guideTarget === h.id, 'object-dragging': dragging?.id === h.id }" :style="{ left: position(h).x + '%', top: position(h).y + '%', width: h.sprite ? (pose(h)?.width ?? h.sprite.width) + '%' : undefined, height: h.sprite ? (pose(h)?.height ?? h.sprite.height) + '%' : undefined, zIndex: dragging?.id === h.id ? 30 : h.sprite?.z }" :aria-label="h.label" :data-sound="objectSound(h)" :data-guide-object="h.id" :data-sprite-asset="pose(h)?.asset ?? h.sprite?.asset" @click="select(h)" @pointerdown="beginDrag($event, h)" @pointermove="moveDrag" @pointerup="endDrag(h)" @pointercancel="dragging = undefined">
         <AssetImage v-if="h.sprite" :asset="content.assets[pose(h)?.asset ?? h.sprite.asset]!" :anchor="scene.camera ? 'bottom' : undefined" />
-        <span v-else class="hotspot-symbol"><Icon :name="h.completed && matches(state, h.completed) ? 'check' : h.icon" /></span><span class="hotspot-label">{{ h.label }}</span>
+        <span v-else class="hotspot-symbol"><Icon :name="h.completed && matches(state, h.completed) ? 'check' : h.icon" /></span>
       </button>
     </template>
-    <div v-if="dragging && scene.hotspots.find(h => h.id === dragging?.id)?.drag" class="object-drop-target" :style="{ left: scene.hotspots.find(h => h.id === dragging?.id)!.drag!.target.x + '%', top: scene.hotspots.find(h => h.id === dragging?.id)!.drag!.target.y + '%', width: scene.hotspots.find(h => h.id === dragging?.id)!.drag!.target.width + '%', height: scene.hotspots.find(h => h.id === dragging?.id)!.drag!.target.height + '%' }">{{ scene.hotspots.find(h => h.id === dragging?.id)!.drag!.hint }}</div>
   </div>
   </div>
   </div>

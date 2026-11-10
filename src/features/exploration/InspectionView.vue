@@ -17,6 +17,8 @@ const extraLines=computed(()=>!props.inspection.manipulation?exhibit.value?.line
 const copy=ref<HTMLElement>();
 const options=computed(()=>props.inspection.options??[]);
 const done=(id:string,onceKey?:string)=>props.state.rewards.includes(onceKey??id);
+const completedAtOpen=new Set(props.state.rewards);
+const newResponse=(id:string,onceKey?:string)=>done(id,onceKey)&&!completedAtOpen.has(onceKey??id);
 const directAction=computed(()=>!props.inspection.manipulation&&props.propAsset&&!props.activity&&!props.inspection.journalLink&&options.value.length===1?options.value[0]:undefined);
 const hasJournal=computed(()=>props.inspection.journalLink&&props.journalAvailable);
 const { visibleCounts,visibleActions,textDone,finishText,revealActions }=useReadingSequence({texts:()=>[shownText,...extraLines.value],actions:()=>options.value.length+Number(!!props.activity)+Number(!!hasJournal.value)+Number(!!props.completeLabel),reduced:()=>props.reducedMotion});
@@ -37,11 +39,11 @@ onMounted(async()=>{await nextTick();copy.value?.focus({preventScroll:true});});
         <blockquote v-if="extraLines.length" class="exhibit-quotation"><p v-for="(line,i) in extraLines" :key="line"><ProgressiveText :text="line" :revealed="visibleCounts[i+1]" /></p></blockquote>
       </div>
       <div class="inspection-actions text-scroll">
-        <div v-if="options.length&&!directAction" class="choice-list"><div v-for="(option,i) in options" :key="option.id" class="reading-action" :class="{ 'is-ready':i<visibleActions }" :inert="i>=visibleActions" :aria-hidden="i>=visibleActions">
+        <div v-if="options.length&&!directAction" class="choice-list"><template v-for="(option,i) in options" :key="option.id"><div v-if="!done(option.id,option.onceKey)||option.feedback&&newResponse(option.id,option.onceKey)" class="reading-action" :class="{ 'is-ready':i<visibleActions }" :inert="i>=visibleActions" :aria-hidden="i>=visibleActions">
           <button v-if="!done(option.id,option.onceKey)" class="choice" :data-action-id="option.id" :disabled="i>=visibleActions||!developer&&!matches(state,option.condition)" @click="emit('option',option.id)"><Icon name="arrow"/><span>{{option.label}}</span></button>
           <small v-if="!done(option.id,option.onceKey)&&!developer&&!matches(state,option.condition)">{{option.unavailable}}</small>
-          <p v-if="option.feedback&&done(option.id,option.onceKey)" class="object-response"><ProgressiveText :text="option.feedback" :active="textDone" :reduced-motion="reducedMotion"/></p>
-        </div></div>
+          <p v-if="option.feedback&&newResponse(option.id,option.onceKey)" class="object-response"><ProgressiveText :text="option.feedback" :active="textDone" :reduced-motion="reducedMotion"/></p>
+        </div></template></div>
         <div v-if="activity" class="inspection-activity reading-action" :class="{ 'is-ready':visibleActions>options.length }" :inert="visibleActions<=options.length"><UiButton tone="jade" :disabled="visibleActions<=options.length||!developer&&!matches(state,activity.condition)" @click="emit('activity')">{{done(activity.reward.id,activity.reward.onceKey)?'再看看走访书签':'整理走访书签'}}</UiButton><small v-if="!developer&&!matches(state,activity.condition)">{{activity.unavailable}}</small></div>
         <div v-if="hasJournal" class="reading-action" :class="{ 'is-ready':visibleActions>options.length+Number(!!activity) }" :inert="visibleActions<=options.length+Number(!!activity)"><UiButton tone="quiet" @click="emit('journal')">食谱</UiButton></div>
       <div v-if="completeLabel" class="reading-action" :class="{'is-ready':visibleActions>options.length+Number(!!activity)+Number(!!hasJournal)}" :inert="visibleActions<=options.length+Number(!!activity)+Number(!!hasJournal)"><UiButton tone="jade" :disabled="visibleActions<=options.length+Number(!!activity)+Number(!!hasJournal)" @click="emit('complete')">{{completeLabel}}<Icon name="arrow"/></UiButton></div>

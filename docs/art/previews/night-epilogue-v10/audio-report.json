@@ -1,0 +1,8 @@
+{
+  "checks": [
+    "Night music and paper effect actually decode/play after the first gesture; sliders and mute persist across reload without changing story saves.",
+    "Home theme starts through the real Continue button; moving the tea cup plays the cup cue.",
+    "Day rooms share one uninterrupted player; returning home crossfades, doorway cue plays, and visibility changes pause/resume without media errors."
+  ],
+  "errors": []
+}

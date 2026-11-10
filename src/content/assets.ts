@@ -15,6 +15,10 @@ const homeSprite = (id: keyof typeof arrivalHomeRegions, label: string): Asset =
   source: '内置 imagegen；老宅生活布局独立素材，见 docs/art/第一章老宅环境-v4.md', placeholder: false,
 });
 export const assets: Record<string, Asset> = {
+  ...Object.fromEntries([
+    ['music-home','灯下 · 家里的轻配乐'],['music-day','巷里 · 白天小馆轻配乐'],['music-night','门灯 · 夜饭小馆轻配乐'],
+    ['sfx-wood','木面轻触'],['sfx-paper','纸页翻动'],['sfx-cup','杯碟轻碰'],['sfx-door','场景通路轻木声'],
+  ].map(([id,label])=>[id!,{url:`${base}assets/audio/${id}.wav`,label:label!,source:'本工程原创合成旋律与音色；scripts/generate-soundscape.py，见 public/assets/audio/README.md',placeholder:false}])),
   'epilogue-grandma-table': { url: `${base}assets/epilogue/grandmother-table-v3.png`, label: '奶奶 · 长桌旁侧身坐姿', source: '内置 imagegen；参考原奶奶与长桌底图调整俯视角和朝向，见 docs/art/epilogue/table-layout-v3.md', placeholder: false, alphaCutoff: .08, region: { x: 0, y: 0, width: 1024, height: 1536, canvasWidth: 1024, canvasHeight: 1536 } },
   ...Object.fromEntries([['epilogue-table-night', 'table-night-v4'], ['epilogue-gate-dawn', 'gate-dawn-v2']].map(([id, file]) => [id!, { url: `${base}assets/epilogue/${file}.png`, label: id!, source: '内置 imagegen；第五章独立桌边与次晨院门取景；桌边v4见 docs/art/epilogue/table-layout-v4.md，院门见 scene-revision-v2.md', placeholder: false }])),
   'epilogue-grandma': { url: `${base}assets/epilogue/grandmother-seated-v2.png`, label: '奶奶 · 灯下高清坐姿', source: '内置 imagegen；独立高清透明人物，见 docs/art/epilogue/grandmother-v2.md', placeholder: false, alphaCutoff: .08, region: { x: 16, y: 12, width: 982, height: 1524, canvasWidth: 1024, canvasHeight: 1536 } },

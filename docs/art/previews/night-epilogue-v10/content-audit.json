@@ -1,0 +1,28 @@
+{
+  "baseline": "ccff14f",
+  "contentVersion": 6,
+  "chapters": 5,
+  "dialogues": 14,
+  "nodes": 144,
+  "inspections": 57,
+  "inspectionVersions": {
+    "before": 42,
+    "after": 43
+  },
+  "lifeFragments": 11,
+  "assetsAdded": [
+    "music-home",
+    "music-day",
+    "music-night",
+    "sfx-wood",
+    "sfx-paper",
+    "sfx-cup",
+    "sfx-door"
+  ],
+  "checks": [
+    "All existing IDs, actions, choices, effects, conditions, onceKeys, scenes, links, sprites, poses and minigame contracts are unchanged.",
+    "All prior reading-version conditions and private/public factual records are preserved.",
+    "First-three-chapter dialogue/object source, both user originals and title font are byte-identical to baseline.",
+    "Only new reading versions and seven registered original audio assets are added; save format is unchanged."
+  ]
+}

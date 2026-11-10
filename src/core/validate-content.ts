@@ -196,6 +196,8 @@ export function validateContent(pack: ContentPack): string[] {
   for (const entry of [...pack.clues,...pack.items,...pack.metrics,...pack.quests,...pack.achievements,...pack.endings]) for (const version of entry.versions ?? []) {
     condition(version.condition,entry.id);
     if (!version.text.trim()) errors.push(`${entry.id}: 阶段记录为空`);
+    if(version.title!==undefined&&!version.title.trim())errors.push(`${entry.id}: 阶段标题为空`);
+    if(version.asset&&!pack.assets[version.asset])errors.push(`${entry.id}: 阶段插图不存在 ${version.asset}`);
   }
   unique('食谱', (pack.recipes ?? []).map(r => r.id));
   for (const [id, asset] of Object.entries(pack.assets)) {

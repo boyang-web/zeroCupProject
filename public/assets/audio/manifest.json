@@ -1,0 +1,37 @@
+{
+  "music-home": {
+    "file": "music-home.wav",
+    "seconds": 40.0,
+    "peak": 0.22998748741111485
+  },
+  "music-day": {
+    "file": "music-day.wav",
+    "seconds": 40.0,
+    "peak": 0.22998748741111485
+  },
+  "music-night": {
+    "file": "music-night.wav",
+    "seconds": 40.0,
+    "peak": 0.22998748741111485
+  },
+  "sfx-wood": {
+    "file": "sfx-wood.wav",
+    "seconds": 0.12,
+    "peak": 0.20490127262184515
+  },
+  "sfx-paper": {
+    "file": "sfx-paper.wav",
+    "seconds": 0.28,
+    "peak": 0.2599871822260201
+  },
+  "sfx-cup": {
+    "file": "sfx-cup.wav",
+    "seconds": 0.48,
+    "peak": 0.2599871822260201
+  },
+  "sfx-door": {
+    "file": "sfx-door.wav",
+    "seconds": 0.36,
+    "peak": 0.25266273995178073
+  }
+}

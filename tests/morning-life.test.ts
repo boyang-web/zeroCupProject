@@ -8,6 +8,7 @@ import { scenesOf } from '../src/core/scenes.ts';
 import { decodeSave } from '../src/infrastructure/saves.ts';
 import { dialogueReadings } from '../src/presentation/dialogue-readings.ts';
 import { entryText } from '../src/presentation/entry-text.ts';
+import { epilogueRecords } from '../src/content/epilogue-records.ts';
 import { ordersReady, packagingReady, type Serving } from '../src/features/minigames/breakfast.ts';
 import { validateContent } from '../src/core/validate-content.ts';
 import { act, choices, enterMorning, finishMorning, finishNoon, morningDecision } from './helpers.ts';
@@ -96,9 +97,11 @@ test('each family route has its own Ning followup and later visits stop asking w
 
 test('the journal distinguishes formal sample trials, looking at one sample, and an unagreed plan',()=>{
   const record=content.clues.find(c=>c.id==='morning-record')!,unfinished=content.clues.find(c=>c.id==='morning-unfinished')!;
-  const trial=entryText(record,finishMorning());assert.ok(trial.includes('第一笼照旧，第二笼试'));
-  const meal=entryText(record,finishMorning('table'));assert.ok(meal.includes('还没答应正式试三天'));assert.ok(!meal.includes('账本最后一页'));
-  const deferred=entryText(unfinished,finishMorning('defer'));assert.ok(deferred.includes('今天送面的事没谈成'));
+  const trial=epilogueRecords(finishMorning())[0]!.text!;assert.ok(trial.includes('第一笼照旧，第二笼试'));
+  const mealState=finishMorning('table');const meal=epilogueRecords(mealState)[0]!.text!;assert.ok(meal.includes('试三天和晚开门都还没定'));
+  assert.doesNotMatch(entryText(record,mealState),/账本|站名|六点十分/);
+  const deferred=epilogueRecords(finishMorning('defer'))[0]!.text!;assert.ok(deferred.includes('样面还没约'));
+  assert.doesNotMatch(entryText(unfinished,finishMorning('defer')),/已经约好|已经试行/);
 });
 
 test('the lunchbox message is optional, learned from Ning and usable when talking to Qin',()=>{

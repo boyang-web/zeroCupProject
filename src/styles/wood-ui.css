@@ -1,6 +1,10 @@
 /* Straight rails stretch; square joinery and separate floral ornaments retain their proportions. */
 .wood-frame { position: absolute; inset: 0; display: grid; grid-template: var(--frame-corner, 24px) minmax(0,1fr) var(--frame-corner,24px) / var(--frame-corner,24px) minmax(0,1fr) var(--frame-corner,24px); z-index: -1; pointer-events: none; }
-.wood-frame > .asset-image { width: 100%; height: 100%; overflow: hidden; display: block; }
+/* Fractional device pixels can leave dark gutters between separately clipped
+   SVG tiles. Overlap the internal edges; anchor the outer edges in place. */
+.wood-frame > .asset-image { --slice-x:0px; --slice-y:0px; width:calc(100% + 1px); height:calc(100% + 1px); overflow:hidden; display:block; transform:translate(var(--slice-x),var(--slice-y)); }
+.wood-frame > .asset-image:nth-child(3n) { --slice-x:-1px; }
+.wood-frame > .asset-image:nth-child(n+7) { --slice-y:-1px; }
 .asset-image { display: block; width: 100%; height: 100%; object-fit: contain; user-select: none; pointer-events: none; }
 .asset-missing { display: grid; place-items: center; width: 100%; height: 100%; font: .8rem var(--font-story); color: var(--muted); }
 .ui-ornament { display: block; width: 90px; height: 70px; pointer-events: none; }

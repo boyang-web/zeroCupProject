@@ -64,7 +64,7 @@ export interface Chapter {
   camera?: SceneCamera;
   decorations?: SceneDecoration[];
 }
-export interface Entry { id: string; title: string; text: string; category?: 'life' | 'detail'; asset?: string; versions?: { condition: Condition; text: string }[] }
+export interface Entry { id: string; title: string; text: string; category?: 'life' | 'detail'; asset?: string; versions?: { condition: Condition; text: string; title?:string; asset?:string }[] }
 export type FeatureId = 'journal' | 'inventory' | 'objectHints' | 'chapterTrack' | 'lifeNotes' | 'collection' | 'revisit';
 export interface GuideStep {
   id: string; chapterId: string; title: string; text: string;
