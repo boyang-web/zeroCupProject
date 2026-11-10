@@ -1,0 +1,564 @@
+{
+  "sourceCommit": "52d1306e0d9bb059d881ab2f930b4c6f7e9dfbed",
+  "directory": "submission\\20261111-002125",
+  "assets": [
+    {
+      "source": "assets/arrival/book-flat-v4.png",
+      "file": "public/assets/arrival/book-flat-v4.webp",
+      "originalBytes": 2080215,
+      "bytes": 274248
+    },
+    {
+      "source": "assets/arrival/courtyard-clean-v2.png",
+      "file": "public/assets/arrival/courtyard-clean-v2.webp",
+      "originalBytes": 2959550,
+      "bytes": 294966
+    },
+    {
+      "source": "assets/arrival/courtyard-evening-v1.png",
+      "file": "public/assets/arrival/courtyard-evening-v1.webp",
+      "originalBytes": 2595623,
+      "bytes": 230402
+    },
+    {
+      "source": "assets/arrival/grandmother-home-v4.png",
+      "file": "public/assets/arrival/grandmother-home-v4.webp",
+      "originalBytes": 2742187,
+      "bytes": 274900
+    },
+    {
+      "source": "assets/arrival/grandmother-seated-left-v3.png",
+      "file": "public/assets/arrival/grandmother-seated-left-v3.webp",
+      "originalBytes": 2592408,
+      "bytes": 213812
+    },
+    {
+      "source": "assets/arrival/grandmother-v2.png",
+      "file": "public/assets/arrival/grandmother-v2.webp",
+      "originalBytes": 2673160,
+      "bytes": 221510
+    },
+    {
+      "source": "assets/arrival/letter-flat-v5.png",
+      "file": "public/assets/arrival/letter-flat-v5.webp",
+      "originalBytes": 1430828,
+      "bytes": 112946
+    },
+    {
+      "source": "assets/arrival/old-house-evening-v4.png",
+      "file": "public/assets/arrival/old-house-evening-v4.webp",
+      "originalBytes": 2300839,
+      "bytes": 169182
+    },
+    {
+      "source": "assets/arrival/old-house-main-v4.png",
+      "file": "public/assets/arrival/old-house-main-v4.webp",
+      "originalBytes": 2570196,
+      "bytes": 213618
+    },
+    {
+      "source": "assets/arrival/osmanthus-rice-v1.png",
+      "file": "public/assets/arrival/osmanthus-rice-v1.webp",
+      "originalBytes": 1791307,
+      "bytes": 129100
+    },
+    {
+      "source": "assets/arrival/phone-flat-v4.png",
+      "file": "public/assets/arrival/phone-flat-v4.webp",
+      "originalBytes": 1001301,
+      "bytes": 96018
+    },
+    {
+      "source": "assets/arrival/teacup-v4.png",
+      "file": "public/assets/arrival/teacup-v4.webp",
+      "originalBytes": 766220,
+      "bytes": 69736
+    },
+    {
+      "source": "assets/arrival/thread-spool-v5.svg",
+      "file": "public/assets/arrival/thread-spool-v5.svg",
+      "originalBytes": 1366,
+      "bytes": 1366
+    },
+    {
+      "source": "assets/audio/README.md",
+      "file": "public/assets/audio/README.md",
+      "originalBytes": 1388,
+      "bytes": 1388
+    },
+    {
+      "source": "assets/audio/manifest.json",
+      "file": "public/assets/audio/manifest.json",
+      "originalBytes": 727,
+      "bytes": 727
+    },
+    {
+      "source": "assets/audio/music-day.wav",
+      "file": "public/assets/audio/music-day.wav",
+      "originalBytes": 1764044,
+      "bytes": 1764044
+    },
+    {
+      "source": "assets/audio/music-home.wav",
+      "file": "public/assets/audio/music-home.wav",
+      "originalBytes": 1764044,
+      "bytes": 1764044
+    },
+    {
+      "source": "assets/audio/music-night.wav",
+      "file": "public/assets/audio/music-night.wav",
+      "originalBytes": 1764044,
+      "bytes": 1764044
+    },
+    {
+      "source": "assets/audio/sfx-cup.wav",
+      "file": "public/assets/audio/sfx-cup.wav",
+      "originalBytes": 21212,
+      "bytes": 21212
+    },
+    {
+      "source": "assets/audio/sfx-door.wav",
+      "file": "public/assets/audio/sfx-door.wav",
+      "originalBytes": 15920,
+      "bytes": 15920
+    },
+    {
+      "source": "assets/audio/sfx-paper.wav",
+      "file": "public/assets/audio/sfx-paper.wav",
+      "originalBytes": 12392,
+      "bytes": 12392
+    },
+    {
+      "source": "assets/audio/sfx-wood.wav",
+      "file": "public/assets/audio/sfx-wood.wav",
+      "originalBytes": 5336,
+      "bytes": 5336
+    },
+    {
+      "source": "assets/epilogue/dawn-v1.png",
+      "file": "public/assets/epilogue/dawn-v1.webp",
+      "originalBytes": 2972481,
+      "bytes": 326878
+    },
+    {
+      "source": "assets/epilogue/gate-dawn-v2.png",
+      "file": "public/assets/epilogue/gate-dawn-v2.webp",
+      "originalBytes": 3052334,
+      "bytes": 347166
+    },
+    {
+      "source": "assets/epilogue/grandmother-seated-v2.png",
+      "file": "public/assets/epilogue/grandmother-seated-v2.webp",
+      "originalBytes": 2709435,
+      "bytes": 266364
+    },
+    {
+      "source": "assets/epilogue/grandmother-table-v3.png",
+      "file": "public/assets/epilogue/grandmother-table-v3.webp",
+      "originalBytes": 2569386,
+      "bytes": 251700
+    },
+    {
+      "source": "assets/epilogue/night-v1.png",
+      "file": "public/assets/epilogue/night-v1.webp",
+      "originalBytes": 2668790,
+      "bytes": 260092
+    },
+    {
+      "source": "assets/epilogue/sprites-v1.png",
+      "file": "public/assets/epilogue/sprites-v1.webp",
+      "originalBytes": 1440594,
+      "bytes": 343674
+    },
+    {
+      "source": "assets/epilogue/table-night-v4.png",
+      "file": "public/assets/epilogue/table-night-v4.webp",
+      "originalBytes": 2617249,
+      "bytes": 252984
+    },
+    {
+      "source": "assets/fonts/BaiweiHand.woff",
+      "file": "public/assets/fonts/BaiweiHand.woff",
+      "originalBytes": 414968,
+      "bytes": 414968
+    },
+    {
+      "source": "assets/fonts/BaiweiTitle.woff",
+      "file": "public/assets/fonts/BaiweiTitle.woff",
+      "originalBytes": 3764,
+      "bytes": 3764
+    },
+    {
+      "source": "assets/fonts/LXGWWenKai-OFL.txt",
+      "file": "public/assets/fonts/LXGWWenKai-OFL.txt",
+      "originalBytes": 5170,
+      "bytes": 5170
+    },
+    {
+      "source": "assets/fonts/NotoSerifSC-OFL.txt",
+      "file": "public/assets/fonts/NotoSerifSC-OFL.txt",
+      "originalBytes": 4350,
+      "bytes": 4350
+    },
+    {
+      "source": "assets/fonts/README.md",
+      "file": "public/assets/fonts/README.md",
+      "originalBytes": 795,
+      "bytes": 142
+    },
+    {
+      "source": "assets/intro/home-door-v2.png",
+      "file": "public/assets/intro/home-door-v2.webp",
+      "originalBytes": 1152601,
+      "bytes": 59088
+    },
+    {
+      "source": "assets/intro/travel-bag-v1.png",
+      "file": "public/assets/intro/travel-bag-v1.webp",
+      "originalBytes": 2748844,
+      "bytes": 249026
+    },
+    {
+      "source": "assets/journal/paper-fibers-v1.png",
+      "file": "public/assets/journal/paper-fibers-v1.webp",
+      "originalBytes": 2641093,
+      "bytes": 128622
+    },
+    {
+      "source": "assets/morning/board-flat-v2.png",
+      "file": "public/assets/morning/board-flat-v2.webp",
+      "originalBytes": 1910832,
+      "bytes": 285204
+    },
+    {
+      "source": "assets/morning/breakfast-buns-v2.png",
+      "file": "public/assets/morning/breakfast-buns-v2.webp",
+      "originalBytes": 1225048,
+      "bytes": 141486
+    },
+    {
+      "source": "assets/morning/breakfast-single-bun-bowl-v4.png",
+      "file": "public/assets/morning/breakfast-single-bun-bowl-v4.webp",
+      "originalBytes": 1815788,
+      "bytes": 104050
+    },
+    {
+      "source": "assets/morning/bus-ledger-flat-v2.png",
+      "file": "public/assets/morning/bus-ledger-flat-v2.webp",
+      "originalBytes": 988438,
+      "bytes": 157468
+    },
+    {
+      "source": "assets/morning/chalk-boxes-v3.svg",
+      "file": "public/assets/morning/chalk-boxes-v3.svg",
+      "originalBytes": 2204,
+      "bytes": 2204
+    },
+    {
+      "source": "assets/morning/chen-seated-v2.png",
+      "file": "public/assets/morning/chen-seated-v2.webp",
+      "originalBytes": 2388603,
+      "bytes": 214748
+    },
+    {
+      "source": "assets/morning/chen-standing-v2.png",
+      "file": "public/assets/morning/chen-standing-v2.webp",
+      "originalBytes": 1937623,
+      "bytes": 124414
+    },
+    {
+      "source": "assets/morning/closed-steamer-v2.png",
+      "file": "public/assets/morning/closed-steamer-v2.webp",
+      "originalBytes": 2075883,
+      "bytes": 157912
+    },
+    {
+      "source": "assets/morning/empty-steamer-v3.png",
+      "file": "public/assets/morning/empty-steamer-v3.webp",
+      "originalBytes": 1666432,
+      "bytes": 131208
+    },
+    {
+      "source": "assets/morning/father-daughter-photo-v2.png",
+      "file": "public/assets/morning/father-daughter-photo-v2.webp",
+      "originalBytes": 2280226,
+      "bytes": 253092
+    },
+    {
+      "source": "assets/morning/front-v2.png",
+      "file": "public/assets/morning/front-v2.webp",
+      "originalBytes": 2630703,
+      "bytes": 260024
+    },
+    {
+      "source": "assets/morning/kitchen-v2.png",
+      "file": "public/assets/morning/kitchen-v2.webp",
+      "originalBytes": 2445642,
+      "bytes": 203612
+    },
+    {
+      "source": "assets/morning/ning-seated-v2.png",
+      "file": "public/assets/morning/ning-seated-v2.webp",
+      "originalBytes": 2191593,
+      "bytes": 175492
+    },
+    {
+      "source": "assets/morning/ning-standing-v2.png",
+      "file": "public/assets/morning/ning-standing-v2.webp",
+      "originalBytes": 1624150,
+      "bytes": 94276
+    },
+    {
+      "source": "assets/morning/prep-board-v2.png",
+      "file": "public/assets/morning/prep-board-v2.webp",
+      "originalBytes": 2264253,
+      "bytes": 189630
+    },
+    {
+      "source": "assets/morning/props-v1.png",
+      "file": "public/assets/morning/props-v1.webp",
+      "originalBytes": 2158837,
+      "bytes": 505974
+    },
+    {
+      "source": "assets/morning/reserved-buns-v2.png",
+      "file": "public/assets/morning/reserved-buns-v2.webp",
+      "originalBytes": 1487727,
+      "bytes": 140960
+    },
+    {
+      "source": "assets/morning/sample-sheet-v3.svg",
+      "file": "public/assets/morning/sample-sheet-v3.svg",
+      "originalBytes": 928,
+      "bytes": 928
+    },
+    {
+      "source": "assets/morning/school-drawing-v3.svg",
+      "file": "public/assets/morning/school-drawing-v3.svg",
+      "originalBytes": 2081,
+      "bytes": 2081
+    },
+    {
+      "source": "assets/morning/school-letter-v2.png",
+      "file": "public/assets/morning/school-letter-v2.webp",
+      "originalBytes": 2088590,
+      "bytes": 136402
+    },
+    {
+      "source": "assets/morning/tea-empty-v3.png",
+      "file": "public/assets/morning/tea-empty-v3.webp",
+      "originalBytes": 1077278,
+      "bytes": 127822
+    },
+    {
+      "source": "assets/morning/tea-filled-v3.png",
+      "file": "public/assets/morning/tea-filled-v3.webp",
+      "originalBytes": 973831,
+      "bytes": 102064
+    },
+    {
+      "source": "assets/morning/yard-v2.png",
+      "file": "public/assets/morning/yard-v2.webp",
+      "originalBytes": 2858268,
+      "bytes": 299034
+    },
+    {
+      "source": "assets/night/counter-v1.png",
+      "file": "public/assets/night/counter-v1.webp",
+      "originalBytes": 2734087,
+      "bytes": 259308
+    },
+    {
+      "source": "assets/night/extras-v1.png",
+      "file": "public/assets/night/extras-v1.webp",
+      "originalBytes": 1294690,
+      "bytes": 172974
+    },
+    {
+      "source": "assets/night/flat-note-v1.png",
+      "file": "public/assets/night/flat-note-v1.webp",
+      "originalBytes": 1112259,
+      "bytes": 113326
+    },
+    {
+      "source": "assets/night/front-v1.png",
+      "file": "public/assets/night/front-v1.webp",
+      "originalBytes": 2779131,
+      "bytes": 255346
+    },
+    {
+      "source": "assets/night/kitchen-v1.png",
+      "file": "public/assets/night/kitchen-v1.webp",
+      "originalBytes": 2750437,
+      "bytes": 250844
+    },
+    {
+      "source": "assets/night/luo-seated-v1.png",
+      "file": "public/assets/night/luo-seated-v1.webp",
+      "originalBytes": 2118055,
+      "bytes": 170558
+    },
+    {
+      "source": "assets/night/people-v1.png",
+      "file": "public/assets/night/people-v1.webp",
+      "originalBytes": 2262024,
+      "bytes": 497084
+    },
+    {
+      "source": "assets/night/props-v1.png",
+      "file": "public/assets/night/props-v1.webp",
+      "originalBytes": 1781819,
+      "bytes": 398876
+    },
+    {
+      "source": "assets/noon/bowl-empty-v2.png",
+      "file": "public/assets/noon/bowl-empty-v2.webp",
+      "originalBytes": 1502464,
+      "bytes": 86278
+    },
+    {
+      "source": "assets/noon/bowl-half-v2.png",
+      "file": "public/assets/noon/bowl-half-v2.webp",
+      "originalBytes": 1597459,
+      "bytes": 160460
+    },
+    {
+      "source": "assets/noon/bowl-scallion-v2.png",
+      "file": "public/assets/noon/bowl-scallion-v2.webp",
+      "originalBytes": 1646750,
+      "bytes": 118282
+    },
+    {
+      "source": "assets/noon/chopsticks-flat-v2.png",
+      "file": "public/assets/noon/chopsticks-flat-v2.webp",
+      "originalBytes": 460831,
+      "bytes": 74578
+    },
+    {
+      "source": "assets/noon/chuan-standing-v2.png",
+      "file": "public/assets/noon/chuan-standing-v2.webp",
+      "originalBytes": 1673729,
+      "bytes": 95542
+    },
+    {
+      "source": "assets/noon/corner-v2.png",
+      "file": "public/assets/noon/corner-v2.webp",
+      "originalBytes": 2411329,
+      "bytes": 171098
+    },
+    {
+      "source": "assets/noon/cup-empty-v2.png",
+      "file": "public/assets/noon/cup-empty-v2.webp",
+      "originalBytes": 1101400,
+      "bytes": 30430
+    },
+    {
+      "source": "assets/noon/cup-filled-v2.png",
+      "file": "public/assets/noon/cup-filled-v2.webp",
+      "originalBytes": 1023048,
+      "bytes": 25692
+    },
+    {
+      "source": "assets/noon/curtain-v2.png",
+      "file": "public/assets/noon/curtain-v2.webp",
+      "originalBytes": 2200786,
+      "bytes": 304312
+    },
+    {
+      "source": "assets/noon/empty-seat-v2.png",
+      "file": "public/assets/noon/empty-seat-v2.webp",
+      "originalBytes": 1355907,
+      "bytes": 89882
+    },
+    {
+      "source": "assets/noon/front-v2.png",
+      "file": "public/assets/noon/front-v2.webp",
+      "originalBytes": 2445665,
+      "bytes": 197034
+    },
+    {
+      "source": "assets/noon/kitchen-v2.png",
+      "file": "public/assets/noon/kitchen-v2.webp",
+      "originalBytes": 2692033,
+      "bytes": 239074
+    },
+    {
+      "source": "assets/noon/menu-board-v2.png",
+      "file": "public/assets/noon/menu-board-v2.webp",
+      "originalBytes": 1800883,
+      "bytes": 74714
+    },
+    {
+      "source": "assets/noon/order-rail-v2.png",
+      "file": "public/assets/noon/order-rail-v2.webp",
+      "originalBytes": 1530271,
+      "bytes": 189858
+    },
+    {
+      "source": "assets/noon/props-v1.png",
+      "file": "public/assets/noon/props-v1.webp",
+      "originalBytes": 2946007,
+      "bytes": 504324
+    },
+    {
+      "source": "assets/noon/qin-standing-v2.png",
+      "file": "public/assets/noon/qin-standing-v2.webp",
+      "originalBytes": 1788009,
+      "bytes": 104946
+    },
+    {
+      "source": "assets/noon/tian-seated-v2.png",
+      "file": "public/assets/noon/tian-seated-v2.webp",
+      "originalBytes": 2043684,
+      "bytes": 145664
+    },
+    {
+      "source": "assets/title/homecoming-v1.png",
+      "file": "public/assets/title/homecoming-v1.webp",
+      "originalBytes": 2610561,
+      "bytes": 174728
+    },
+    {
+      "source": "assets/ui/v2/details-v2.png",
+      "file": "public/assets/ui/v2/details-v2.webp",
+      "originalBytes": 804184,
+      "bytes": 176196
+    },
+    {
+      "source": "assets/ui/v2/frames-v2.png",
+      "file": "public/assets/ui/v2/frames-v2.webp",
+      "originalBytes": 2005900,
+      "bytes": 98758
+    }
+  ],
+  "checks": [
+    "typecheck",
+    "content",
+    "tests",
+    "build"
+  ],
+  "files": {
+    "complete": 378,
+    "anonymous": 378
+  },
+  "packages": {
+    "complete": {
+      "file": "2026-零杯壹组-风栖林-蔺博洋-完整版本.zip",
+      "bytes": 39087660,
+      "sha256": "17421ec18f5a892397debf18b69c15879375a8a68faed69692da3d92a5371465",
+      "under40MiB": true
+    },
+    "anonymous": {
+      "file": "2026-零杯壹组-风栖林-蔺博洋-匿名版本.zip",
+      "bytes": 39087603,
+      "sha256": "88e9c6e08ad7de049217aa30667f15630e61e574321cb66bf9c7f3c634ee5ea1",
+      "under40MiB": true
+    }
+  },
+  "anonymousIdentityHits": 0,
+  "outer": {
+    "file": "零杯壹组-风栖林-蔺博洋.zip",
+    "bytes": 78175653,
+    "sha256": "9e49819fb7db4fe0e524f32e16ba4f82e4f6f1e81294b30763231dffc5873a7a"
+  }
+}

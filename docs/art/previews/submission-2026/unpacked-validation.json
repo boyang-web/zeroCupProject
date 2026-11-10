@@ -1,0 +1,20 @@
+[
+  {
+    "variant": "complete",
+    "nestedZipValid": true,
+    "noNodeModules": true,
+    "independentServer": true,
+    "introAndAssets": true,
+    "audioRange": true,
+    "errors": []
+  },
+  {
+    "variant": "anonymous",
+    "nestedZipValid": true,
+    "noNodeModules": true,
+    "independentServer": true,
+    "introAndAssets": true,
+    "audioRange": true,
+    "errors": []
+  }
+]

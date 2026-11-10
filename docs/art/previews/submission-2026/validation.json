@@ -1,0 +1,58 @@
+{
+  "browser": "144.0.7559.133",
+  "checks": [
+    {
+      "viewport": [
+        1920,
+        1080
+      ],
+      "result": "引子、教学、对白、百味录、图鉴、设置与存读档、琴记排单完成、终章早餐结局通过"
+    },
+    {
+      "viewport": [
+        1440,
+        900
+      ],
+      "result": "引子、教学、对白、百味录、图鉴、设置与存读档、琴记排单完成、终章早餐结局通过"
+    },
+    {
+      "viewport": [
+        1280,
+        720
+      ],
+      "result": "引子、教学、对白、百味录、图鉴、设置与存读档、琴记排单完成、终章早餐结局通过"
+    },
+    {
+      "viewport": [
+        720,
+        1280
+      ],
+      "result": "引子、教学、对白、百味录、图鉴、设置与存读档、琴记排单完成、终章早餐结局通过"
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "result": "引子、教学、对白、百味录、图鉴、设置与存读档、琴记排单完成、终章早餐结局通过"
+    },
+    {
+      "viewport": [
+        320,
+        640
+      ],
+      "result": "引子、教学、对白、百味录、图鉴、设置与存读档、琴记排单完成、终章早餐结局通过"
+    }
+  ],
+  "errors": [],
+  "selectedImages": [
+    "validation/journal-1920.jpg",
+    "validation/intro-1440.jpg",
+    "validation/collection-1440.jpg",
+    "validation/service-1280.jpg",
+    "validation/dialogue-720.jpg",
+    "validation/guide-390.jpg",
+    "validation/settings-390.jpg",
+    "validation/ending-320.jpg"
+  ]
+}

@@ -1,10 +1,13 @@
 """Finalize checked staging copies into the two named ZIPs and their outer ZIP."""
 from pathlib import Path
 import hashlib,json,re,shutil,subprocess,sys,zipfile
+sys.stdout.reconfigure(encoding='utf8')
 ROOT=Path(__file__).resolve().parent.parent
 OUT=Path(sys.argv[1]).resolve()
 assert OUT.is_relative_to(ROOT/'submission')and(OUT/'report.json').is_file()
 report=json.loads((OUT/'report.json').read_text(encoding='utf8'))
+current_dist={str(p.relative_to(OUT/'complete')).replace('\\','/')for p in(OUT/'complete/dist').rglob('*')if p.is_file()}
+assert 'dist/index.html'in current_dist
 validation=json.loads((OUT/'validation.json').read_text(encoding='utf8'))
 assert not validation['errors']
 text_suffixes={'.ts','.vue','.css','.js','.mjs','.json','.html','.md','.txt','.svg','.py','.bat','.command'}
@@ -25,7 +28,7 @@ for variant in ['complete','anonymous']:
     for rel in validation.get('selectedImages',[]):
         target=folder/'docs/images'/Path(rel).name;target.parent.mkdir(exist_ok=True);shutil.copyfile(OUT/rel,target)
     doc=folder/'docs/架构与验证.md'
-    text=doc.read_text(encoding='utf8')
+    text=doc.read_text(encoding='utf8').split('\n## 本次独立运行核验',1)[0]
     text+='\n## 本次独立运行核验\n\n实际浏览器：'+validation['browser']+'。源码与打包副本分别通过类型、内容检查、190项测试和生产构建。当前成品已在独立服务器验证下列视口与关键场景，无缺失资源或页面异常；未将目标 chrome129 设置称为 129 实测，IE、Safari、全部真机及完整人工通关仍留待复核。\n\n'
     text+='\n'.join('- '+str(row['viewport'])+'：'+row['result']for row in validation['checks'])+'\n\n'
     text+='\n'.join('![运行画面](images/'+Path(rel).name+')'for rel in validation.get('selectedImages',[]))+'\n'
@@ -33,6 +36,8 @@ for variant in ['complete','anonymous']:
     candidates=[]
     for path in folder.rglob('*'):
         if 'node_modules'in path.parts or not path.is_file():continue
+        relpath=str(path.relative_to(folder)).replace('\\','/')
+        if relpath.startswith('dist/')and relpath not in current_dist:continue
         if path.suffix=='.map':raise AssertionError('Source map: '+str(path))
         if path.suffix in text_suffixes:
             value=path.read_text(encoding='utf8',errors='ignore')
@@ -50,7 +55,7 @@ for variant in ['complete','anonymous']:
     with zipfile.ZipFile(target,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=6)as z:
         for path in candidates:
             info=zipfile.ZipInfo.from_file(path,str(path.relative_to(folder)).replace('\\','/'))
-            if path.suffix=='.command':info.external_attr=(0o100755<<16)
+            if path.suffix=='.command':info.create_system=3;info.external_attr=(0o100755<<16)
             z.writestr(info,path.read_bytes(),compress_type=zipfile.ZIP_DEFLATED,compresslevel=6)
     with zipfile.ZipFile(target)as z:
         assert z.testzip()is None
