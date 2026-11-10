@@ -21,7 +21,7 @@ const beats=[
 ];
 watch(act,()=>{phoneView.value='lock';});
 watch(()=>props.reducedMotion,reduced=>{if(reduced){pointerX.tween.kill();pointerY.tween.kill();pointer.x=0;pointer.y=0;gsap.killTweensOf(door);if(done.value)door.value=1;}});
-const worldStyle=computed(()=>({'--progress':progress.value,'--mx':pointer.x,'--my':pointer.y,'--door':door.value,'--light-x':(58+pointer.x*19)+'%','--light-y':(32+pointer.y*17)+'%','--paper':'url("'+props.paperImage+'")','--door-art':'url("'+props.doorImage+'")'}));
+const worldStyle=computed(()=>({'--progress':progress.value,'--mx':pointer.x,'--my':pointer.y,'--door':door.value,'--light-x':(58+pointer.x*19)+'%','--light-y':(32+pointer.y*17)+'%','--paper':'url("'+new URL(props.paperImage,document.baseURI).href+'")','--door-art':'url("'+new URL(props.doorImage,document.baseURI).href+'")'}));
 function scroll(){const el=scroller.value;if(el)progress.value=el.scrollTop/el.clientHeight;}
 // Native focus must not rewind sticky objects to their unscrolled position.
 function preserveScenePosition(){const el=scroller.value;if(el&&Math.abs(el.scrollTop-progress.value*el.clientHeight)>1)el.scrollTo({top:progress.value*el.clientHeight,behavior:'instant'});}

@@ -55,7 +55,7 @@ const soundscape=createSoundscape({
   music:{home:content.assets['music-home']!.url,day:content.assets['music-day']!.url,night:content.assets['music-night']!.url},
   effects:{wood:content.assets['sfx-wood']!.url,paper:content.assets['sfx-paper']!.url,cup:content.assets['sfx-cup']!.url,door:content.assets['sfx-door']!.url},
 });
-const themeStyle = { ...woodVariables(content.assets), '--journal-paper': `url("${content.assets['journal-paper']!.url}")` };
+const themeStyle = { ...woodVariables(content.assets, document.baseURI), '--journal-paper': `url("${new URL(content.assets['journal-paper']!.url, document.baseURI).href}")` };
 const audioMessage = ref(''), objectivesOpen = ref(false), fullscreen = ref(false), viewHome = ref(false), closeView = ref(false);
 const showingHome = computed(() => state.value.phase === 'title' || viewHome.value);
 const returning = computed(() => isRevisiting(state.value));
