@@ -227,6 +227,7 @@ function supplementalText() {
   }
   findModules(registry);
   const files = new Map<string, string>([
+    ['src/features/title/IntroJourney.vue', '小满归途引子的叙述与实物文字'],
     ['src/features/exploration/PhysicalObject.vue', '翻阅实物时的提示'],
     ['src/features/journal/JournalView.vue', '书内空页与阅读提示'],
     ['src/features/collection/CollectionView.vue', '收藏物件的操作提示'],

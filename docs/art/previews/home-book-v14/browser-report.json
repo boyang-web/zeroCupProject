@@ -1,0 +1,35 @@
+{
+  "checks": [
+    {
+      "viewport": [
+        1440,
+        900
+      ],
+      "pagesLayer": 0,
+      "coverLayer": 2,
+      "cancelAndContinue": true,
+      "savedProgressPreserved": true
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "pagesLayer": 0,
+      "coverLayer": 2,
+      "cancelAndContinue": true,
+      "savedProgressPreserved": true
+    },
+    {
+      "viewport": [
+        844,
+        390
+      ],
+      "pagesLayer": 0,
+      "coverLayer": 2,
+      "cancelAndContinue": true,
+      "savedProgressPreserved": true
+    }
+  ],
+  "errors": []
+}

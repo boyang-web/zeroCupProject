@@ -27,6 +27,7 @@ Thumbs.db
 desktop.ini
 
 # Preserve originals locally; publish the current project and directory guides
+/submission/
 /归档.zip
 /archive/*
 !/archive/README.md

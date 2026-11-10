@@ -60,9 +60,9 @@ onBeforeUnmount(() => { cancelAnimationFrame(frame); resize?.disconnect(); movem
   </Transition>
   <Transition name="tutorial-card">
     <aside v-show="expanded" ref="card" class="tutorial-window" :class="{ 'is-positioned': !!box }" :style="{ left: placement.x + 'px', top: placement.y + 'px' }" :inert="!expanded" :aria-hidden="!expanded" :aria-label="'操作教学：' + guide.title" :aria-describedby="guide.text ? id + '-text' : undefined" role="region">
-      <WoodFrame kind="ui-menu" />
-      <header><UiButton tone="quiet" aria-label="收起教学" title="收起后可以自由看看" @click="emit('minimize', true)">收起 <span aria-hidden="true">−</span></UiButton></header>
+      <WoodFrame kind="ui-paper" style="--frame-corner: 10px" />
       <h3>{{ guide.title }}</h3>
+      <header><UiButton tone="quiet" aria-label="收起教学" title="收起后可以自由看看" @click="emit('minimize', true)"><span aria-hidden="true">−</span></UiButton></header>
       <p v-if="guide.text" :id="id + '-text'">{{ guide.text }}</p>
     </aside>
   </Transition>
