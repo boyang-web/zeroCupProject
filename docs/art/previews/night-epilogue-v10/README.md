@@ -11,7 +11,7 @@
 | 夜饭三条收束 | [取餐](night-pickup.jpg)、[取消](night-cancelled.jpg)、[未到](night-missed.jpg) |
 | 终章分支回看 | [陈家](epilogue-chen.jpg)、[琴记](epilogue-qin.jpg) |
 | 可选简历草稿 | [未改](epilogue-phone-before.jpg)、[已保存未发](epilogue-phone-after.jpg) |
-| 三个显式结局 | [早餐](ending-breakfast.jpg)、[通话窄屏](ending-call.jpg)、[留书](ending-book.jpg)；另附选择页与次晨页 |
+| 三个显式结局 | [早餐](ending-breakfast.jpg)、[通话窄屏](ending-call.jpg)、[留书](ending-book.jpg)；另附选择页、次晨页及正文滚动后的画面 |
 | 音乐／音效／静音 | [设置](audio-settings.jpg) |
 
 旧接缝图仅在隔离页面注入原 CSS 以作对照，没有修改游戏源文件。图片没有拼接或重绘。具体覆盖、结构审计、声音哈希及页面异常见本目录 JSON 报告与[验收说明](../../../engineering/第四五章与声音验收.md)。

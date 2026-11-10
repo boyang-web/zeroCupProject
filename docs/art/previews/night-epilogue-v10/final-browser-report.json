@@ -5,7 +5,8 @@
     "Epilogue breakfast: explicit choice, finished night conversation, dawn reading and final ending all work with normal animation.",
     "Epilogue call (mobile): explicit choice, finished night conversation, dawn reading and final ending all work.",
     "Epilogue book: explicit choice, finished night conversation, dawn reading and final ending all work.",
-    "Wooden dock and setting frames captured at DPR 1, 1.25 and 2; original seams reproduced only by injecting the old tile sizing into an isolated preview."
+    "Wooden dock and setting frames captured at DPR 1, 1.25 and 2; original seams reproduced only by injecting the old tile sizing into an isolated preview.",
+    "Final ending pages: only narrative and shop records scroll; title, action row and dock stay fixed with no overlap or stale reward toast. Journal opens and closes normally from the ending."
   ],
   "errors": []
 }

@@ -231,6 +231,7 @@ watch([musicVolume,effectsVolume,muted,showingHome,()=>state.value.chapterId],()
 const region = ref<HTMLElement>(); let tween: gsap.core.Tween | undefined;
 const discovery = ref<{ title: string; text: string;  }>(); let discoveryTimer: ReturnType<typeof setTimeout> | undefined;
 watch([state, developer], ([next, testing], [previous, wasTesting]) => {
+  if(next.phase==='ending'){discovery.value=undefined;response.value=undefined;return;}
   if (testing || testing !== wasTesting) return;
   const recipe = content.recipes?.find(r => matches(next, r.condition) && !matches(previous, r.condition));
   const life = content.clues.find(c => c.category === 'life' && next.clues.includes(c.id) && !previous.clues.includes(c.id));
@@ -246,7 +247,7 @@ watch([state, developer], ([next, testing], [previous, wasTesting]) => {
   if (next.phase === 'title' || !notice) return;
   discovery.value = notice; clearTimeout(discoveryTimer);
 });
-const showDiscovery = computed(() => !!discovery.value && !node.value && !panel.value && !closeView.value && !showingHome.value && !response.value && (!guideVisible.value || guideMinimized.value));
+const showDiscovery = computed(() => state.value.phase==='playing' && !!discovery.value && !node.value && !panel.value && !closeView.value && !showingHome.value && !response.value && (!guideVisible.value || guideMinimized.value));
 watch([showDiscovery, discovery], () => { clearTimeout(discoveryTimer); if (showDiscovery.value) discoveryTimer = setTimeout(() => { discovery.value = undefined; }, 7000); });
 watch([showingHome, () => state.value.chapterId, () => state.value.sceneId], async () => {
   await nextTick(); tween?.kill();
@@ -272,7 +273,14 @@ onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); soundscape.
           <Transition name="hud-reveal"><aside v-if="objectivesOpen&&!guideChrome" class="objectives-panel"><WoodFrame kind="ui-toast"/><h2>{{returning?'这次回访':'手头的事'}}</h2><div class="text-scroll"><p>{{returning?scene.description:chapter.objective}}</p><ol v-if="chapter.beats&&!returning" class="objective-list"><li v-for="beat in chapter.beats" :key="beat.label" :class="{done:matches(state,beat.condition)}"><Icon :name="matches(state,beat.condition)?'check':'leaf'"/>{{beat.label}}</li></ol></div></aside></Transition>
 
         </div>
-        <section v-else class="ending-screen" :style="{ backgroundImage: `linear-gradient(90deg, #24170fe8, #24170fb0), url('${content.assets[ending.asset ?? 'title-homecoming']!.url}')` }"><p class="eyebrow">第五章 · {{ chapter.title }}</p><h1>{{ ending.title }}</h1><div class="outcomes"><article v-for="record in epilogueRecords(state)" :key="record.id"><small>{{ record.title }}</small><p>{{ record.text }}</p></article></div><p class="ending-copy">{{ ending.text }}</p><div class="button-row"><UiButton tone="jade" @click="openPanel('journal')">翻翻百味录</UiButton><UiButton v-if="unlocked('revisit')" @click="openPanel('revisit')">回访老街</UiButton><UiButton @click="openPanel('saves')">读档</UiButton><UiButton @click="viewHome = true">回到首页</UiButton></div></section>
+        <section v-else class="ending-screen" :style="{ backgroundImage: `linear-gradient(90deg, #24170fe8, #24170fb0), url('${content.assets[ending.asset ?? 'title-homecoming']!.url}')` }">
+          <p class="eyebrow">第五章 · {{ chapter.title }}</p><h1>{{ ending.title }}</h1>
+          <div class="ending-reading text-scroll" tabindex="0" aria-label="结尾正文与三家店记">
+            <p class="ending-copy">{{ ending.text }}</p>
+            <div class="outcomes"><article v-for="record in epilogueRecords(state)" :key="record.id"><small>{{ record.title }}</small><p>{{ record.text }}</p></article></div>
+          </div>
+          <div class="button-row"><UiButton tone="jade" @click="openPanel('journal')">翻翻百味录</UiButton><UiButton v-if="unlocked('revisit')" @click="openPanel('revisit')">回访老街</UiButton><UiButton @click="openPanel('saves')">读档</UiButton><UiButton @click="viewHome = true">回到首页</UiButton></div>
+        </section>
       </template>
     </main>
     <GameDock v-if="!showingHome" :tools="dockTools" :blocked="!!panel||!!node" @activate="activateDock"/>
