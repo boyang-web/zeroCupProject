@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref } from 'vue';
+import IntroJourney from './IntroJourney.vue';
 import type { ContentPack } from '../../core/contracts';
 const props = defineProps<{ content: ContentPack; hasSave: boolean; reducedMotion: boolean }>();
 const emit = defineEmits<{ start: []; continue: []; saves: []; settings: [] }>();
@@ -42,7 +43,7 @@ onBeforeUnmount(() => clearTimeout(timer));
     <Transition name="landscape"><img :key="background" class="overture-landscape" :src="background" alt="桂花树下，长明巷的老屋亮着暖光" fetchpriority="high" /></Transition>
     <div class="overture-veil"></div><div class="overture-window" aria-hidden="true"></div>
     <div class="overture-motes" aria-hidden="true"><i v-for="n in 18" :key="n" :style="{ '--i': n }"></i></div>
-    <header class="overture-top"><span>长明巷 <b>·</b> 秋</span><span v-if="stage >= 0" class="intro-location">{{ stage === 2 ? '归途' : '小满的房间' }}</span><button v-else @click="emit('settings')">游玩设置 ↗</button></header>
+    <header v-if="stage < 0" class="overture-top"><span>长明巷 <b>·</b> 秋</span><span v-if="stage >= 0" class="intro-location">{{ stage === 2 ? '归途' : '小满的房间' }}</span><button v-else @click="emit('settings')">游玩设置 ↗</button></header>
     <Transition name="chapter" mode="out-in">
       <div v-if="stage < 0" key="home" class="overture-home">
         <div class="overture-heading"><h1><span>百</span><span>味</span><span>录</span><small>长明巷<br>人间食记</small></h1></div>
@@ -50,14 +51,7 @@ onBeforeUnmount(() => clearTimeout(timer));
         <button class="overture-book" aria-label="向左拖动翻开百味录，继续故事" @pointerdown.stop="grab" @pointermove.stop="pull" @pointerup="release" @pointercancel="dragging = false; gesture = 0" @keydown.enter.prevent="keyboardAction" @keydown.space.prevent="keyboardAction"><span class="book-binding"></span><span class="book-cover"><small>长明巷旧藏</small><strong>百<br>味<br>录</strong><i>家常滋味 · 街坊人生</i></span><span class="book-ribbon"></span><span class="gesture-trace" aria-hidden="true">←</span></button>
 
       </div>
-      <div v-else :key="stage" class="overture-story">
-        <div class="overture-narration"><p class="overture-kicker">{{ current!.label }}</p><h2>{{ current!.title }}</h2><p v-for="(line, i) in current!.lines" :key="line" :style="{ '--delay': `${.2 + i * .25}s` }">{{ line }}</p></div>
-        <div class="overture-prop">
-          <button v-if="stage < 2" class="intro-phone" @pointerdown.stop="grab" @pointermove.stop="pull" @pointerup="release" @pointercancel="dragging = false; gesture = 0" @keydown.enter.prevent="keyboardAction" @keydown.space.prevent="keyboardAction" :class="{ unfolded: opened || stage === 1 }"  :aria-label="stage === 0 ? '向左滑动查看手机，再滑动阅读消息' : '向左滑动收好奶奶的消息'"><span class="phone-speaker"></span><span class="phone-time">{{ stage === 0 ? '09:41' : '18:26' }}</span><template v-if="stage === 0"><span class="phone-date">星期一</span><span class="phone-notice"><small>日历 · 今天</small><strong>没有日程安排</strong></span><span v-if="opened" class="phone-draft"><small>备忘录 / 未完成</small><strong>个人简历</strong><span>姓名：小满<br>目前状态：待业</span><i>光标停在“下一份工作”那里。</i></span><span v-else class="phone-touch">←</span></template><template v-else><span class="phone-contact">奶奶</span><span class="phone-message">小满，你那边最近忙不忙？<br><br>院里的桂花开了。今年开得好，你小时候总拿个碗在树底下接。<br><br>有空回来住几天。我给你留着被子。</span><span class="phone-reply">好。我这两天回来。</span></template><span class="phone-swipe" aria-hidden="true">‹ ‹ ‹</span></button>
-          <div v-else class="intro-ticket" role="button" tabindex="0" aria-label="向左拖出车票，回到长明巷" @pointerdown.stop="grab" @pointermove.stop="pull" @pointerup="release" @pointercancel="dragging = false; gesture = 0" @keydown.enter.prevent="keyboardAction" @keydown.space.prevent="keyboardAction"><small>一张回家的车票</small><div><strong>远方</strong><span>→</span><strong>故乡</strong></div><hr><p>旅客姓名 <b>小满</b></p><p>随身行李 <b>一个箱子，还有没想好的以后</b></p><span class="ticket-code" aria-hidden="true"></span><small>下一站 · 长明巷</small><span class="ticket-pull" aria-hidden="true">←</span></div>
-        </div>
-        <div class="intro-progress" aria-hidden="true"><i v-for="(_, i) in scenes" :key="i" :class="{ active: stage === i }"></i></div>
-      </div>
+      <IntroJourney v-else key="journey" :reduced-motion="reducedMotion" :home-image="content.assets['arrival-home']!.url" :title-image="content.assets['title-homecoming']!.url" :paper-image="content.assets['journal-paper']!.url" :door-image="content.assets['intro-door']!.url" @finish="emit('start')" />
     </Transition>
 
     <div class="overture-curtain" aria-hidden="true"><span>第一章 · 归巷</span></div>

@@ -1,0 +1,9 @@
+{
+  "checks": [
+    "Desktop normal animation: five intro acts, book tabs, calendar, draft editing, local reply and door interaction reach the focused first chapter without leaking intro input into saves.",
+    "Mobile touch: five intro acts, book tabs, calendar, draft editing, local reply and door interaction reach the focused first chapter without leaking intro input into saves.",
+    "Desktop: existing save bypasses intro; all seven acquired life stories render once with independent text scrolling; 3D inventory, rotation, audio settings and replay confirmation remain available.",
+    "Mobile: existing save bypasses intro; all seven acquired life stories render once with independent text scrolling; 3D inventory, rotation, audio settings and replay confirmation remain available."
+  ],
+  "errors": []
+}

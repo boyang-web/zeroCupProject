@@ -1,0 +1,13 @@
+{
+  "file": "归档.zip",
+  "bytes": 677709401,
+  "sha256": "9ce72752f0aaf0e52a5783de8d7ebc907d6db745c265470b21b0e828af98c187",
+  "preservedLocally": true,
+  "excluded": [
+    "node_modules",
+    "dist",
+    "__MACOSX",
+    "AppleDouble metadata"
+  ],
+  "chinesePathEncoding": "UTF-8"
+}

@@ -15,6 +15,7 @@ const homeSprite = (id: keyof typeof arrivalHomeRegions, label: string): Asset =
   source: '内置 imagegen；老宅生活布局独立素材，见 docs/art/第一章老宅环境-v4.md', placeholder: false,
 });
 export const assets: Record<string, Asset> = {
+  'intro-door': { url: `${base}assets/intro/home-door-v2.png`, label: '归乡引子 · 暖木家门', source: '用户提供归档.zip；包内标注为内置 imagegen，原登记见 docs/art/开场材质与交互-v2.md', placeholder: false },
   ...Object.fromEntries([
     ['music-home','灯下 · 家里的轻配乐'],['music-day','巷里 · 白天小馆轻配乐'],['music-night','门灯 · 夜饭小馆轻配乐'],
     ['sfx-wood','木面轻触'],['sfx-paper','纸页翻动'],['sfx-cup','杯碟轻碰'],['sfx-door','场景通路轻木声'],

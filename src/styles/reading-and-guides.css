@@ -73,3 +73,6 @@
 }
 .reduced-motion .reading-action.is-ready,.reduced-motion .tutorial-window,.reduced-motion .guide-object > .asset-image,.reduced-motion .tutorial-pointer,.reduced-motion .tutorial-thread { animation:none; }
 @media (prefers-reduced-motion:reduce) { .reading-action.is-ready,.tutorial-window,.guide-object > .asset-image,.tutorial-pointer,.tutorial-thread { animation:none; } }
+
+/* 引导只保留当前目标，取消步骤计数与重复点击说明。 */
+.tutorial-window header{justify-content:flex-end;margin-bottom:3px}.tutorial-window h3:last-child{margin-bottom:0}

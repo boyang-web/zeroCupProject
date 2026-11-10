@@ -59,11 +59,11 @@ onBeforeUnmount(() => { cancelAnimationFrame(frame); resize?.disconnect(); movem
     </svg>
   </Transition>
   <Transition name="tutorial-card">
-    <aside v-show="expanded" ref="card" class="tutorial-window" :class="{ 'is-positioned': !!box }" :style="{ left: placement.x + 'px', top: placement.y + 'px' }" :inert="!expanded" :aria-hidden="!expanded" :aria-label="'操作教学：' + guide.title" :aria-describedby="id + '-text'" role="region">
+    <aside v-show="expanded" ref="card" class="tutorial-window" :class="{ 'is-positioned': !!box }" :style="{ left: placement.x + 'px', top: placement.y + 'px' }" :inert="!expanded" :aria-hidden="!expanded" :aria-label="'操作教学：' + guide.title" :aria-describedby="guide.text ? id + '-text' : undefined" role="region">
       <WoodFrame kind="ui-menu" />
-      <header><div v-if="total > 1" class="tutorial-progress" :aria-label="`教学第 ${step} 步，共 ${total} 步`"><span>{{ String(step).padStart(2, '0') }}<small> / {{ String(total).padStart(2, '0') }}</small></span><i v-for="n in total" :key="n" :class="{ passed: n < step, current: n === step }" aria-hidden="true"></i></div><UiButton tone="quiet" aria-label="收起教学" title="收起后可以自由看看" @click="emit('minimize', true)">收起 <span aria-hidden="true">−</span></UiButton></header>
+      <header><UiButton tone="quiet" aria-label="收起教学" title="收起后可以自由看看" @click="emit('minimize', true)">收起 <span aria-hidden="true">−</span></UiButton></header>
       <h3>{{ guide.title }}</h3>
-      <p :id="id + '-text'">{{ guide.text }}</p>
+      <p v-if="guide.text" :id="id + '-text'">{{ guide.text }}</p>
     </aside>
   </Transition>
   <Transition name="hud-reveal"><UiButton v-if="active && minimized" class="tutorial-restore" tone="paper" @click="emit('minimize', false)"><Icon name="leaf" />继续教学 <Icon name="arrow" /></UiButton></Transition>
