@@ -10,8 +10,25 @@ import {act,choices,completeArrival,reachArrivalApproach,finishMorning,noonDecis
 import {dialogueChoices} from '../src/presentation/dialogue-choices.ts';
 import {sceneOf} from '../src/core/scenes.ts';
 import {decodeSave} from '../src/infrastructure/saves.ts';
+import {currentGuide} from '../src/core/progression.ts';
 
 const commission=content.dialogues.find(d=>d.id==='commission')!;
+
+test('old rewarded opening actions recover missing tutorial flags instead of trapping the conversation lesson',()=>{
+  const finished=choices(reachArrivalApproach(),['accept-commission','arrival-set-off']);
+  const old={...finished,flags:finished.flags.filter(f=>!['arrival-greeted','arrival-spool-story','arrival-introduced','entrusted','arrival-instructions'].includes(f))};
+  // On the old save, closing and repeating the instructions never adds the flag:
+  // arrival-set-off is already in the reward ledger.
+  const missingInstructions={...finished,flags:finished.flags.filter(f=>f!=='arrival-instructions')};
+  const trapped=choices(act(missingInstructions,{type:'talk',hotspotId:'grandma'}),['arrival-set-off']);
+  assert.equal(currentGuide(trapped,content)?.id,'arrival-talk');
+  const loaded=decodeSave(JSON.stringify({format:'baiwei-save',version:1,savedAt:'2026-11-10T00:00:00Z',state:old}),content);
+  assert.ok(loaded.ok,loaded.ok?'':loaded.error);
+  assert.equal(currentGuide(loaded.value.state,content)?.id,'arrival-read');
+  assert.deepEqual(loaded.value.state.inventory,old.inventory);
+  assert.deepEqual(loaded.value.state.rewards,old.rewards);
+  assert.equal(act(finish(loaded.value.state),{type:'travel'}).chapterId,'morning');
+});
 function available(state:GameState){return commission.nodes.find(n=>n.id===state.dialogue?.nodeId)!.choices.filter(c=>matches(state,c.condition)&&(!c.decision||!state.decisions[c.decision]||state.decisions[c.decision]===c.id));}
 function finish(state:GameState){
   let current=state;
@@ -49,6 +66,21 @@ test('an interrupted question or commitment resumes that pending step instead of
   for(const id of ['accept-brief','accept-commission']){
     const state=act(reachArrivalApproach(),{type:'choose',choiceId:id});const resumed=act(act(state,{type:'close-dialogue'}),{type:'talk',hotspotId:'grandma'});
     assert.equal(resumed.dialogue?.nodeId,'instructions');assert.equal(resumed.inventory['small-key'],1);
+  }
+});
+
+test('a save left in the old first-chapter question loop can finish without restarting or repeating rewards',()=>{
+  let state=choices(act(act(createState(content),{type:'start'}),{type:'talk',hotspotId:'grandma'}),['arrival-ate','arrival-remember']);
+  // The old build returned to request after answering all three optional topics.
+  state={...state,clues:[...state.clues,'family-photo','book-purpose','chen-memory'],flags:[...state.flags,'phone-away'],rewards:[...state.rewards,'arrival-why-book','arrival-understand-book','arrival-why-me','arrival-admit','arrival-photo-question','arrival-photo-reply']};
+  const raw=JSON.stringify({format:'baiwei-save',version:1,savedAt:'2026-11-09T12:35:00Z',state});
+  const loaded=decodeSave(raw,content);assert.ok(loaded.ok,loaded.ok?'':loaded.error);
+  for(const interrupted of [false,true]){
+    let resumed=loaded.value.state;
+    if(interrupted)resumed=act(act(resumed,{type:'close-dialogue'}),{type:'talk',hotspotId:'grandma'});
+    const result=finish(resumed);
+    assert.equal(result.dialogue,null);assert.equal(result.inventory['small-key'],1);assert.equal(result.inventory['baiwei-book'],1);
+    assert.equal(act(result,{type:'travel'}).chapterId,'morning');
   }
 });
 

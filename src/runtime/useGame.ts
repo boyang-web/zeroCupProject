@@ -63,6 +63,11 @@ export function useGame(content: ContentPack, storage: StoragePort) {
     const result = transition(state.value, command, content, { developer: developer.value });
     if (result.changed) {
       let warning = '';
+      if (command.type === 'replay-chapter') {
+        const checkpoint = saves.write('checkpoint', result.state);
+        volatileCheckpoints[mode()] = checkpoint.ok ? null : { format: 'baiwei-save', version: 1, savedAt: new Date().toISOString(), state: structuredClone(result.state) };
+        if (!checkpoint.ok) warning = '重玩后的检查点仅在本次打开期间保留。';
+      }
       if (command.type === 'choose' && node.value?.choices.some(c => c.id === command.choiceId && c.decision)) {
         const checkpoint = saves.write('checkpoint', state.value);
         volatileCheckpoints[mode()] = checkpoint.ok ? null : { format: 'baiwei-save', version: 1, savedAt: new Date().toISOString(), state: structuredClone(state.value) };

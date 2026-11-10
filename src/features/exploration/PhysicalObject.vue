@@ -5,6 +5,9 @@ const emit=defineEmits<{examined:[]}>();const opened=ref(false),examined=ref(fal
 const lines=computed(()=>props.exhibit?.lines??[]);
 const{visibleCounts,textDone,finishText}=useReadingSequence({texts:()=>examined.value?lines.value:[],reduced:()=>props.reducedMotion,lead:0});
 const phoneView=computed(()=>props.exhibit?.phone?.view??(props.exhibit?.phone?'messages':'draft'));
+// Match AssetImage's cropped viewBox and centered contain scaling, including
+// the empty space above/below a wide envelope in a tall inspection panel.
+const letterSize=computed(()=>({width:props.asset?.region?.width??1659,height:props.asset?.region?.height??669}));
 function reveal(){opened.value=true;if(!examined.value){examined.value=true;emit('examined');}}
 let downX=0,dragged=false;
 function flip(){if(dragged){dragged=false;return;}if(opened.value)opened.value=false;else reveal();}
@@ -28,7 +31,7 @@ function end(event:PointerEvent){if(Math.abs(event.clientX-downX)>35){if(opened.
    </div>
   </template>
   <template v-else-if="kind==='unfold'">
-   <button v-if="!opened" type="button" class="letter-sealed physical-object__surface" aria-label="拆开信封" @click="reveal"><AssetImage v-if="asset" :asset="asset"/><span class="letter-addressee">{{exhibit?.addressee?exhibit.addressee+' 收':exhibit?.title}}</span><span v-if="exhibit?.sender" class="letter-sender">{{exhibit.sender}} 寄</span></button>
+   <button v-if="!opened" type="button" class="letter-sealed physical-object__surface" aria-label="拆开信封" @click="reveal"><AssetImage v-if="asset" :asset="asset"/><svg class="letter-inscription" :viewBox="`0 0 ${letterSize.width} ${letterSize.height}`" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><text class="letter-addressee" x="40%" y="35%" :font-size="letterSize.width*.052" text-anchor="middle">{{exhibit?.addressee?exhibit.addressee+' 收':exhibit?.title}}</text><text v-if="exhibit?.sender" class="letter-sender" x="70%" y="73%" :font-size="letterSize.width*.027" text-anchor="middle">{{exhibit.sender}} 寄</text></svg></button>
    <div v-else class="letter-open"><div class="letter-open__envelope" aria-hidden="true"></div><article class="letter-paper"><header><small>{{exhibit?.kicker}}</small><h3>{{exhibit?.title}}</h3></header><div class="letter-paper__copy text-scroll" tabindex="0" aria-label="信纸正文" @click="finishText"><p v-for="(line,i) in lines" v-show="(visibleCounts[i]??0)>0" :key="i"><ProgressiveText :text="line" :revealed="visibleCounts[i]??0" :reserve-space="false"/></p></div></article></div>
   </template>
   <template v-else-if="kind==='flip'">

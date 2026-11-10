@@ -10,6 +10,7 @@ const plan = props.definition.packing!;
 const packed = reactive<Record<string, PackedOrder>>(Object.fromEntries(plan.orders.map(o => [o.id, { vessel: '', rice: false, tofu: false, sauce: '', utensils: '' }])));
 const selected = ref(plan.orders[0]!.id), latched = ref(false), insulation = ref(''), assisted = ref(false), feedback = ref('');
 const current = computed(() => packed[selected.value]!);
+const currentOrder = computed(() => plan.orders.find(o => o.id === selected.value)!);
 const hasBag = computed(() => (props.state.inventory[props.definition.assistedItem ?? ''] ?? 0) > 0);
 function check() {
   const errors = packingErrors(plan, packed, latched.value, insulation.value, hasBag.value);
@@ -20,7 +21,7 @@ function help() {
   assisted.value = true;
   const o = plan.orders.find(o => o.id === selected.value)!;
   Object.assign(current.value, { vessel: o.vessel, rice: true, tofu: true, sauce: o.sauce, utensils: o.utensils });
-  latched.value = true; insulation.value ||= 'sleeve';
+  if (o.vessel === 'box') { latched.value = true; insulation.value ||= 'sleeve'; }
   feedback.value = `许叔带你核对了${o.person}这一份。另一张单也要看清。`;
 }
 </script>
@@ -32,7 +33,7 @@ function help() {
       <div class="packing-ingredients"><label><input v-model="current.rice" type="checkbox" />米饭</label><label><input v-model="current.tofu" type="checkbox" />豆腐烧菜</label></div>
       <label>辣酱<select v-model="current.sauce"><option value="">放在哪里？</option><option value="rim">碗沿</option><option value="cup">单独小杯</option><option value="mixed">拌进饭里</option></select></label>
       <label>筷子<select v-model="current.utensils"><option value="">放在哪里？</option><option value="beside">碗边</option><option value="outside">盒外</option><option value="inside">饭盒里</option></select></label></div></div>
-    <div class="packing-finish"><label><input v-model="latched" type="checkbox" />试扣盒盖，再把空盒留在托盘</label><label>保温<select v-model="insulation"><option value="">选一种</option><option value="sleeve">店里的保温套</option><option v-if="hasBag" value="bag">陈伯的保温袋（交接后取回）</option></select></label></div>
+    <div v-if="currentOrder.vessel === 'box'" class="packing-finish"><label><input v-model="latched" type="checkbox" />试扣盒盖，再把空盒留在托盘</label><label>保温<select v-model="insulation"><option value="">选一种</option><option value="sleeve">店里的保温套</option><option v-if="hasBag" value="bag">陈伯的保温袋（交接后取回）</option></select></label></div>
     <p class="muted">罗姐那碗先上桌；小梁那份只核对分装单，等回信再盛。没有倒计时。</p>
     <p class="activity-feedback" role="status">{{feedback}}</p><div class="button-row"><UiButton tone="jade" @click="check">核对两张单</UiButton><UiButton tone="paper" @click="help">请许叔带做这一份</UiButton></div>
   </div>

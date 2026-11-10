@@ -12,6 +12,10 @@ import {directObjectAction} from '../../presentation/object-actions';
 const props = defineProps<{ chapter: Chapter; content: ContentPack; state: GameState; guideTarget?: string; focusLocked?: boolean; quiet?: boolean; reducedMotion?: boolean; developer?: boolean; blocked?: boolean }>();
 const emit = defineEmits<{ interact: [hotspot: Hotspot]; move: [id: string]; option: [hotspot: Hotspot, actionId: string]; framing: [close: boolean] }>();
 const scene = computed(() => sceneOf(props.state, props.content));
+const worldObjects = computed(() => {
+  const contained = new Set(scene.value.hotspots.flatMap(h => h.interaction.kind === 'inspect' ? h.interaction.contents ?? [] : []));
+  return scene.value.hotspots.filter(h => !contained.has(h.id));
+});
 const place = computed(()=>props.chapter.scenes?`${props.chapter.location??''}${props.chapter.location?' · ':''}${scene.value.title}`:props.chapter.location??scene.value.title);
 const moment = computed(()=>(scene.value.time??props.chapter.time).split('·')[0]!.trim());
 const failed = ref(false);
@@ -67,7 +71,7 @@ watch(() => props.blocked, (blocked, wasBlocked) => {
 });
 function pose(h: Hotspot) { return h.variants?.find(v => matches(props.state, v.condition)); }
 function locked(h: Hotspot) { return !!props.blocked || !!props.focusLocked && props.guideTarget !== h.id; }
-const availableObjects = computed(() => scene.value.hotspots.filter(h => (props.developer || matches(props.state, h.condition)) && (!props.focusLocked || h.id === props.guideTarget)));
+const availableObjects = computed(() => worldObjects.value.filter(h => (props.developer || matches(props.state, h.condition)) && (!props.focusLocked || h.id === props.guideTarget)));
 watch([() => props.blocked, () => props.focusLocked, () => props.guideTarget], () => { dragging.value = undefined; suppressClick = false; });
 function position(h: Hotspot) { return dragging.value?.id === h.id ? dragging.value : { x: pose(h)?.x ?? h.x, y: pose(h)?.y ?? h.y }; }
 function beginDrag(event: PointerEvent, h: Hotspot) {
@@ -117,7 +121,7 @@ watch(() => scene.value.id, () => {
     <div class="scene-atmosphere" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
     <div v-for="d in (scene.decorations ?? []).filter(d => matches(state, d.condition))" :key="d.id" :data-scenery="d.id" class="world-scenery" :style="{ left: d.x+'%', top: d.y+'%', width: d.width+'%', height: d.height+'%', zIndex: d.z ?? 2 }" aria-hidden="true"><AssetImage :asset="content.assets[d.asset]!" anchor="bottom" /></div>
     <div v-if="chapter.character && !failed" class="scene-character" :style="{ left: chapter.character.x + '%', top: chapter.character.y + '%', width: chapter.character.width + '%', height: chapter.character.height + '%' }" aria-hidden="true"><img :src="content.assets[chapter.character.asset]?.url" alt="" /></div>
-    <template v-for="h in scene.hotspots" :key="h.id">
+    <template v-for="h in worldObjects" :key="h.id">
       <button v-if="developer || matches(state, h.condition)" class="hotspot" :disabled="moving || locked(h)" :class="{ 'world-object': h.sprite, 'world-person': h.interaction.kind === 'dialogue', discovered: h.completed && matches(state, h.completed), 'guide-object': guideTarget === h.id, 'object-dragging': dragging?.id === h.id }" :style="{ left: position(h).x + '%', top: position(h).y + '%', width: h.sprite ? (pose(h)?.width ?? h.sprite.width) + '%' : undefined, height: h.sprite ? (pose(h)?.height ?? h.sprite.height) + '%' : undefined, zIndex: dragging?.id === h.id ? 30 : h.sprite?.z }" :aria-label="h.label" :data-guide-object="h.id" :data-sprite-asset="pose(h)?.asset ?? h.sprite?.asset" @click="select(h)" @pointerdown="beginDrag($event, h)" @pointermove="moveDrag" @pointerup="endDrag(h)" @pointercancel="dragging = undefined">
         <AssetImage v-if="h.sprite" :asset="content.assets[pose(h)?.asset ?? h.sprite.asset]!" :anchor="scene.camera ? 'bottom' : undefined" />
         <span v-else class="hotspot-symbol"><Icon :name="h.completed && matches(state, h.completed) ? 'check' : h.icon" /></span><span class="hotspot-label">{{ h.label }}</span>

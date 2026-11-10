@@ -34,8 +34,9 @@ export const epilogue: Chapter = {
       { id: 'epilogue-calendar', label: '日历', x: 21, y: 43, icon: 'look', sprite: { asset: 'epilogue-calendar', width: 6, height: 15, z: 4 }, interaction: { kind: 'inspect', manipulation: 'flip', text: '“接小满”下面添了今日的勾。周日那格还空着，带问号的通话札压在纸夹里。奶奶没有先把它抄上去。', versions: [{ condition: flag('epilogue-call'), text: '周日那格添了“一点”。这是刚才两人一起定下的时间，车次单背面也抄了一遍。' }] } },
       { id: 'epilogue-bag', label: '陈伯的保温袋', x: 90, y: 86, icon: 'look', condition: { kind: 'item', id: 'insulated-bag' }, sprite: { asset: 'prop-bag', width: 8, height: 19, z: 4 }, interaction: { kind: 'inspect', text: '你把借来的袋子搭在门边。奶奶拉开提手，让它不再叠着：“早上路过巷口，我还给他。你别塞回包里，明早又一块带走。”', action: { id: 'epilogue-hang-bag', label: '把袋子挂好', effects: [{ kind: 'flag', id: 'epilogue-bag-hung' }] } } },
     ] },
-    { id: 'epilogue-table', camera: { views: [{ id: 'pages', label: '灯下的书页', x: 43, y: 62, zoom: 1.04 }, { id: 'grandma', label: '桌边的奶奶', x: 77.5, y: 60, zoom: 1.04 }] }, decorations: [{ id: 'epilogue-open-book', asset: 'epilogue-book', x: 38, y: 70, width: 26, height: 17, z: 3 }, { id: 'epilogue-table-lamp', asset: 'night-lamp-on', x: 19, y: 60, width: 6, height: 17, z: 4 }, { id: 'epilogue-table-tea', asset: 'epilogue-tea', x: 52, y: 59, width: 10, height: 10, z: 4 }], title: '檐下长桌', time: '当晚 · 灯下整理', asset: 'epilogue-table-night', description: '书里记做法，纸夹里等回话，私札留在信封里。', links: [{ sceneId: 'epilogue-yard', label: '起身回院里', condition: beforeMorning, unavailable: '已经收好纸笔，接下来是次晨。' }, { sceneId: 'epilogue-gate', label: '收好纸笔，歇到天亮', condition: all(chosen, flag('epilogue-night-finished')), unavailable: '先把下一步说定，听完当晚的话。' }], hotspots: [
-      { ...person('epilogue-table-grandma', 'epilogue-table-talk'), x: 77.5, y: 85, cameraView: 'grandma', sprite: { asset: 'epilogue-grandma-table', width: 21, height: 58, z: 5 } }, ...storePages,
+    { id: 'epilogue-table', camera: { views: [{ id: 'pages', label: '灯下的书页', x: 43, y: 62, zoom: 1.04 }, { id: 'grandma', label: '桌边的奶奶', x: 72.5, y: 60, zoom: 1.04 }] }, decorations: [{ id: 'epilogue-table-lamp', asset: 'night-lamp-on', x: 19, y: 60, width: 6, height: 17, z: 4 }, { id: 'epilogue-table-tea', asset: 'epilogue-tea', x: 52, y: 59, width: 10, height: 10, z: 4 }], title: '檐下长桌', time: '当晚 · 灯下整理', asset: 'epilogue-table-night', description: '书里记做法，纸夹里等回话，私札留在信封里。', links: [{ sceneId: 'epilogue-yard', label: '起身回院里', condition: beforeMorning, unavailable: '已经收好纸笔，接下来是次晨。' }, { sceneId: 'epilogue-gate', label: '收好纸笔，歇到天亮', condition: all(chosen, flag('epilogue-night-finished')), unavailable: '先把下一步说定，听完当晚的话。' }], hotspots: [
+      { ...person('epilogue-table-grandma', 'epilogue-table-talk'), x: 72.5, y: 85, cameraView: 'grandma', sprite: { asset: 'epilogue-grandma-table', width: 21, height: 58, z: 5 } },
+      { id: 'epilogue-open-book', label: '百味录 · 三张店签', x: 38, y: 70, cameraView: 'pages', icon: 'book', condition: flag('epilogue-greeted'), sprite: { asset: 'epilogue-book', width: 26, height: 17, z: 3 }, interaction: { kind: 'inspect', contents: storePages.map(p => p.id), manipulation: 'book', text: '你把书摊在灯下，三张店签从纸边露出来。沿着夹签翻开，今天新添的几页都在这里。', exhibit: { kind: 'book', kicker: '夹在书里的店签', title: '百味录', lines: ['陈家的一笼早饭', '琴记的半份面', '夜饭小馆的两份饭'] } } }, ...storePages,
       { id: 'epilogue-phone', label: '尚未发出的简历', x: 49, y: 65.5, icon: 'look', condition: clue('job-gap'), sprite: { asset: 'arrival-phone', width: 3.8, height: 5.4, z: 9 }, interaction: {
         kind: 'inspect', manipulation: 'phone',
         text: '手机亮了一下，简历还停在“能够适应”那半句。上一份工作的结束日期仍写着“至今”。你点进那一格，键盘弹出来，奶奶隔着桌子问谁发消息。\n\n“没有，我在改东西。”\n\n“那你改。等会儿要吃米酒就叫我，锅还在厨房。”她没再问，拿起刚才的针线。',
@@ -44,7 +45,7 @@ export const epilogue: Chapter = {
         options: [{ id: 'epilogue-update-date', label: '把结束日期改对，保存草稿。', condition: not(flag('epilogue-updated-date')), effects: [{ kind: 'flag', id: 'epilogue-updated-date' }], feedback: '你把“至今”删掉，填回真正离职的日期，保存了草稿。个人简介仍留着半句，手机这回先扣在桌上。' }],
       } },
       { id: 'epilogue-slips', label: '三张短札', x: 56, y: 67, icon: 'letter', sprite: { asset: 'epilogue-slips', width: 9, height: 7, z: 10 }, condition: pages, completed: flag('epilogue-filed'), interaction: { kind: 'minigame', gameId: 'epilogue-filing' } },
-      { id: 'epilogue-ticket', label: '车次单', x: 23, y: 72, icon: 'letter', sprite: { asset: 'epilogue-ticket', width: 8, height: 5, z: 10 }, interaction: { kind: 'dialogue', dialogueId: 'epilogue-departure' } },
+      { id: 'epilogue-ticket', condition: flag('epilogue-reviewed'), label: '车次单', x: 23, y: 72, icon: 'letter', sprite: { asset: 'epilogue-ticket', width: 8, height: 5, z: 10 }, interaction: { kind: 'dialogue', dialogueId: 'epilogue-departure' } },
     ] },
     { id: 'epilogue-gate', tint: 'dawn', decorations: [
       { id: 'epilogue-breakfast-grandma', asset: 'epilogue-grandma', x: 45, y: 98, width: 19, height: 61, z: 4, condition: flag('epilogue-breakfast') },
@@ -88,7 +89,7 @@ const tableNodes: DialogueSeed[] = [
 ];
 const departureNodes: DialogueSeed[] = [
   { id: 'ticket', speaker: '奶奶', choices: [{ id: 'epilogue-times', label: '记清车次和你的空当。', next: 'options', effects: [{ kind: 'flag', id: 'epilogue-ticket-read' }] }] },
-  { id: 'options', speaker: '小满', choices: [
+  { id: 'options', speaker: '小满', choicesOnlyWhen: flag('epilogue-ticket-read'), choices: [
     { id: 'epilogue-ask-calendar', label: '日历上那句“别问工作”……', condition: clue('calendar'), next: 'calendar', effects: [] },
     { id: 'epilogue-ask-apron', label: '阿川说起回来帮忙的那天。', condition: clue('chuan-return'), next: 'apron', effects: [] },
     { id: 'epilogue-ask-both', label: '想起你的茶和琴姐的围裙。', condition: all(clue('calendar'), clue('chuan-return')), next: 'both', effects: [] },
