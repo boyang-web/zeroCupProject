@@ -8,3 +8,5 @@
 - `art/arrival/`：未再使用的初版小院底图 `courtyard-v1.png`；原图内容保持不变，当前场景使用 `public/assets/arrival/courtyard-clean-v2.png`。
 
 原件保留。需要运行的素材复制到正式工程 public/assets，并在 [资源来源](../docs/engineering/资源来源.md) 登记。最新制作约束见 [议题清单](../docs/议题清单.md)，原始资料中的旧设定不直接视为定案。
+
+2026-11-11：根目录“比赛要求”已整体移入 `competition/`，选手手册与评分 PPT 原件保持不变。

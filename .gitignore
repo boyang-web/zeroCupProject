@@ -33,3 +33,6 @@ desktop.ini
 !/archive/README.md
 /references/*
 !/references/README.md
+
+# Root delivery artifact (copy of the validated submission package)
+/零杯壹组-风栖林-蔺博洋.zip
