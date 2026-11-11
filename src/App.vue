@@ -58,6 +58,7 @@ const soundscape=createSoundscape({
 const themeStyle = { ...woodVariables(content.assets, document.baseURI), '--journal-paper': `url("${new URL(content.assets['journal-paper']!.url, document.baseURI).href}")` };
 const audioMessage = ref(''), objectivesOpen = ref(false), fullscreen = ref(false), viewHome = ref(false), closeView = ref(false);
 const introActive = ref(false);
+const titleScreen = ref<InstanceType<typeof TitleScreen>>();
 const showingHome = computed(() => state.value.phase === 'title' || viewHome.value);
 const returning = computed(() => isRevisiting(state.value));
 const unlocked = (id: FeatureId) => featureUnlocked(state.value, content, id, { developer: developer.value });
@@ -215,7 +216,15 @@ function settleActivity(gameId:string,result:MinigameResult){
 }
 function finish(result:MinigameResult){if(panel.value?.kind==='minigame')settleActivity(panel.value.gameId,result);}
 function finishJournal(result:MinigameResult){if(journalActivity.value)settleActivity(journalActivity.value.id,result);}
-function restart() { panel.value = null; viewHome.value = false; objectivesOpen.value = false; pendingEntry.value = undefined; game.newGame(); }
+function restart() {
+  game.newGame();
+  resetScenePresentation();
+}
+function confirmRestart() {
+  if (!showingHome.value) { restart(); return; }
+  panel.value = null;
+  titleScreen.value?.beginNewJourney();
+}
 async function requestChapterReplay() {
   panel.value = { kind: 'replay-chapter' };
   await nextTick();
@@ -223,12 +232,14 @@ async function requestChapterReplay() {
 }
 function replayChapter() {
   if (!game.dispatch({ type: 'replay-chapter' })) return;
+  resetScenePresentation();
+}
+function resetScenePresentation() {
   clearTimeout(discoveryTimer); discovery.value = undefined; pendingEntry.value = undefined;
   response.value = undefined; journalSource.value = undefined; journalBookmarks.value = false;
   objectivesOpen.value = false; guideMinimized.value = false; closeView.value = false;
   sceneRevision.value++; panel.value = null; viewHome.value = false;
 }
-function requestStart() { if (hasProgress.value) panel.value = { kind: 'restart' }; else restart(); }
 function continueStory() { if (state.value.phase !== 'title') viewHome.value = false; else if (game.load('auto')) viewHome.value = false; }
 function travel() { panel.value = null; game.dispatch({ type: returning.value ? 'resume-journey' : 'travel' }); }
 function revisit(id: string) { if (game.dispatch({ type: 'revisit', chapterId: id }) || developer.value) panel.value = null; }
@@ -284,7 +295,7 @@ onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); soundscape.
   <div class="game-shell immersive" :class="{ 'reduced-motion': reducedMotion, 'at-home': showingHome, 'developer-active': developer, 'tutorial-focused': guideFocused, 'tutorial-minimal': guideChrome === 'minimal' }" :data-tutorial-step="presentedGuide?.id" :style="themeStyle" @click.capture="uiSound">
     <aside v-if="developer" class="developer-bar" aria-label="测试模式"><strong>开发者测试</strong><span>前置限制已放开</span><button @click="developerTools">测试工具 · F8</button><button @click="exitDeveloper">退出测试</button></aside>
     <main ref="region">
-      <TitleScreen v-if="showingHome" :content="content" :has-save="hasProgress" :reduced-motion="reducedMotion" @intro="introActive = $event" @start="requestStart" @continue="continueStory" @saves="openPanel('saves')" @settings="openPanel('settings')" />
+      <TitleScreen v-if="showingHome" ref="titleScreen" :content="content" :has-save="hasProgress" :reduced-motion="reducedMotion" @intro="introActive = $event" @start="restart" @continue="continueStory" @saves="openPanel('saves')" @settings="openPanel('settings')" @restart="panel = { kind: 'restart' }" />
       <template v-else>
         <div v-if="state.phase === 'playing'" class="play-layout">
           <SceneView :key="sceneRevision" :developer="developer" :chapter="chapter" :content="content" :state="state" :guide-target="!guideMinimized ? presentedGuide?.target : undefined" :focus-locked="guideFocused" :blocked="!!panel || !!node" :reduced-motion="reducedMotion" @framing="closeView = $event" @interact="interact" @option="sceneOption" />
@@ -308,7 +319,7 @@ onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); soundscape.
     <Transition name="hud-reveal"><SceneResponse v-if="response&&!panel&&!node&&!closeView&&!showingHome" :key="response.key" :title="response.title" :text="response.text" :reduced-motion="reducedMotion" @close="response=undefined"/></Transition>
 
     <Transition name="discovery"><aside v-if="discovery && showDiscovery" class="discovery-toast" role="status"><WoodFrame kind="ui-toast" /><Icon name="book" /><div><small>{{ discovery.text }}</small><strong>{{ discovery.title }}</strong></div><UiButton tone="icon" aria-label="收起发现提示" @click="discovery = undefined"><Icon name="close" /></UiButton></aside></Transition>
-    <Modal v-if="node || panel" :class="{'modal--confirm':panel?.kind==='replay-chapter','modal--choices':node&&dialogueChoicesOnly(node,state)}" :title="title" :variant="modalVariant" :advance-reading="(!!node||panel?.kind==='inspect') && panel?.kind !== 'developer'" @advance="advanceReading" @close="closeModal">
+    <Modal v-if="node || panel" :class="{'modal--confirm':panel?.kind==='replay-chapter'||panel?.kind==='restart','modal--choices':node&&dialogueChoicesOnly(node,state)}" :title="title" :variant="modalVariant" :advance-reading="(!!node||panel?.kind==='inspect') && panel?.kind !== 'developer'" @advance="advanceReading" @close="closeModal">
       <template #actions><UiButton v-if="containingBook" tone="quiet" @click="panel = { kind: 'inspect', hotspot: containingBook }">翻回书签</UiButton><UiButton v-if="developer && panel?.kind !== 'developer'" tone="quiet" @click="developerTools">测试工具</UiButton></template>
       <DeveloperTools v-if="panel?.kind === 'developer'" :content="content" :state="state" @jump="debugJump" @dialogue="debugDialogue" @game="debugGame" @hotspot="debugObject" @panel="openPanel" @reset="resetTest" @exit="exitDeveloper" />
       <DialogueView ref="dialogueReader" :developer="developer" v-else-if="node" :key="state.dialogue!.id + ':' + node.id" :node="node" :state="state" :content="content" :reduced-motion="reducedMotion" @choose="choose" />
@@ -329,7 +340,14 @@ onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); soundscape.
         <p v-if="returning" class="muted">你正在回访旧章节，确认后也会清空之后的行程。</p>
         <div class="button-row"><UiButton @click="panel = { kind: 'settings' }">继续当前进度</UiButton><UiButton tone="wood" @click="replayChapter">确认重玩本章</UiButton></div>
       </section>
-      <template v-else-if="panel?.kind === 'restart'"><p>新的归途会替换自动存档。手动档位和导出的文件会保留。</p><div class="button-row"><UiButton tone="jade" @click="restart">开始新的故事</UiButton><UiButton @click="panel = null">先不重来</UiButton></div></template>
+      <section v-else-if="panel?.kind === 'restart'" class="chapter-replay-confirm">
+        <p>{{ showingHome ? '要从引子重新开始吗？' : '要重新开始旅程吗？' }}</p>
+        <p v-if="hasProgress">{{ showingHome ? '读完引子、进入第一章时' : '开始新旅程时' }}会替换自动存档。手动存档和导出的文件会保留。</p>
+        <div class="button-row">
+          <UiButton autofocus @click="closeModal">先不重来</UiButton>
+          <UiButton tone="wood" @click="confirmRestart">{{ showingHome ? '从引子开始' : '开始新的故事' }}</UiButton>
+        </div>
+      </section>
       <template v-else-if="panel?.kind === 'notice'"><p>{{ panel.text }}</p></template>
     </Modal>
   </div>

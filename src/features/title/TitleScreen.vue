@@ -4,9 +4,10 @@ import IntroJourney from './IntroJourney.vue';
 import HomeBook from './HomeBook.vue';
 import type { ContentPack } from '../../core/contracts';
 const props = defineProps<{ content: ContentPack; hasSave: boolean; reducedMotion: boolean }>();
-const emit = defineEmits<{ start: []; continue: []; saves: []; settings: []; intro: [active: boolean] }>();
+const emit = defineEmits<{ start: []; continue: []; saves: []; settings: []; restart: []; intro: [active: boolean] }>();
 const previewIntro = new URLSearchParams(window.location.search).get('intro') === '1';
 const stage = ref(previewIntro ? 0 : -1), leaving = ref(false);
+const startingNew = ref(false);
 const tilt = ref({x: 0, y: 0});
 let timer: ReturnType<typeof setTimeout> | undefined;
 const background = computed(() => props.content.assets['title-homecoming']!.url);
@@ -16,8 +17,10 @@ function move(event: PointerEvent) {
 }
 watch(stage, value => emit('intro', value >= 0), { immediate: true });
 function begin() { stage.value = 0; }
+function beginNewJourney() { startingNew.value = true; begin(); }
+defineExpose({ beginNewJourney });
 function openBook() { if (props.hasSave) leave(); else begin(); }
-function finishJourney() { if (props.hasSave) emit('continue'); else emit('start'); }
+function finishJourney() { if (props.hasSave && !startingNew.value) emit('continue'); else emit('start'); }
 function leave() { if (leaving.value) return; leaving.value = true; if (props.hasSave) emit('continue'); else emit('start'); }
 onBeforeUnmount(() => { clearTimeout(timer); emit('intro', false); });
 </script>
@@ -31,7 +34,13 @@ onBeforeUnmount(() => { clearTimeout(timer); emit('intro', false); });
     <Transition name="chapter" mode="out-in">
       <div v-if="stage < 0" key="home" class="overture-home">
         <div class="overture-heading"><h1><span>百</span><span>味</span><span>录</span><small>长明巷<br>人间食记</small></h1></div>
-        <nav class="overture-nav" aria-label="故事入口"><div><button @click="emit('saves')">存档</button><button @click="begin">重读引子</button></div></nav>
+        <nav class="overture-nav" aria-label="故事入口">
+          <div>
+            <button @click="emit('saves')">存档</button>
+            <button @click="begin">重读引子</button>
+            <button @click="emit('restart')">新的归途</button>
+          </div>
+        </nav>
         <HomeBook :paper="content.assets['journal-paper']!.url" :reduced-motion="reducedMotion" @open="openBook" />
 
       </div>
@@ -55,4 +64,7 @@ onBeforeUnmount(() => { clearTimeout(timer); emit('intro', false); });
 .overture-book:hover .home-book-cover{box-shadow:inset 10px 0 12px #111b17,0 1px 3px #111b1744}
 .overture-book .home-book-ribbon{z-index:1;pointer-events:none}
 .overture-book .gesture-trace{z-index:3}
+.overture-nav{width:auto;max-width:84%}
+.overture-nav>div{flex-wrap:wrap;gap:0 clamp(16px,4vw,32px)}
+.overture-nav button{white-space:nowrap}
 </style>
