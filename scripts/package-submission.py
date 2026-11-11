@@ -62,11 +62,8 @@ purposes={'vue':'界面组件与响应式状态','three':'物件三维渲染','g
 for name,purpose in purposes.items():
     p=json.loads((ROOT/'node_modules'/name/'package.json').read_text(encoding='utf8'));library_rows.append('| '+name+' | '+p['version']+' | '+purpose+' | '+str(p.get('license','随项目许可'))+' |')
 libraries='| 库 | 版本 | 用途 | 许可 |\n| --- | --- | --- | --- |\n'+'\n'.join(library_rows)
-readme="""# 百味录
-
-以长明巷的三家小馆和一次归家为线索的叙事探索游戏。主题：市井烟火·百味人间。界面为自适应布局，包含五章、三种显式结局、食谱与人间百味片段。
-
-{team}
+# Share the approved product copy with the development README.
+readme=(ROOT/'docs/submission/README-产品与技术.md').read_text(encoding='utf8')+'\n'+"""{team}
 
 ## 直接运行
 
