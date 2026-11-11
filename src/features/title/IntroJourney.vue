@@ -33,10 +33,10 @@ function keyboard(e:KeyboardEvent){if(e.target!==scroller.value)return;if(e.key=
 function animateDoor(value:number,duration=.5){gsap.to(door,{value,duration:props.reducedMotion?0:duration,ease:'power3.out',overwrite:true});}
 let startX=0,distance=0,timer:ReturnType<typeof setTimeout>|undefined;
 function grab(e:PointerEvent){if(done.value)return;startX=e.clientX;distance=0;dragging.value=true;gsap.killTweensOf(door);(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);}
-function pull(e:PointerEvent){if(!dragging.value)return;distance=startX-e.clientX;animateDoor(Math.max(0,Math.min(.98,distance/Math.min(300,innerWidth*.6))),.13);}
+function pull(e:PointerEvent){if(!dragging.value)return;distance=startX-e.clientX;door.value=Math.max(0,Math.min(.98,distance/Math.min(300,innerWidth*.6)));}
 function release(){dragging.value=false;if(distance>Math.min(85,innerWidth*.2))finish();else if(Math.abs(distance)<6){if(knocked.value)finish();else{knocked.value=true;animateDoor(.12,.7);}}else animateDoor(knocked.value ? .12 : 0);}
 function cancelDrag(){dragging.value=false;animateDoor(knocked.value ? .12 : 0);}
-function finish(){if(done.value)return;done.value=true;animateDoor(1,1.1);timer=setTimeout(()=>emit('finish'),props.reducedMotion?0:1550);}
+function finish(){if(done.value)return;done.value=true;gsap.to(door,{value:1,duration:props.reducedMotion?0:Math.max(.28,.72*(1-door.value)),ease:'power2.out',overwrite:true});timer=setTimeout(()=>emit('finish'),props.reducedMotion?0:720);}
 function sendReply(){if(reply.value.trim())sentReply.value=reply.value.trim();}
 onBeforeUnmount(()=>{clearTimeout(timer);pointerX.tween.kill();pointerY.tween.kill();gsap.killTweensOf(door);});
 </script>
@@ -71,7 +71,7 @@ onBeforeUnmount(()=>{clearTimeout(timer);pointerX.tween.kill();pointerY.tween.ki
      <button class="journey-ticket" :class="{'ticket-back':ticketBack}" aria-label="翻看车票背面" :aria-pressed="ticketBack" @click="ticketBack=!ticketBack"><template v-if="!ticketBack"><small>归 途 / HOMEBOUND</small><div><strong>城市</strong><i>→</i><strong>故乡</strong></div><p>靠窗座位 <b>小满</b></p><span class="ticket-bars" aria-hidden="true"></span></template><template v-else><small>奶奶的消息</small><p class="ticket-message">到了给我留句话。<br/>热的给你留着。</p><span>长明巷</span></template></button>
     </div>
    </div>
-   <div v-if="act===4" class="arrival-door"><div class="door-panel"><span class="door-light-leak"></span><button class="door-handle" aria-label="向左拖开家门，也可按回车开门" @pointerdown.stop="grab" @pointermove.stop="pull" @pointerup.stop="release" @pointercancel="cancelDrag" @keydown.enter.stop.prevent="finish" @keydown.space.stop.prevent="finish"><span class="ring-plate"></span><span class="brass-ring"></span></button></div><div class="door-warmth" aria-hidden="true"></div></div>
+   <div v-if="act===4" class="arrival-door"><div class="door-panel"><span class="door-light-leak"></span><button class="door-handle" aria-label="向左拖开家门，也可按回车开门" @pointerdown.stop="grab" @pointermove.stop="pull" @pointerup.stop="release" @pointercancel="cancelDrag" @keydown.enter.stop.prevent="finish" @keydown.space.stop.prevent="finish"><span class="ring-plate"></span><span class="brass-ring"></span></button><span class="door-drag-guide"><span aria-hidden="true"><i></i>←</span>按住门环，向左拖开</span></div><div class="door-warmth" aria-hidden="true"></div></div>
    <button v-if="act<4" class="intro-down-cue" aria-label="继续这一段归途" @click="advance"><svg viewBox="0 0 40 55" fill="none" aria-hidden="true"><path d="M20 3v22M10 19l10 10 10-10M10 32l10 10 10-10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><i aria-hidden="true"></i></button>
    <div class="journey-blackout" aria-hidden="true"><span>第一章 · 归巷</span></div>
   </div><div class="journey-distance" aria-hidden="true"></div>

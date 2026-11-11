@@ -95,7 +95,7 @@
 .intro-down-cue svg{width:34px;height:48px;filter:drop-shadow(0 0 7px #f6d99d55)}
 .intro-down-cue i{position:absolute;bottom:0;width:21px;height:3px;border-radius:50%;background:#f2d6a13d;filter:blur(3px)}
 .intro-down-cue:hover{color:#fff1cf}
-.journey-blackout{position:absolute;inset:0;z-index:70;background:#1d2118;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity 1s .6s}
+.journey-blackout{position:absolute;inset:0;z-index:70;background:#1d2118;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .48s .12s}
 .journey-blackout span{font-size:18px;letter-spacing:.45em;color:#e1d4ad}.complete .journey-blackout{opacity:1;pointer-events:auto}
 @keyframes down-breathe{0%,100%{translate:0 0;opacity:.5}50%{translate:0 8px;opacity:1}}
 @keyframes luggage-glow{0%,100%{opacity:.45;scale:.95}50%{opacity:.9;scale:1.05}}
@@ -144,3 +144,6 @@
  .intro-down-cue,.luggage-halo,.window-land img,.message-notification{animation:none!important}
  .journey *{transition:none!important}.intro-prop,.door-panel{will-change:auto}
 }
+
+/* 显式展示拖动方向，减少猜测，键盘入口仍可用。 */
+.door-drag-guide{position:absolute;left:5%;top:79%;display:grid;justify-items:start;gap:7px;font:12px var(--font-story);letter-spacing:.08em;color:#fff1cc;text-shadow:0 1px 5px #1c211b;pointer-events:none;transition:opacity .3s}.door-drag-guide>span{position:relative;width:75px;height:17px;border-bottom:1px solid #dfca9b88;font:17px Georgia,serif}.door-drag-guide i{position:absolute;right:0;top:4px;width:7px;height:7px;border-radius:50%;border:1px solid #f4d79c;animation:door-drag-demo 3s ease-in-out infinite}.door-drag-guide small{font-size:9px;opacity:.75}.door-dragging .door-drag-guide,.complete .door-drag-guide{opacity:0}@keyframes door-drag-demo{0%,20%{translate:0 0;opacity:.3}45%,75%{translate:-48px 0;opacity:1}100%{translate:-48px 0;opacity:0}}@media(max-width:720px){.door-drag-guide{font-size:10px;top:80%;gap:5px}.door-drag-guide small{font-size:8px}}

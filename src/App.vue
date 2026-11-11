@@ -57,6 +57,7 @@ const soundscape=createSoundscape({
 });
 const themeStyle = { ...woodVariables(content.assets, document.baseURI), '--journal-paper': `url("${new URL(content.assets['journal-paper']!.url, document.baseURI).href}")` };
 const audioMessage = ref(''), objectivesOpen = ref(false), fullscreen = ref(false), viewHome = ref(false), closeView = ref(false);
+const introActive = ref(false);
 const showingHome = computed(() => state.value.phase === 'title' || viewHome.value);
 const returning = computed(() => isRevisiting(state.value));
 const unlocked = (id: FeatureId) => featureUnlocked(state.value, content, id, { developer: developer.value });
@@ -251,10 +252,10 @@ function uiSound(event:MouseEvent){
   if(!button||button.disabled||button.closest('[inert]'))return;
   const cue=button.dataset.sound??'wood';if(['wood','paper','cup','door'].includes(cue))void soundscape.play(cue as SoundEffect);
 }
-function soundVisibility(){soundscape.setActive(!document.hidden&&!showingHome.value);}
-watch([musicVolume,effectsVolume,muted,showingHome,()=>state.value.chapterId],()=>{
+function soundVisibility(){soundscape.setActive(!document.hidden&&(!showingHome.value||introActive.value));}
+watch([musicVolume,effectsVolume,muted,showingHome,introActive,()=>state.value.chapterId],()=>{
   soundscape.setLevels({music:musicVolume.value,effects:effectsVolume.value,muted:muted.value});
-  soundscape.setTheme(sceneMusic(state.value.chapterId));soundVisibility();
+  soundscape.setTheme(introActive.value ? 'home' : sceneMusic(state.value.chapterId));soundVisibility();
 },{immediate:true});
 const region = ref<HTMLElement>(); let tween: gsap.core.Tween | undefined;
 const discovery = ref<{ title: string; text: string;  }>(); let discoveryTimer: ReturnType<typeof setTimeout> | undefined;
@@ -283,7 +284,7 @@ onBeforeUnmount(() => { tween?.kill(); clearTimeout(discoveryTimer); soundscape.
   <div class="game-shell immersive" :class="{ 'reduced-motion': reducedMotion, 'at-home': showingHome, 'developer-active': developer, 'tutorial-focused': guideFocused, 'tutorial-minimal': guideChrome === 'minimal' }" :data-tutorial-step="presentedGuide?.id" :style="themeStyle" @click.capture="uiSound">
     <aside v-if="developer" class="developer-bar" aria-label="测试模式"><strong>开发者测试</strong><span>前置限制已放开</span><button @click="developerTools">测试工具 · F8</button><button @click="exitDeveloper">退出测试</button></aside>
     <main ref="region">
-      <TitleScreen v-if="showingHome" :content="content" :has-save="hasProgress" :reduced-motion="reducedMotion" @start="requestStart" @continue="continueStory" @saves="openPanel('saves')" @settings="openPanel('settings')" />
+      <TitleScreen v-if="showingHome" :content="content" :has-save="hasProgress" :reduced-motion="reducedMotion" @intro="introActive = $event" @start="requestStart" @continue="continueStory" @saves="openPanel('saves')" @settings="openPanel('settings')" />
       <template v-else>
         <div v-if="state.phase === 'playing'" class="play-layout">
           <SceneView :key="sceneRevision" :developer="developer" :chapter="chapter" :content="content" :state="state" :guide-target="!guideMinimized ? presentedGuide?.target : undefined" :focus-locked="guideFocused" :blocked="!!panel || !!node" :reduced-motion="reducedMotion" @framing="closeView = $event" @interact="interact" @option="sceneOption" />
