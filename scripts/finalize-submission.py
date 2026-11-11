@@ -29,7 +29,7 @@ for variant in ['complete','anonymous']:
         target=folder/'docs/images'/Path(rel).name;target.parent.mkdir(exist_ok=True);shutil.copyfile(OUT/rel,target)
     doc=folder/'docs/架构与验证.md'
     text=doc.read_text(encoding='utf8').split('\n## 本次独立运行核验',1)[0]
-    text+='\n## 本次独立运行核验\n\n实际浏览器：'+validation['browser']+'。源码与打包副本分别通过类型、内容检查、190项测试和生产构建。当前成品已在独立服务器验证下列视口与关键场景，无缺失资源或页面异常；未将目标 chrome129 设置称为 129 实测，IE、Safari、全部真机及完整人工通关仍留待复核。\n\n'
+    text+='\n## 本次独立运行核验\n\n实际浏览器：'+validation['browser']+'。源码与打包副本分别通过类型、内容检查、'+str(report['testCount'])+'项测试和生产构建。当前成品已在独立服务器验证下列视口与页面，无缺失资源或页面异常；未将目标 chrome129 设置称为 129 实测，IE、Safari、全部真机及完整人工通关仍留待复核。\n\n'
     text+='\n'.join('- '+str(row['viewport'])+'：'+row['result']for row in validation['checks'])+'\n\n'
     text+='\n'.join('![运行画面](images/'+Path(rel).name+')'for rel in validation.get('selectedImages',[]))+'\n'
     doc.write_text(text,encoding='utf8')

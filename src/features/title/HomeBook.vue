@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref } from 'vue';
+import { computed, onBeforeUnmount, ref } from 'vue';
 import { gsap } from 'gsap';
 const props = defineProps<{ paper: string; reducedMotion: boolean }>();
+const paperUrl = computed(() => new URL(props.paper, document.baseURI).href);
 const emit = defineEmits<{ open: [] }>();
 const opening = ref(0), dragging = ref(false), committed = ref(false);
 let start = 0, target = 0;
@@ -12,7 +13,7 @@ function release() { if(!dragging.value)return;dragging.value=false;if(opening.v
 onBeforeUnmount(()=>{gsap.killTweensOf(opening)});
 </script>
 <template>
- <button class="entry-volume" :class="{ 'is-dragging': dragging, 'is-opening': committed, 'motion-reduced': reducedMotion }" :style="{'--turn':opening,'--volume-paper':`url(${paper})`}" aria-label="向左翻开百味录，继续故事；也可按回车" @pointerdown.stop="grab" @pointermove.stop="pull" @pointerup="release" @pointercancel="release" @keydown.enter.prevent="finish" @keydown.space.prevent="finish">
+ <button class="entry-volume" :class="{ 'is-dragging': dragging, 'is-opening': committed, 'motion-reduced': reducedMotion }" :style="{'--turn':opening,'--volume-paper':`url(${paperUrl})`}" aria-label="向左翻开百味录，继续故事；也可按回车" @pointerdown.stop="grab" @pointermove.stop="pull" @pointerup="release" @pointercancel="release" @keydown.enter.prevent="finish" @keydown.space.prevent="finish">
   <span class="entry-volume__shadow" aria-hidden="true"></span>
   <span class="entry-volume__body" aria-hidden="true">
    <span class="entry-volume__backboard"></span>

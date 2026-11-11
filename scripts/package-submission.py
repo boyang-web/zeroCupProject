@@ -15,6 +15,9 @@ def run(args,cwd=ROOT,log=None):
     if r.returncode:raise RuntimeError(text[-7000:])
     return text
 BASE=run(['git','rev-parse','HEAD']).strip()
+# Do not accidentally ship an uncommitted local gameplay variant.
+if run(['git','status','--porcelain','--','src','public','tests','package.json','package-lock.json','index.html','tsconfig.json','vite.config.ts']).strip():
+    raise RuntimeError('Commit or restore runtime changes before packaging.')
 manifest=json.loads(run(['node','--experimental-strip-types','scripts/submission-assets.ts']))
 def copy_file(src,dst):
     dst.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(src,dst)
@@ -84,6 +87,17 @@ readme="""# 百味录
 
 源码与成品所需素材均随包提供；运行资源已裁剪并转换为等尺寸 WebP，原始素材不在包内。小游戏只返回结果，由统一规则发奖励；领域规则不依赖 DOM。内容 v6、状态 v3，自动与手动存档、回访、章节重玩均保留。
 
+## 交付目录
+
+- `src/`：正式源码，按规则、内容、运行装配、功能、表现和适配分层。
+- `public/assets/`：源码构建所需资源与字体许可。
+- `dist/`：可直接启动的生产成品。
+- `tests/`：规则、分支与存档测试。
+- `scripts/`：检查、文本导出、素材生成和本地服务。
+- `docs/`：设计、架构验证、素材披露与提示词。
+- `third_party_licenses/`：第三方库许可原文。
+- 根目录：README、第三方说明、锁文件、构建配置及双平台启动入口。
+
 ## 操作
 
 点场景人物和独立物件，翻看、拖动或交谈。对白窗口点按或空格／回车补全、继续，回答须明确选择。纸本、手机等长文仅在正文区滚动。Tab 选择控件，Enter 确认，Esc 返回。引子保留自然滚动与物件操作；已有存档可翻开首页的书续读。
@@ -133,6 +147,7 @@ docs=COMPLETE/'docs';docs.mkdir()
 (docs/'素材与工具说明.md').write_text('# 素材与工具说明\n\n插画与透明物件使用内置图像生成工具，并由程序分层、裁切引用；物件、框角、字体和桂花不拉伸变形。SVG 单据、线轴、落花、窗影和部分三维物件由代码构建。音乐与音效为原创合成，生成脚本随包。所有 PNG→WebP 转换仅发生在打包副本，保持尺寸与透明通道。\n\n字体保留 SIL OFL 原文；第三方库许可见根目录说明与 third_party_licenses。以下为当前运行资产登记，不包含旧占位或其他工程素材。\n\n'+'\n'.join('- '+id+'：'+a['label']+'；'+a['source'].split('，见')[0].split('见 docs/')[0]for id,a in manifest['assets'].items()),encoding='utf8')
 (COMPLETE/'RUN.bat').write_text('@echo off\ncd /d "%~dp0"\nnode scripts\\serve.mjs dist\nif errorlevel 1 pause\n',encoding='ascii')
 (COMPLETE/'RUN.command').write_text('#!/bin/sh\ncd "$(dirname "$0")"\nnode scripts/serve.mjs dist\n',encoding='utf8')
+(COMPLETE/'RUN.command').chmod(0o755)
 # Reuse installed dependencies only for the staging checks; never put the junction in archives.
 link=COMPLETE/'node_modules'
 if os.name=='nt':run(['cmd','/c','mklink','/J',str(link),str(ROOT/'node_modules')])
@@ -141,6 +156,6 @@ for name,args in [('typecheck',['npm.cmd'if os.name=='nt'else'npm','run','typech
     print('Staging check:',name,flush=True);run(args,COMPLETE,name+'.log')
 shutil.copytree(COMPLETE,ANON,ignore=shutil.ignore_patterns('node_modules','*.tsbuildinfo'),dirs_exist_ok=True)
 (ANON/'README.md').write_text(readme.format(team='',libraries=libraries),encoding='utf8')
-report={'sourceCommit':BASE,'directory':str(OUT.relative_to(ROOT)),'assets':sorted(records,key=lambda r:r['file']),'checks':['typecheck','content','tests','build'],'files':{},'packages':{}}
+report={'sourceCommit':BASE,'testCount':int(re.search(r'(?:#|ℹ) tests (\d+)',(OUT/'tests.log').read_text(encoding='utf8')).group(1)),'directory':str(OUT.relative_to(ROOT)),'assets':sorted(records,key=lambda r:r['file']),'checks':['typecheck','content','tests','build'],'files':{},'packages':{}}
 (OUT/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf8')
 print('STAGING_READY '+str(OUT),flush=True)
