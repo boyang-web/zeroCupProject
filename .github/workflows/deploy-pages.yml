@@ -27,6 +27,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - name: Convert PNG assets to WebP
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install --quiet Pillow
+          .venv/bin/python scripts/pages-webp.py dist
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
